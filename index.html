@@ -161,7 +161,7 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-sevenGreen pulse-light"></span>
                     <h2 id="currentStoreNameTitle" class="text-base font-black text-slate-900">지점명 불러오는 중...</h2>
                 </div>
-                <p id="currentMonthMetaText" class="text-[11px] text-slate-400 mt-0.5 font-medium">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
+                <p id="currentMonthMetaText" class="text-[10px] text-slate-400 mt-0.5 font-semibold">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
             </div>
 
             <!-- 법정 수당 스위치 설정부 -->
@@ -192,12 +192,12 @@
             </div>
         </div>
 
-        <!-- 매점 편집 패널 (드로어 형식) -->
+        <!-- 매점 및 데이터 편집 패널 (드로어 형식) -->
         <div id="storeManagerPanel" class="hidden bg-white p-4 rounded-2xl shadow-sm border-2 border-sevenGreen/20 space-y-3 animate-in fade-in duration-200 text-xs">
             <div class="flex justify-between items-center border-b pb-1.5">
                 <h3 class="font-black text-slate-900 flex items-center gap-1.5">
                     <i data-lucide="store" class="w-4 h-4 text-sevenGreen"></i>
-                    다중 점포(매장) 관리 대장
+                    다중 점포(매장) 및 시스템 데이터 대장
                 </h3>
                 <button onclick="toggleStoreManagerPanel()" class="text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
             </div>
@@ -220,13 +220,31 @@
                     </div>
                 </div>
             </div>
+
+            <div class="border-t pt-3 border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-500">지점 전산 데이터 안전 백업</h4>
+                    <button onclick="exportData()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold py-2 px-3 rounded-xl flex items-center justify-center space-x-1.5 border border-emerald-200">
+                        <i data-lucide="upload-cloud" class="w-4 h-4 text-sevenGreen"></i>
+                        <span>전체 데이터 백업 (JSON 파일 다운로드)</span>
+                    </button>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-500">데이터 백업 불러오기 및 복원</h4>
+                    <button onclick="triggerImport()" class="w-full bg-orange-50 hover:bg-orange-100 text-orange-800 font-extrabold py-2 px-3 rounded-xl flex items-center justify-center space-x-1.5 border border-orange-200">
+                        <i data-lucide="download-cloud" class="w-4 h-4 text-sevenOrange"></i>
+                        <span>백업 복구하기 (JSON 파일 선택)</span>
+                    </button>
+                    <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
+                </div>
+            </div>
         </div>
 
-        <!-- 탭 Content: 대시보드 (한 화면에 다 나오도록 여백 극소화) -->
+        <!-- 탭 Content: 대시보드 (한 화면 수납 극대화) -->
         <div id="tabContent-dashboard" class="space-y-4">
             
-            <!-- 3대 핵심 요약 카드 -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- 4대 핵심 요약 카드 (주휴 위험군 알림판 추가) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
                     <div class="p-2.5 bg-sevenGreen/10 text-sevenGreen rounded-xl">
                         <i data-lucide="users" class="w-6 h-6"></i>
@@ -247,7 +265,18 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3 sm:col-span-2 lg:col-span-1">
+                <!-- 실무 최적화 추가 요약 카드: 주휴수당 기준 임계인원 실시간 위험 관리 -->
+                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
+                    <div class="p-2.5 bg-amber-50 text-amber-700 rounded-xl">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">주휴수당 의무 대상</p>
+                        <h3 id="dashboard-weeklyHolidayCount" class="text-lg font-black text-amber-600 mt-0.5">0명</h3>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
                     <div class="p-2.5 bg-sevenGreen/10 text-sevenGreen rounded-xl">
                         <i data-lucide="coins" class="w-6 h-6"></i>
                     </div>
@@ -258,7 +287,7 @@
                 </div>
             </div>
 
-            <!-- AI 퀵 리링크 배너 (높이 축소) -->
+            <!-- AI 퀵 리링크 배너 -->
             <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-emerald-900 text-white rounded-2xl p-4 shadow-md flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 relative overflow-hidden">
                 <div class="absolute right-0 top-0 opacity-10 translate-x-12 translate-y-2 select-none pointer-events-none">
                     <i data-lucide="sparkles" class="w-36 h-36 text-yellow-400"></i>
@@ -276,46 +305,16 @@
                 </button>
             </div>
 
-            <!-- 신규 근무 작성 & 최근 목록 그리드 (높이 조절 및 스크롤 고정으로 스크롤바 최소화) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                <!-- 최근 근무 내역 목록 (최상단 우선순위 유지 및 max-height 장착으로 한 화면에 수납) -->
-                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-7 order-1 lg:order-2 flex flex-col justify-between space-y-3 h-[420px]">
-                    <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
-                        <h3 class="font-extrabold text-slate-900 text-xs flex items-center gap-1.5">
-                            <i data-lucide="history" class="w-4 h-4 text-sevenOrange"></i>
-                            <span id="dashboard-recentListLabel">최근 교대 장부</span>
-                        </h3>
-                        <button onclick="switchTab('shifts')" class="text-[10px] font-bold text-sevenGreen hover:underline">
-                            전체장부 보기 &rarr;
-                        </button>
-                    </div>
-
-                    <div class="overflow-y-auto flex-grow custom-scrollbar pr-1 max-h-[350px]">
-                        <table class="w-full text-left text-[11px] border-collapse">
-                            <thead class="sticky top-0 bg-white z-10">
-                                <tr class="border-b border-slate-100 text-slate-400">
-                                    <th class="py-2 font-bold">스태프</th>
-                                    <th class="py-2 font-bold">근무날짜</th>
-                                    <th class="py-2 font-bold">출퇴근 시간(휴게)</th>
-                                    <th class="py-2 font-bold text-right">실제 시수</th>
-                                    <th class="py-2 font-bold text-right">계산 급여</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboard-recentShiftsTable" class="divide-y divide-slate-50 text-slate-600 font-semibold">
-                                <!-- JS 동적 생성 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 출퇴근 일지 추가 폼 -->
-                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-5 order-2 lg:order-1 space-y-3 h-[420px] overflow-y-auto custom-scrollbar">
+                
+                <!-- 1단: 출퇴근 일지 추가 폼 -->
+                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-4 order-2 lg:order-1 space-y-3 h-[420px] overflow-y-auto custom-scrollbar">
                     <h3 class="font-black text-slate-950 text-xs flex items-center gap-1.5 border-b pb-2">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-sevenOrange"></i>
                         <span>교대 근무 기록 추가</span>
                     </h3>
 
-                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-2.5 text-[11px]">
+                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-2 text-[11px]">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">근무자 알바생 선택</label>
                             <select id="form-worker" onchange="onWorkerSelected(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 font-bold focus:ring-1 focus:ring-sevenGreen focus:outline-none">
@@ -323,7 +322,7 @@
                             </select>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2.5">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-slate-500 font-bold mb-0.5">근무 날짜</label>
                                 <input type="date" id="form-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-semibold text-slate-800">
@@ -334,7 +333,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2.5">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-slate-500 font-bold mb-0.5">교대 출근 시각</label>
                                 <input type="time" id="form-startTime" value="09:00" onchange="onStartTimeChanged(this.value)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-semibold text-slate-800">
@@ -345,9 +344,8 @@
                             </div>
                         </div>
 
-                        <!-- 선택형 휴게시간 Dropdown -->
                         <div>
-                            <label class="block text-slate-500 font-bold mb-0.5">무급 휴게시간</label>
+                            <label class="block text-slate-500 font-bold mb-0.5">무급 휴게시간 선택</label>
                             <select id="form-breakMinutes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                                 <option value="0">휴게 시간 없음 (무감산)</option>
                                 <option value="15">15분 휴게</option>
@@ -370,10 +368,137 @@
                         </button>
                     </form>
                 </div>
+
+                <!-- 2단: 세븐일레븐 일과 체커 & 시재 정산기 (편의점 유용 기능 위젯) -->
+                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-4 order-3 lg:order-2 flex flex-col justify-between space-y-3 h-[420px]">
+                    <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
+                        <h3 class="font-extrabold text-slate-900 text-xs flex items-center gap-1.5">
+                            <i data-lucide="store" class="w-4 h-4 text-sevenGreen"></i>
+                            <span>세븐 일과 & 시재 정산기</span>
+                        </h3>
+                        <div class="flex space-x-1">
+                            <button onclick="switchCheckerTab('disposal')" id="btn-checker-disposal" class="bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded">FF 폐기</button>
+                            <button onclick="switchCheckerTab('pos')" id="btn-checker-pos" class="bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded">시재 정산</button>
+                        </div>
+                    </div>
+
+                    <!-- FF 폐기 목록 -->
+                    <div id="checkerTab-disposal" class="flex-grow overflow-y-auto custom-scrollbar pr-1 space-y-2 text-[11px]">
+                        <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-100/80">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-black text-sevenGreen flex items-center gap-1">
+                                    <i data-lucide="alarm-clock" class="w-3.5 h-3.5"></i>
+                                    오전 09:30 폐기 타임
+                                </span>
+                                <span id="disposal-timer-0" class="text-[10px] font-black text-slate-700">계산 중...</span>
+                            </div>
+                            <p class="text-slate-500 font-semibold text-[10px]">대상 품목: 삼각김밥, 도시락, 샌드위치류</p>
+                        </div>
+
+                        <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-black text-sevenOrange flex items-center gap-1">
+                                    <i data-lucide="alarm-clock" class="w-3.5 h-3.5"></i>
+                                    오후 19:30 폐기 타임
+                                </span>
+                                <span id="disposal-timer-1" class="text-[10px] font-black text-slate-700">계산 중...</span>
+                            </div>
+                            <p class="text-slate-500 font-semibold text-[10px]">대상 품목: 햄버거, 샐러드, 신선식품류</p>
+                        </div>
+
+                        <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-black text-sevenRed flex items-center gap-1">
+                                    <i data-lucide="alarm-clock" class="w-3.5 h-3.5"></i>
+                                    야간 23:00 폐기 타임
+                                </span>
+                                <span id="disposal-timer-2" class="text-[10px] font-black text-slate-700">계산 중...</span>
+                            </div>
+                            <p class="text-slate-500 font-semibold text-[10px]">대상 품목: 디저트, 가공유제품, 즉석식품류</p>
+                        </div>
+                    </div>
+
+                    <!-- 교대 시재 정산기 -->
+                    <div id="checkerTab-pos" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-1 text-[11px] space-y-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">50,000원</span>
+                                <input type="number" id="pos-count-50000" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">10,000원</span>
+                                <input type="number" id="pos-count-10000" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">5,000원</span>
+                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">1,000원</span>
+                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">500원</span>
+                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">100원</span>
+                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">50원</span>
+                                <input type="number" id="pos-count-5" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                            <div class="flex items-center justify-between border-b pb-1">
+                                <span class="font-bold text-slate-500">10원</span>
+                                <input type="number" id="pos-count-1" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-100 p-2 rounded-xl flex justify-between items-center mt-2 border border-slate-200">
+                            <span class="font-bold text-slate-500">POS 기본 준비금:</span>
+                            <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-20 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-right font-black text-slate-800">
+                        </div>
+
+                        <div class="flex justify-between items-center px-1 font-black">
+                            <span id="pos-diff-cash" class="text-sevenGreen">과부족: ₩0원</span>
+                            <span id="pos-total-cash" class="text-slate-800">현금총합: ₩0원</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3단: 최근 근무 내역 목록 -->
+                <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-4 order-1 lg:order-3 flex flex-col justify-between space-y-3 h-[420px]">
+                    <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
+                        <h3 class="font-extrabold text-slate-900 text-xs flex items-center gap-1.5">
+                            <i data-lucide="history" class="w-4 h-4 text-sevenOrange"></i>
+                            <span id="dashboard-recentListLabel">최근 교대 장부</span>
+                        </h3>
+                        <button onclick="switchTab('shifts')" class="text-[10px] font-bold text-sevenGreen hover:underline">
+                            전체장부 보기 &rarr;
+                        </button>
+                    </div>
+
+                    <div class="overflow-y-auto flex-grow custom-scrollbar pr-1 max-h-[350px]">
+                        <table class="w-full text-left text-[11px] border-collapse">
+                            <thead class="sticky top-0 bg-white z-10">
+                                <tr class="border-b border-slate-100 text-slate-400">
+                                    <th class="py-2 font-bold">스태프</th>
+                                    <th class="py-2 font-bold">근무날짜</th>
+                                    <th class="py-2 font-bold text-right">실제 시수</th>
+                                    <th class="py-2 font-bold text-right">계산 급여</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recentShiftsTable" class="divide-y divide-slate-50 text-slate-600 font-semibold">
+                                <!-- JS 동적 생성 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 탭 Content: 근무 일지 장부 (이름별 아코디언 그룹화 및 가로 수납 기능) -->
+        <!-- 탭 Content: 근무 일지 장부 -->
         <div id="tabContent-shifts" class="hidden bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
                 <div>
@@ -412,7 +537,7 @@
         <!-- 탭 Content: 알바생 명부 및 구비 서류 -->
         <div id="tabContent-workers" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-4">
             
-            <!-- 활성 스태프 목록 및 서류 현황판 (모바일 우선 1번 배치 및 목록 컴팩트 고정) -->
+            <!-- 활성 스태프 목록 및 서류 현황판 -->
             <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 lg:col-span-7 order-1 lg:order-2 flex flex-col justify-between space-y-3">
                 <h3 class="font-bold text-slate-900 text-xs flex items-center gap-1.5 border-b pb-2">
                     <i data-lucide="users" class="w-4 h-4 text-sevenGreen"></i>
@@ -424,7 +549,7 @@
                 </div>
             </div>
 
-            <!-- 명부 신규 입력 (모바일 우선 2번 배치) -->
+            <!-- 명부 신규 입력 -->
             <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 lg:col-span-5 h-fit order-2 lg:order-1 space-y-3">
                 <h3 class="font-bold text-slate-900 text-xs flex items-center gap-1.5 border-b pb-2">
                     <i data-lucide="user-plus" class="w-4 h-4 text-sevenGreen"></i>
@@ -781,6 +906,10 @@
             initStoreSelectorDOM();
             updateApiKeyStatusButton();
             renderEverything();
+
+            // 실시간 폐기 타이머 무한 주기 가동
+            updateDisposalTimers();
+            setInterval(updateDisposalTimers, 1000);
         }
 
         // --- STREAMING_CHUNK: 연락처 포맷터 및 공통 헬퍼 함수들... ---
@@ -1026,17 +1155,25 @@
 
             let totalHoursSum = 0;
             let totalPayrollSum = 0;
+            let holidayEligibleCount = 0; // 주휴수당 대상 위험관리 카운트
 
             filteredShifts.forEach(s => {
                 totalHoursSum += s.totalHours;
             });
             workersList.forEach(w => {
-                totalPayrollSum += getWorkerMonthlyStats(w.id, selectedMonth).finalPay;
+                const stats = getWorkerMonthlyStats(w.id, selectedMonth);
+                totalPayrollSum += stats.finalPay;
+                
+                const weeklyAvgHours = stats.totalHours / 4.345;
+                if (activeStore.optionHoliday && weeklyAvgHours >= 15) {
+                    holidayEligibleCount++;
+                }
             });
 
             document.getElementById('dashboard-workerCount').innerText = `${workersList.length}명`;
             document.getElementById('dashboard-totalHours').innerText = `${totalHoursSum.toFixed(1)}시간`;
             document.getElementById('dashboard-totalPayroll').innerText = `₩${totalPayrollSum.toLocaleString()}원`;
+            document.getElementById('dashboard-weeklyHolidayCount').innerText = `${holidayEligibleCount}명`;
 
             const formWorkerSelect = document.getElementById('form-worker');
             formWorkerSelect.innerHTML = '';
@@ -1054,14 +1191,13 @@
             recentTableBody.innerHTML = '';
             const previewShifts = filteredShifts.slice(0, 5);
             if (previewShifts.length === 0) {
-                recentTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400 font-bold">이번 달 정산 대상 교대 데이터가 비어 있습니다.</td></tr>`;
+                recentTableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 font-bold">이번 달 정산 대상 교대 데이터가 비어 있습니다.</td></tr>`;
             } else {
                 previewShifts.forEach(s => {
                     recentTableBody.innerHTML += `
                         <tr class="hover:bg-slate-50/70">
                             <td class="py-2 font-bold text-slate-900">${s.workerName}</td>
                             <td class="py-2 text-slate-500">${s.date}</td>
-                            <td class="py-2 text-slate-500">${s.startTime} ~ ${s.endTime} (${s.breakMinutes ? s.breakMinutes + '분 휴게' : '무휴게'})</td>
                             <td class="py-2 text-right font-black text-slate-700">${s.totalHours}H ${s.nightHours > 0 ? `<span class="text-[9px] text-amber-600">(야:${s.nightHours}H)</span>` : ''}</td>
                             <td class="py-2 text-right font-black text-sevenGreen">₩${Math.round(s.totalHours * s.hourlyRate).toLocaleString()}원</td>
                         </tr>
@@ -1789,7 +1925,7 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. 포스(POS) 시재 정산 및 돈통 확인 (오차 범위 내 정산 일치 검수)
 2. 시식대 및 매대 전면 청소상태 확인
-3. 냉장고 쇼케이스 워크인 워크쓰루 FF(삼각김밥, 샌드위치) 선입선출 및 페이스업 배치 완수
+3. 냉장고 쇼케이스 FF(삼각김밥, 샌드위치) 선입선출 및 페이스업 배치 완수
 4. 워크인 음료 냉장고 후방 보충 진열 실시
 5. 폐기 예정 물품 스캐너 확인 후 수거함 안전 격리 처리`);
                     } else if (systemPrompt.includes("노무 정산")) {
@@ -2073,6 +2209,160 @@
             link.click();
             document.body.removeChild(link);
             showToast(`${selectedMonth.split('-')[1]}월 간편급여대장 CSV 파일이 다운로드 되었습니다.`);
+        }
+
+        // --- STREAMING_CHUNK: 백업 내보내기 & 불러오기 비즈니스 엔진... ---
+        function exportData() {
+            const backupPayload = {
+                stores: localStorage.getItem('seven_stores_live_v3'),
+                activeStoreId: localStorage.getItem('seven_activeStore_id_v3'),
+                workers: localStorage.getItem('seven_workers_live_v3'),
+                shifts: localStorage.getItem('seven_shifts_live_v3'),
+                selectedMonth: localStorage.getItem('seven_selected_month_live_v3'),
+                apiKey: localStorage.getItem('gemini_api_key')
+            };
+
+            const jsonString = JSON.stringify(backupPayload, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const dateStr = new Date().toISOString().split('T')[0];
+
+            link.href = url;
+            link.download = `7eleven_staff_backup_${dateStr}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("🎉 매장 전산 전체 데이터 백업 파일 다운로드 완료!");
+        }
+
+        function triggerImport() {
+            document.getElementById('importFileInput').click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.stores && parsed.workers && parsed.shifts) {
+                        localStorage.setItem('seven_stores_live_v3', parsed.stores);
+                        localStorage.setItem('seven_activeStore_id_v3', parsed.activeStoreId);
+                        localStorage.setItem('seven_workers_live_v3', parsed.workers);
+                        localStorage.setItem('seven_shifts_live_v3', parsed.shifts);
+                        
+                        if (parsed.selectedMonth) localStorage.setItem('seven_selected_month_live_v3', parsed.selectedMonth);
+                        if (parsed.apiKey) localStorage.setItem('gemini_api_key', parsed.apiKey);
+
+                        // 메모리 변수 즉시 재할당 동기화
+                        stores = JSON.parse(parsed.stores);
+                        currentStoreId = parsed.activeStoreId;
+                        workersMap = JSON.parse(parsed.workers);
+                        shiftsMap = JSON.parse(parsed.shifts);
+                        selectedMonth = parsed.selectedMonth || selectedMonth;
+
+                        document.getElementById('monthSelector').value = selectedMonth;
+                        initStoreSelectorDOM();
+                        renderEverything();
+                        showToast("🎉 7-ELEVEN 백업 장부가 완벽히 원상 복구되었습니다!");
+                    } else {
+                        showToast("⚠️ 올바른 7-ELEVEN 시스템 백업 파일 형식이 아닙니다.");
+                    }
+                } catch (err) {
+                    showToast("⚠️ 파일 해독 실패. 유효한 백업 JSON 규격이 아닙니다.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- STREAMING_CHUNK: 편의점 특화 도구 (FF 폐기 타이머 & 시재 정산기) ---
+        function switchCheckerTab(tab) {
+            if (tab === 'disposal') {
+                document.getElementById('checkerTab-disposal').classList.remove('hidden');
+                document.getElementById('checkerTab-pos').classList.add('hidden');
+                document.getElementById('btn-checker-disposal').className = "bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded";
+                document.getElementById('btn-checker-pos').className = "bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded";
+            } else {
+                document.getElementById('checkerTab-disposal').classList.add('hidden');
+                document.getElementById('checkerTab-pos').classList.remove('hidden');
+                document.getElementById('btn-checker-disposal').className = "bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded";
+                document.getElementById('btn-checker-pos').className = "bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded";
+            }
+            lucide.createIcons();
+        }
+
+        function updateDisposalTimers() {
+            const now = new Date();
+            const targets = [
+                { time: '09:30', elId: 'disposal-timer-0' },
+                { time: '19:30', elId: 'disposal-timer-1' },
+                { time: '23:00', elId: 'disposal-timer-2' }
+            ];
+
+            targets.forEach(t => {
+                const [targetH, targetM] = t.time.split(':').map(Number);
+                let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetH, targetM, 0);
+                
+                // 만약 오늘 타임이 지나갔다면 내일 폐기로 자동 롤오버 계산
+                if (now > targetDate) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
+
+                const diffMs = targetDate - now;
+                const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+                const displayBox = document.getElementById(t.elId);
+                if (displayBox) {
+                    displayBox.innerText = `${diffHrs}시간 ${diffMins}분 ${diffSecs}초 남음`;
+                    // 폐기 임박 30분 전 알람 빨간 강조 기능
+                    if (diffHrs === 0 && diffMins <= 30) {
+                        displayBox.className = "text-[10px] font-black text-sevenRed animate-pulse";
+                    } else {
+                        displayBox.className = "text-[10px] font-black text-slate-600";
+                    }
+                }
+            });
+        }
+
+        function calculatePosCash() {
+            const table = {
+                '50000': 50000,
+                '10000': 10000,
+                '500': 5000,   // 마크업상 key 보조 매핑
+                '100': 1000,
+                '50': 500,
+                '10': 100,
+                '5': 50,
+                '1': 10
+            };
+
+            let cashTotal = 0;
+            Object.keys(table).forEach(k => {
+                const inputVal = Number(document.getElementById(`pos-count-${k}`).value || 0);
+                cashTotal += inputVal * table[k];
+            });
+
+            document.getElementById('pos-total-cash').innerText = `현금총합: ₩${cashTotal.toLocaleString()}원`;
+
+            const baseCash = Number(document.getElementById('pos-base-cash').value || 150000);
+            const discrepancy = cashTotal - baseCash;
+            const diffDisplay = document.getElementById('pos-diff-cash');
+
+            if (discrepancy === 0) {
+                diffDisplay.innerText = `과부족: ₩0원 (정상)`;
+                diffDisplay.className = "text-sevenGreen font-black";
+            } else if (discrepancy > 0) {
+                diffDisplay.innerText = `과부족: +₩${discrepancy.toLocaleString()}원 (과잉)`;
+                diffDisplay.className = "text-blue-600 font-black";
+            } else {
+                diffDisplay.innerText = `과부족: -₩${Math.abs(discrepancy).toLocaleString()}원 (부족)`;
+                diffDisplay.className = "text-sevenRed font-black";
+            }
         }
     </script>
 </body>
