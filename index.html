@@ -498,6 +498,13 @@
                             </div>
                         </div>
 
+                        <div class="bg-slate-100 p-1.5 rounded-lg flex justify-between items-center border border-slate-200">
+                            <span class="font-bold text-slate-500">정산 담당자:</span>
+                            <select id="pos-worker-select" class="w-28 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-right font-black text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                <!-- JS 동적 생성 -->
+                            </select>
+                        </div>
+
                         <div class="bg-slate-100 p-1.5 rounded-lg flex justify-between items-center mt-1 border border-slate-200">
                             <span class="font-bold text-slate-500">기본 준비금:</span>
                             <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-16 bg-white border border-slate-200 rounded px-1 py-0.5 text-right font-black text-slate-800" min="0" onkeypress="return event.charCode >= 48">
@@ -841,7 +848,7 @@
             <p id="confirmMessage" class="text-slate-500 leading-relaxed font-semibold"></p>
             <div class="flex justify-end space-x-2 pt-1">
                 <button onclick="closeConfirmModal(false)" class="bg-slate-100 text-slate-600 px-3.5 py-1.5 rounded-lg font-bold hover:bg-slate-200">취소</button>
-                <button id="confirmSubmitBtn" class="bg-sevenRed text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-red-700">영구 삭제</button>
+                <button id="confirmSubmitBtn" onclick="closeConfirmModal(true)" class="bg-sevenRed text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-red-700">영구 삭제</button>
             </div>
         </div>
     </div>
@@ -1286,6 +1293,26 @@
             return Math.round(base + nightAdd);
         }
 
+        // --- 같은 날 분할 근무(중복) 시간대 겹침 검사 ---
+        function isShiftTimeOverlapping(existingShift, newStart, newEnd) {
+            const toMinutes = (timeStr) => {
+                const [h, m] = timeStr.split(':').map(Number);
+                return h * 60 + m;
+            };
+
+            let existStart = toMinutes(existingShift.startTime);
+            let existEnd = toMinutes(existingShift.endTime);
+            let newStartMin = toMinutes(newStart);
+            let newEndMin = toMinutes(newEnd);
+
+            // 자정을 넘기는 교대(예: 22:00~05:00) 보정
+            if (existEnd <= existStart) existEnd += 24 * 60;
+            if (newEndMin <= newStartMin) newEndMin += 24 * 60;
+
+            // 두 구간이 겹치는지 검사
+            return newStartMin < existEnd && existStart < newEndMin;
+        }
+
         // --- 주휴수당 달력 주차별(Calendar Week) 정밀 연산 엔진 ---
         function getWeeklyHolidayAllowance(monthlyShifts, optionHoliday) {
             if (!optionHoliday || monthlyShifts.length === 0) return 0;
@@ -1521,9 +1548,13 @@
             }
 
             const currentShifts = shiftsMap[currentStoreId] || [];
-            const isDuplicate = currentShifts.some(s => s.workerId === workerId && s.date === selectedQuickDate);
-            if (isDuplicate) {
-                showToast("⚠️ 이미 해당 날짜에 동일 스태프의 근무 정보가 존재합니다!");
+            const isOverlapping = currentShifts.some(s =>
+                s.workerId === workerId &&
+                s.date === selectedQuickDate &&
+                isShiftTimeOverlapping(s, startTime, endTime)
+            );
+            if (isOverlapping) {
+                showToast("⚠️ 해당 날짜에 동일 스태프의 근무 시간대가 중복(겹침)됩니다! 분할 근무라면 시간대를 다르게 지정해 주세요.");
                 return;
             }
 
@@ -1670,6 +1701,24 @@
                 });
                 onWorkerSelected(formWorkerSelect.value);
             }
+
+            // 시재 정산 담당자 선택 드롭다운 동기화
+            const posWorkerSelect = document.getElementById('pos-worker-select');
+            if (posWorkerSelect) {
+                const prevSelectedWorker = posWorkerSelect.value;
+                posWorkerSelect.innerHTML = '';
+                if (workersList.length === 0) {
+                    posWorkerSelect.innerHTML = `<option value="">담당자 없음</option>`;
+                } else {
+                    workersList.forEach(w => {
+                        posWorkerSelect.innerHTML += `<option value="${w.name}">${w.name}</option>`;
+                    });
+                    if (prevSelectedWorker && workersList.some(w => w.name === prevSelectedWorker)) {
+                        posWorkerSelect.value = prevSelectedWorker;
+                    }
+                }
+            }
+
 
             const recentTableBody = document.getElementById('dashboard-recentShiftsTable');
             recentTableBody.innerHTML = '';
@@ -2065,8 +2114,13 @@
             const now = new Date();
             const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}시 ${String(now.getMinutes()).padStart(2,'0')}분 ${String(now.getSeconds()).padStart(2,'0')}초`;
 
-            const shiftsList = shiftsMap[currentStoreId] || [];
-            const activeWorker = shiftsList.length > 0 ? shiftsList[0].workerName : '교대근무자';
+            const posWorkerSelect = document.getElementById('pos-worker-select');
+            const activeWorker = (posWorkerSelect && posWorkerSelect.value) ? posWorkerSelect.value : '';
+
+            if (!activeWorker) {
+                showToast("⚠️ 정산 담당자를 먼저 선택해 주세요.");
+                return;
+            }
 
             const newRecord = {
                 id: 'pos_' + Date.now(),
@@ -2200,12 +2254,15 @@
             document.getElementById('confirmMessage').innerText = message;
             
             const modal = document.getElementById('confirmModal');
-            modal.style.display = 'flex';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
             onConfirmAction = callback;
         }
 
         function closeConfirmModal(isSubmit) {
-            document.getElementById('confirmModal').style.display = 'none';
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
             if (isSubmit && onConfirmAction) {
                 onConfirmAction();
             }
@@ -2391,9 +2448,13 @@
             }
 
             const currentShifts = shiftsMap[currentStoreId] || [];
-            const isDuplicate = currentShifts.some(s => s.workerId === workerId && s.date === date);
-            if (isDuplicate) {
-                showToast("⚠️ 이미 해당 날짜에 동일 직원의 근무 정보가 존재합니다!");
+            const isOverlapping = currentShifts.some(s =>
+                s.workerId === workerId &&
+                s.date === date &&
+                isShiftTimeOverlapping(s, startTime, endTime)
+            );
+            if (isOverlapping) {
+                showToast("⚠️ 해당 날짜에 동일 직원의 근무 시간대가 중복(겹침)됩니다! 분할 근무라면 시간대를 다르게 지정해 주세요.");
                 return;
             }
 
