@@ -565,7 +565,7 @@
                         <i data-lucide="calendar" class="w-4 h-4 text-sevenGreen"></i>
                         <span id="calendar-title">2026년 06월 근무자 종합 달력</span>
                     </h3>
-                    <p class="text-[9px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 "근무 등록"으로 즉시 자동 연동됩니다.</p>
+                    <p class="text-[9px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.</p>
                 </div>
             </div>
 
@@ -937,6 +937,94 @@
         </div>
     </div>
 
+    <!-- 📌 [추가된 기능] 달력 스마트 근무 등록 모달 -->
+    <div id="quickShiftModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
+            <div class="flex items-center justify-between border-b pb-1.5">
+                <div class="flex items-center space-x-1.5 text-sevenGreen">
+                    <i data-lucide="calendar-plus" class="w-5 h-5 flex-shrink-0 text-sevenOrange"></i>
+                    <h3 class="font-black text-slate-900 text-sm"><span id="quickShiftDateTitle" class="text-sevenGreen font-black">2026-06-14</span> 근무 빠른 등록</h3>
+                </div>
+                <button onclick="closeQuickShiftModal()" class="text-slate-400 hover:text-slate-600 font-extrabold text-sm p-1">✕</button>
+            </div>
+
+            <div class="space-y-3">
+                <!-- 1. 스태프 선택 및 시급 정보 자동 동기화 -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">근무 스태프 선택 *</label>
+                        <select id="quick-form-worker" onchange="onQuickWorkerSelected(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:ring-1 focus:ring-sevenGreen focus:outline-none">
+                            <!-- 동적 로드 -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">적용 시급 (원) *</label>
+                        <input type="number" id="quick-form-hourlyRate" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold text-slate-800" min="0">
+                    </div>
+                </div>
+
+                <!-- 2. 교대 원터치 퀵 프리셋 버튼부 (여기에 점주님의 편의를 위해 추가!) -->
+                <div>
+                    <label class="block text-slate-500 font-bold mb-1">간편 교대 프리셋 선택</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button onclick="applyShiftPreset('09:00', '16:00', 30)" class="bg-emerald-50 hover:bg-emerald-100 text-sevenGreen border border-emerald-150 rounded-lg py-1 px-1 font-bold text-[10px] text-center">
+                            오전 (09~16시)
+                        </button>
+                        <button onclick="applyShiftPreset('15:00', '22:00', 30)" class="bg-orange-50 hover:bg-orange-100 text-sevenOrange border border-orange-150 rounded-lg py-1 px-1 font-bold text-[10px] text-center">
+                            오후 (15~22시)
+                        </button>
+                        <button onclick="applyShiftPreset('22:00', '05:00', 60)" class="bg-rose-50 hover:bg-rose-100 text-sevenRed border border-rose-150 rounded-lg py-1 px-1 font-bold text-[10px] text-center">
+                            야간 (22~05시)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. 교대 시간 수동 세부 설정 -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">출근 시각</label>
+                        <input type="time" id="quick-form-startTime" value="09:00" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">퇴근 시각</label>
+                        <input type="time" id="quick-form-endTime" value="16:00" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">무급 휴게시간</label>
+                        <select id="quick-form-breakMinutes" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800">
+                            <option value="0">없음 (0분)</option>
+                            <option value="15">15분</option>
+                            <option value="30" selected>30분</option>
+                            <option value="45">45분</option>
+                            <option value="60">60분 (1H)</option>
+                            <option value="90">90분</option>
+                            <option value="120">120분</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. 기타 및 대타 여부 -->
+                <div class="flex items-center justify-between py-1 bg-slate-50 px-2 rounded-lg border border-slate-100">
+                    <span class="text-slate-600 font-bold">임시 대타(대근)로 등록</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="quick-form-isSubstitute" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sevenOrange"></div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-slate-500 font-bold mb-1">전달 및 메모사항</label>
+                    <input type="text" id="quick-form-memo" placeholder="예: 주말 고정 대근, 상품 발주 완료" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 font-semibold text-slate-800 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-2.5 border-t">
+                <button onclick="closeQuickShiftModal()" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg font-bold hover:bg-slate-200">취소</button>
+                <button onclick="submitQuickShift()" class="bg-sevenGreen text-white px-4 py-2 rounded-lg font-black hover:bg-emerald-700">달력에 즉시 등록</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const apiKey = ""; 
 
@@ -1030,6 +1118,7 @@
         let currentActiveTab = 'dashboard';
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
+        let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
 
         // --- 3. 최초 실행 등록 ---
         window.onload = function() {
@@ -1324,9 +1413,10 @@
                 const dayCell = document.createElement('div');
                 dayCell.className = "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
                 
-                dayCell.onclick = () => {
-                    document.getElementById('form-date').value = dayStr;
-                    showToast(`${dayStr} 근무 등록 날짜가 세팅되었습니다.`);
+                // 달력 셀 터치/클릭 시 -> "간편 팝업 빠른 등록 모달" 호출로 변경!
+                dayCell.onclick = (e) => {
+                    e.stopPropagation();
+                    openQuickShiftModal(dayStr);
                 };
 
                 const cellDate = new Date(year, month - 1, day);
@@ -1363,6 +1453,124 @@
 
                 dayCell.innerHTML = headerHTML + shiftsHTML;
                 gridBody.appendChild(dayCell);
+            }
+        }
+
+        // --- 📌 [신규 장치] 달력 스마트 빠른 근무 추가 모달 제어부 ---
+        function openQuickShiftModal(dateStr) {
+            selectedQuickDate = dateStr;
+            document.getElementById('quickShiftDateTitle').innerText = dateStr;
+            
+            const workersList = workersMap[currentStoreId] || [];
+            const selectEl = document.getElementById('quick-form-worker');
+            selectEl.innerHTML = '';
+
+            if (workersList.length === 0) {
+                selectEl.innerHTML = `<option value="">등록된 알바생이 없습니다.</option>`;
+                document.getElementById('quick-form-hourlyRate').value = '10320';
+            } else {
+                workersList.forEach(w => {
+                    selectEl.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+                });
+                onQuickWorkerSelected(selectEl.value);
+            }
+
+            document.getElementById('quick-form-memo').value = '';
+            document.getElementById('quick-form-isSubstitute').checked = false;
+
+            const modal = document.getElementById('quickShiftModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeQuickShiftModal() {
+            const modal = document.getElementById('quickShiftModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function onQuickWorkerSelected(workerId) {
+            const workersList = workersMap[currentStoreId] || [];
+            const worker = workersList.find(w => w.id === workerId);
+            if (worker) {
+                document.getElementById('quick-form-hourlyRate').value = worker.defaultHourlyRate;
+            }
+        }
+
+        // 간편 퀵 프리셋 버튼 클릭 장치
+        function applyShiftPreset(start, end, breakMin) {
+            document.getElementById('quick-form-startTime').value = start;
+            document.getElementById('quick-form-endTime').value = end;
+            document.getElementById('quick-form-breakMinutes').value = breakMin;
+            showToast(`원터치 프리셋 적용: ${start} ~ ${end} (휴게 ${breakMin}분)`);
+        }
+
+        function submitQuickShift() {
+            const workerId = document.getElementById('quick-form-worker').value;
+            const hourlyRate = Math.max(0, Number(document.getElementById('quick-form-hourlyRate').value));
+            const startTime = document.getElementById('quick-form-startTime').value;
+            const endTime = document.getElementById('quick-form-endTime').value;
+            const breakMinutes = Number(document.getElementById('quick-form-breakMinutes').value || 0);
+            const isSubstitute = document.getElementById('quick-form-isSubstitute').checked;
+            const memo = document.getElementById('quick-form-memo').value;
+
+            if (!workerId) {
+                showToast("먼저 알바생을 등록해야 스케줄 입력이 가능합니다.");
+                return;
+            }
+
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const isDuplicate = currentShifts.some(s => s.workerId === workerId && s.date === selectedQuickDate);
+            if (isDuplicate) {
+                showToast("⚠️ 이미 해당 날짜에 동일 스태프의 근무 정보가 존재합니다!");
+                return;
+            }
+
+            const { totalHours, nightHours, rawDurationMin } = calculateDurationAndNight(startTime, endTime, breakMinutes);
+            if (totalHours <= 0) {
+                showToast("실근무 시간이 0시간보다 적습니다. 시간을 정확히 입력해 주세요.");
+                return;
+            }
+
+            const workersList = workersMap[currentStoreId] || [];
+            const worker = workersList.find(w => w.id === workerId);
+
+            // 근로기준법상 의무 휴게시간 검증
+            const rawDurationHours = rawDurationMin / 60;
+            let breakTimeWarning = "";
+            if (rawDurationHours >= 8 && breakMinutes < 60) {
+                breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 8시간 이상으로, 법정 의무 무급 휴게시간은 최소 1시간(60분)이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
+            } else if (rawDurationHours >= 4 && breakMinutes < 30) {
+                breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 4시간 이상으로, 법정 의무 무급 휴게시간은 최소 30분이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
+            }
+
+            const saveAction = () => {
+                const newS = {
+                    id: 's_' + Date.now(),
+                    workerId,
+                    workerName: worker.name,
+                    date: selectedQuickDate,
+                    startTime,
+                    endTime,
+                    breakMinutes,
+                    hourlyRate,
+                    totalHours,
+                    nightHours,
+                    isSubstitute,
+                    memo
+                };
+
+                shiftsMap[currentStoreId] = [newS, ...currentShifts];
+                showToast(`[${worker.name}] 님의 달력 스케줄 추가 완료!`);
+                closeQuickShiftModal();
+                renderEverything();
+            };
+
+            if (breakTimeWarning) {
+                triggerBreakTimeAlert(breakTimeWarning, saveAction);
+            } else {
+                saveAction();
             }
         }
 
