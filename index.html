@@ -63,7 +63,6 @@
             0%, 100% { opacity: 1; }
             50% { opacity: .4; }
         }
-        /* 아코디언 애니메이션용 효과 */
         .accordion-content {
             transition: max-height 0.3s ease-out, padding 0.3s ease;
         }
@@ -87,7 +86,7 @@
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-base font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
                     </div>
-                    <p class="text-[10px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영 및 AI 노동 검증 도구</p>
+                    <p class="text-[10px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
             </div>
 
@@ -130,6 +129,10 @@
                         <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
                         <span>종합 현황판</span>
                     </button>
+                    <button id="tab-calendar" onclick="switchTab('calendar')" class="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                        <span>월간 근무 달력</span>
+                    </button>
                     <button id="tab-shifts" onclick="switchTab('shifts')" class="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-50">
                         <i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>
                         <span>근무 일지 장부</span>
@@ -152,6 +155,17 @@
     </header>
 
     <main class="max-w-7xl mx-auto p-3 sm:p-4 space-y-4 flex-grow w-full">
+
+        <!-- 보건증 만료 경고 알림판 (D-Day 배너) -->
+        <div id="healthCardWarningBanner" class="hidden bg-rose-50 border-2 border-rose-200 rounded-2xl p-3.5 flex items-start space-x-3 text-xs animate-in fade-in duration-200">
+            <div class="p-1.5 bg-rose-500 text-white rounded-xl">
+                <i data-lucide="alert-octagon" class="w-5 h-5 pulse-light"></i>
+            </div>
+            <div class="flex-grow space-y-0.5">
+                <h4 class="font-black text-rose-950">위생법 무단 미갱신 과태료 경보</h4>
+                <p id="healthCardWarningList" class="text-rose-700 font-semibold"></p>
+            </div>
+        </div>
 
         <!-- 현재 매장 활성 타이틀 배너 및 수당 수동 스위치 -->
         <div class="bg-white rounded-2xl shadow-xs border border-slate-200/60 p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
@@ -242,46 +256,61 @@
         <!-- 탭 Content: 대시보드 (한 화면 수납 극대화) -->
         <div id="tabContent-dashboard" class="space-y-4">
             
-            <!-- 4대 핵심 요약 카드 -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-2 sm:space-x-3">
-                    <div class="p-2 bg-sevenGreen/10 text-sevenGreen rounded-xl flex-shrink-0">
-                        <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+            <!-- 📌 실시간 매장 전달사항 (Store Notice Board) 및 알림판 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <!-- 4대 핵심 요약 카드 (md:col-span-8) -->
+                <div class="md:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
+                        <div class="p-2 bg-sevenGreen/10 text-sevenGreen rounded-xl flex-shrink-0">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">이 지점 알바생</p>
+                            <h3 id="dashboard-workerCount" class="text-sm font-black text-slate-950 mt-0.5">0명</h3>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">이 지점 등록 알바</p>
-                        <h3 id="dashboard-workerCount" class="text-sm sm:text-lg font-black text-slate-950 mt-0.5">0명</h3>
+
+                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
+                        <div class="p-2 bg-sevenOrange/10 text-sevenOrange rounded-xl flex-shrink-0">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p id="dashboard-monthlyHoursLabel" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">0월 총 근무시수</p>
+                            <h3 id="dashboard-totalHours" class="text-sm font-black text-slate-950 mt-0.5">0.0시간</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
+                        <div class="p-2 bg-amber-50 text-amber-700 rounded-xl flex-shrink-0">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">주휴 정밀 대상</p>
+                            <h3 id="dashboard-weeklyHolidayCount" class="text-sm font-black text-amber-600 mt-0.5">0명</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-3">
+                        <div class="p-2 bg-sevenGreen/10 text-sevenGreen rounded-xl flex-shrink-0">
+                            <i data-lucide="coins" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p id="dashboard-monthlyPayrollLabel" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">0월 예정 인건비</p>
+                            <h3 id="dashboard-totalPayroll" class="text-sm font-black text-sevenGreen mt-0.5">₩0</h3>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-2 sm:space-x-3">
-                    <div class="p-2 bg-sevenOrange/10 text-sevenOrange rounded-xl flex-shrink-0">
-                        <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                <!-- 📌 점주 전달사항 공지 핀보드 (md:col-span-4) -->
+                <div class="md:col-span-4 bg-white p-3 rounded-2xl shadow-xs border border-slate-200/60 flex flex-col justify-between">
+                    <div class="flex items-center justify-between border-b pb-1">
+                        <h4 class="font-black text-xs text-slate-900 flex items-center gap-1">
+                            <i data-lucide="pin" class="w-3.5 h-3.5 text-sevenRed"></i>
+                            지점 일일 공지사항
+                        </h4>
+                        <span class="text-[8px] bg-slate-100 text-slate-500 px-1 rounded">인수인계용</span>
                     </div>
-                    <div>
-                        <p id="dashboard-monthlyHoursLabel" class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">0월 총 근무시수</p>
-                        <h3 id="dashboard-totalHours" class="text-sm sm:text-lg font-black text-slate-950 mt-0.5">0.0시간</h3>
-                    </div>
-                </div>
-
-                <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-2 sm:space-x-3">
-                    <div class="p-2 bg-amber-50 text-amber-700 rounded-xl flex-shrink-0">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                    </div>
-                    <div>
-                        <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">주휴수당 의무 대상</p>
-                        <h3 id="dashboard-weeklyHolidayCount" class="text-sm sm:text-lg font-black text-amber-600 mt-0.5">0명</h3>
-                    </div>
-                </div>
-
-                <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-xs border border-slate-100 flex items-center space-x-2 sm:space-x-3">
-                    <div class="p-2 bg-sevenGreen/10 text-sevenGreen rounded-xl flex-shrink-0">
-                        <i data-lucide="coins" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                    </div>
-                    <div>
-                        <p id="dashboard-monthlyPayrollLabel" class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">0월 예정 인건비</p>
-                        <h3 id="dashboard-totalPayroll" class="text-sm sm:text-lg font-black text-sevenGreen mt-0.5">₩0</h3>
-                    </div>
+                    <textarea id="storeNoticeTextarea" oninput="saveStoreNotice(this.value)" placeholder="예: 시방 및 금고 시재 마감 철저, 물품 배송 시 삼각김밥 선입선출 검토 바랍니다." class="w-full text-[10px] text-slate-700 font-medium bg-transparent border-0 focus:ring-0 focus:outline-none resize-none h-10 mt-1" rows="2"></textarea>
                 </div>
             </div>
 
@@ -337,7 +366,15 @@
                                 <input type="time" id="form-startTime" value="09:00" onchange="onStartTimeChanged(this.value)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-semibold text-slate-800">
                             </div>
                             <div>
-                                <label class="block text-slate-500 font-bold mb-0.5">교대 퇴근 시각 <span class="text-sevenGreen font-medium">(+7H 자동)</span></label>
+                                <div class="flex items-center justify-between mb-0.5">
+                                    <label class="text-slate-500 font-bold">퇴근 시각</label>
+                                    <select id="form-shift-interval" onchange="onIntervalChanged(this.value)" class="text-[9px] bg-slate-100 rounded px-1 text-slate-600 focus:outline-none">
+                                        <option value="6">6H 교대</option>
+                                        <option value="7" selected>7H 교대</option>
+                                        <option value="8">8H 교대</option>
+                                        <option value="9">9H 교대</option>
+                                    </select>
+                                </div>
                                 <input type="time" id="form-endTime" value="16:00" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-semibold text-slate-800">
                             </div>
                         </div>
@@ -375,7 +412,7 @@
                     </form>
                 </div>
 
-                <!-- 2단: 세븐일레븐 일과 체커 & 시재 정산기 -->
+                <!-- 2단: 세븐일레븐 일과 체커 & 시재 정산기 (시재 누적 기록 연동형) -->
                 <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/60 lg:col-span-4 order-3 lg:order-2 flex flex-col justify-between space-y-3 h-[420px]">
                     <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
                         <h3 class="font-extrabold text-slate-900 text-xs flex items-center gap-1.5">
@@ -385,10 +422,11 @@
                         <div class="flex space-x-1">
                             <button onclick="switchCheckerTab('disposal')" id="btn-checker-disposal" class="bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded">FF 폐기</button>
                             <button onclick="switchCheckerTab('pos')" id="btn-checker-pos" class="bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded">시재 정산</button>
+                            <button onclick="switchCheckerTab('posHistory')" id="btn-checker-posHistory" class="bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded">정산대장</button>
                         </div>
                     </div>
 
-                    <!-- FF 폐기 목록 (오전 11:00, 오후 20:00, 야간 23:00 정밀 보정 완료) -->
+                    <!-- FF 폐기 목록 -->
                     <div id="checkerTab-disposal" class="flex-grow overflow-y-auto custom-scrollbar pr-1 space-y-2 text-[11px]">
                         <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-100/80">
                             <div class="flex justify-between items-center mb-1">
@@ -424,7 +462,7 @@
                         </div>
                     </div>
 
-                    <!-- 교대 시재 정산기 -->
+                    <!-- 교대 시재 정산기 (연산 정상화) -->
                     <div id="checkerTab-pos" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-1 text-[11px] space-y-2">
                         <div class="grid grid-cols-2 gap-2">
                             <div class="flex items-center justify-between border-b pb-1">
@@ -437,27 +475,27 @@
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">5,000원</span>
-                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-5000" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">1,000원</span>
-                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-1000" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">500원</span>
-                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">100원</span>
-                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">50원</span>
-                                <input type="number" id="pos-count-5" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                             <div class="flex items-center justify-between border-b pb-1">
                                 <span class="font-bold text-slate-500">10원</span>
-                                <input type="number" id="pos-count-1" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-16 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
                             </div>
                         </div>
 
@@ -466,9 +504,25 @@
                             <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-20 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-right font-black text-slate-800">
                         </div>
 
-                        <div class="flex justify-between items-center px-1 font-black">
+                        <div class="flex justify-between items-center px-1 font-black pt-1">
                             <span id="pos-diff-cash" class="text-sevenGreen">과부족: ₩0원</span>
                             <span id="pos-total-cash" class="text-slate-800">현금총합: ₩0원</span>
+                        </div>
+
+                        <button onclick="savePosHistoryRecord()" class="w-full bg-sevenGreen hover:bg-sevenGreen/95 text-white font-black py-2 rounded-xl text-[10px] shadow-xs flex items-center justify-center space-x-1.5 transition-all">
+                            <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+                            <span>현재 과부족 시재를 대장에 기록 저장</span>
+                        </button>
+                    </div>
+
+                    <!-- 저장된 정산대장 리스트업 -->
+                    <div id="checkerTab-posHistory" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-1 text-[11px] space-y-2">
+                        <div class="flex justify-between items-center border-b pb-1.5">
+                            <span class="font-bold text-slate-500">최근 정산 전표 내역</span>
+                            <button onclick="clearPosHistory()" class="text-[9px] text-sevenRed hover:underline font-bold">전체 삭제</button>
+                        </div>
+                        <div id="posHistoryList" class="space-y-1.5">
+                            <!-- 동적 대장 리스트 삽입 -->
                         </div>
                     </div>
                 </div>
@@ -504,12 +558,41 @@
             </div>
         </div>
 
+        <!-- 📅 탭 Content: 월간 근무 달력 (신설) -->
+        <div id="tabContent-calendar" class="hidden bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
+                <div>
+                    <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4.5 h-4.5 text-sevenGreen"></i>
+                        <span id="calendar-title">2026년 06월 근무자 종합 달력</span>
+                    </h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">※ 달력의 빈 날짜 혹은 셀을 터치하시면 해당 날짜의 "근무 추가"로 즉시 연동됩니다.</p>
+                </div>
+            </div>
+
+            <!-- 요일 헤더 -->
+            <div class="grid grid-cols-7 gap-2 text-center text-[11px] font-black text-slate-500 border-b pb-1">
+                <div class="text-sevenRed">일</div>
+                <div>월</div>
+                <div>화</div>
+                <div>수</div>
+                <div>목</div>
+                <div>금</div>
+                <div class="text-blue-600">토</div>
+            </div>
+
+            <!-- 달력 셀 그리드 컨테이너 -->
+            <div id="calendar-grid-body" class="grid grid-cols-7 gap-2 min-h-[400px]">
+                <!-- JS에서 동적 일자 셀 및 근무자 칩 생성 -->
+            </div>
+        </div>
+
         <!-- 탭 Content: 근무 일지 장부 -->
         <div id="tabContent-shifts" class="hidden bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
                 <div>
                     <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
-                        <i data-lucide="calendar" class="w-4.5 h-4.5 text-sevenGreen"></i>
+                        <i data-lucide="calendar-range" class="w-4.5 h-4.5 text-sevenGreen"></i>
                         <span id="shifts-monthlyTitle">정산월별 상세 근무 일지 장부</span>
                     </h3>
                     <p class="text-[10px] text-slate-400 mt-0.5">※ 스태프 이름을 클릭하시면 각 스태프별 상세 교대 근무 기록을 확인할 수 있습니다.</p>
@@ -526,15 +609,15 @@
         <div id="tabContent-reports" class="hidden space-y-4">
             <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200">
                 <h3 class="font-black text-slate-900 text-sm flex items-center gap-2 border-b pb-2">
-                    <i data-lucide="file-text" class="w-4.5 h-4.5 text-sevenGreen"></i>
+                    <i data-lucide="file-spreadsheet" class="w-4.5 h-4.5 text-sevenGreen"></i>
                     <span id="reports-headerTitle">0월말 기준 파트타이머 정산 명세 보고서</span>
                 </h3>
                 <p class="text-[10px] text-slate-500 mt-1">
-                    파트타이머 목록이 표시됩니다. **[스태프 클릭 시 상세 내역이 세부적으로 연산/노출]**되어 페이지를 넘어가지 않고 최적화된 시야에서 파악할 수 있습니다.
+                    파트타이머 목록이 표시됩니다. **[스태프 클릭 시 상세 내역이 세부적으로 연산/노출]**되어 명세를 즉시 파악할 수 있습니다.
                 </p>
             </div>
 
-            <!-- 보기 편하고 넘치지 않는 격자(Grid) 구조 고정 -->
+            <!-- 격자(Grid) 구조 고정 -->
             <div id="reports-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto p-1 custom-scrollbar">
                 <!-- 스태프별 최종 급여 상세명세 카드 동적 생성 -->
             </div>
@@ -579,9 +662,15 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-slate-500 font-bold mb-0.5">연락처 *</label>
-                        <input type="tel" id="newWorkerPhone" oninput="autoHyphen(this)" placeholder="예: 010-1234-5678" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-500 font-bold mb-0.5">연락처 *</label>
+                            <input type="tel" id="newWorkerPhone" oninput="autoHyphen(this)" placeholder="예: 010-1234-5678" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        </div>
+                        <div>
+                            <label class="block text-rose-600 font-bold mb-0.5">보건증 만료 예정일</label>
+                            <input type="date" id="newWorkerHealthDate" class="w-full bg-slate-50 border border-rose-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        </div>
                     </div>
 
                     <div>
@@ -778,9 +867,15 @@
                         <input type="number" id="editWorkerRate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sevenOrange font-bold mb-0.5">매달 고정 공제액 (가불/외상 등)</label>
-                    <input type="number" id="editWorkerDeduction" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-sevenOrange font-bold mb-0.5">매달 고정 공제액</label>
+                        <input type="number" id="editWorkerDeduction" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                    </div>
+                    <div>
+                        <label class="block text-rose-600 font-bold mb-0.5">보건증 만료 예정일</label>
+                        <input type="date" id="editWorkerHealthDate" class="w-full bg-slate-50 border border-rose-200 rounded-xl px-2.5 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-rose-500">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-slate-500 font-bold mb-0.5">연락처</label>
@@ -802,7 +897,7 @@
         </div>
     </div>
 
-    <!-- API 키 설정 모달 (PC 환경 작동 보장) -->
+    <!-- API 키 설정 모달 -->
     <div id="apiKeyModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
             <div class="flex items-center space-x-1.5 text-amber-600 border-b pb-2">
@@ -810,8 +905,8 @@
                 <h3 class="font-black text-slate-900">Gemini AI API 설정</h3>
             </div>
             <p class="text-[10px] text-slate-500 leading-relaxed font-semibold">
-                개인 Google Gemini API Key를 등록하시면 PC와 스마트폰 등 가리지 않고 실시간 법정 초고속 노동법 진단을 직접 구동할 수 있습니다. 
-                <span class="text-sevenGreen font-black">API 키가 없어도 시뮬레이션 감사는 100% 모의 작동합니다!</span>
+                개인 Google Gemini API Key를 등록하시면 실시간 노무진단 분석 및 스마트 봇 상담을 고속 연계 사용하실 수 있습니다. 
+                <span class="text-sevenGreen font-black">API 키가 없어도 시뮬레이션 감사는 100% 정상 작동합니다!</span>
             </p>
             <div class="space-y-1.5">
                 <div>
@@ -829,11 +924,25 @@
         </div>
     </div>
 
+    <!-- 무급 휴게시간 확인을 위한 임시 모달 -->
+    <div id="breakTimeAlertModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
+            <div class="flex items-center space-x-1.5 text-sevenOrange">
+                <i data-lucide="info" class="w-5 h-5 flex-shrink-0"></i>
+                <h3 class="font-black text-slate-900">법정 무급 휴게시간 등록 권장</h3>
+            </div>
+            <p id="breakTimeAlertMessage" class="text-slate-500 leading-relaxed font-semibold"></p>
+            <div class="flex justify-end space-x-2 pt-1">
+                <button onclick="closeBreakTimeModal(false)" class="bg-slate-100 text-slate-600 px-3.5 py-1.5 rounded-lg font-bold hover:bg-slate-200">취소 및 재수정</button>
+                <button onclick="closeBreakTimeModal(true)" class="bg-sevenOrange text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-orange-700">무시하고 저장</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Gemini API 호출 룰 규정 가드레일 (Empty String 선언 필수 준수)
         const apiKey = ""; 
 
-        // --- 1. 초기 더미 데이터 셋 (지점별 완벽 샘플 설계) ---
+        // --- 1. 초기 더미 데이터 셋 ---
         const INITIAL_STORES = [
             { id: 'st_thesharp', name: '세븐일레븐 원주더샾점', optionNight: true, optionHoliday: true },
             { id: 'st_tongil', name: '세븐일레븐 원주통일점', optionNight: true, optionHoliday: true }
@@ -846,6 +955,7 @@
                     name: '김민수', 
                     defaultHourlyRate: 10320, 
                     deduction: 0,
+                    healthDate: '2026-06-30', // 보건증 만료일 디데이 예보용
                     phone: '010-9876-5432', 
                     address: '강원도 원주시 반곡동 123-4', 
                     notes: '오전 고정 알바, 성실함',
@@ -855,7 +965,8 @@
                     id: 'w2', 
                     name: '이서연', 
                     defaultHourlyRate: 10320, 
-                    deduction: 5000, // 매달 고정 외상값 예시
+                    deduction: 5000,
+                    healthDate: '2026-07-15',
                     phone: '010-8765-4321', 
                     address: '강원도 원주시 무실동 456-7', 
                     notes: '보건증 갱신 필요 확인 대상',
@@ -868,6 +979,7 @@
                     name: '박준혁', 
                     defaultHourlyRate: 11000, 
                     deduction: 0,
+                    healthDate: '',
                     phone: '010-7654-3210', 
                     address: '강원도 원주시 단계동 789-1', 
                     notes: '야간 근무자, 주말 대타 수시 가능',
@@ -878,6 +990,7 @@
                     name: '최다은', 
                     defaultHourlyRate: 10320, 
                     deduction: 0,
+                    healthDate: '2026-12-10',
                     phone: '010-6543-2109', 
                     address: '강원도 원주시 단계동 22-11', 
                     notes: '미성년자 스태프 (만 17세)',
@@ -899,39 +1012,37 @@
             ]
         };
 
-        // --- 2. 로컬 수납 구조화 (State) ---
-        let stores = JSON.parse(localStorage.getItem('seven_stores_live_v3')) || INITIAL_STORES;
-        let currentStoreId = localStorage.getItem('seven_activeStore_id_v3') || 'st_thesharp';
-        let workersMap = JSON.parse(localStorage.getItem('seven_workers_live_v3')) || INITIAL_WORKERS;
-        let shiftsMap = JSON.parse(localStorage.getItem('seven_shifts_live_v3')) || INITIAL_SHIFTS;
-        
-        // 데이터 하위호환성 보정 (기존 구동 기기 브라우저에서 토글 속성이 깨지는 것 방지)
-        stores.forEach(st => {
-            if (st.optionNight === undefined) st.optionNight = true;
-            if (st.optionHoliday === undefined) st.optionHoliday = true;
-        });
-        
-        let selectedMonth = localStorage.getItem('seven_selected_month_live_v3') || (() => {
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            return `${yyyy}-${mm}`;
-        })();
+        const INITIAL_POS_HISTORIES = {
+            'st_thesharp': [
+                { id: 'pos_1', timestamp: '2026-06-14 09:24:11', discrepancy: 0, total: 172000, base: 150000, worker: '김민수' },
+                { id: 'pos_2', timestamp: '2026-06-14 15:58:02', discrepancy: -2400, total: 147600, base: 150000, worker: '이서연' }
+            ],
+            'st_tongil': []
+        };
 
+        // --- 2. 로컬 저장소 바인딩 ---
+        let stores = JSON.parse(localStorage.getItem('seven_stores_live_v4')) || INITIAL_STORES;
+        let currentStoreId = localStorage.getItem('seven_activeStore_id_v4') || 'st_thesharp';
+        let workersMap = JSON.parse(localStorage.getItem('seven_workers_live_v4')) || INITIAL_WORKERS;
+        let shiftsMap = JSON.parse(localStorage.getItem('seven_shifts_live_v4')) || INITIAL_SHIFTS;
+        let posHistoryMap = JSON.parse(localStorage.getItem('seven_pos_history_v4')) || INITIAL_POS_HISTORIES;
+        let storeNotice = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
+
+        let selectedMonth = localStorage.getItem('seven_selected_month_live_v4') || '2026-06';
         let currentActiveTab = 'dashboard';
         let onConfirmAction = null;
+        let onBreakConfirmAction = null;
 
         // --- 3. 최초 실행 등록 ---
         window.onload = function() {
             document.getElementById('monthSelector').value = selectedMonth;
             
-            // 캐시 보정
             if (!stores.some(st => st.id === currentStoreId)) {
                 currentStoreId = stores[0] ? stores[0].id : '';
             }
 
-            // 오늘 날짜 기본값 세팅
             document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('storeNoticeTextarea').value = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
             initStoreSelectorDOM();
             updateApiKeyStatusButton();
@@ -940,6 +1051,11 @@
             // 실시간 폐기 타이머 가동
             updateDisposalTimers();
             setInterval(updateDisposalTimers, 1000);
+
+            // 브라우저 Notification 권한 사전 요청
+            if (Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
         }
 
         function autoHyphen(target) {
@@ -953,7 +1069,7 @@
             }
         }
 
-        // --- API 키 모달 관리 장치 (PC 환경 해결) ---
+        // --- API 키 모달 관리 장치 ---
         function openApiKeyModal() {
             const savedKey = localStorage.getItem('gemini_api_key') || '';
             document.getElementById('geminiApiKeyInput').value = savedKey;
@@ -977,7 +1093,7 @@
             }
             closeApiKeyModal();
             updateApiKeyStatusButton();
-            startAiLaborAudit(); // API 설정 시 바로 분석 리프레시
+            startAiLaborAudit();
         }
 
         function updateApiKeyStatusButton() {
@@ -1018,11 +1134,22 @@
             renderEverything();
         }
 
-        // --- 7시간 교대 주기 정밀 세팅 ---
+        // --- 출근 시각 변경 및 퇴근 오토-인터벌 조정 ---
         function onStartTimeChanged(val) {
-            if (!val) return;
-            const [h, m] = val.split(':').map(Number);
-            let targetH = (h + 7) % 24; 
+            recalculateEndTime();
+        }
+
+        function onIntervalChanged(val) {
+            recalculateEndTime();
+        }
+
+        function recalculateEndTime() {
+            const startTimeVal = document.getElementById('form-startTime').value;
+            const intervalVal = Number(document.getElementById('form-shift-interval').value || 7);
+            if (!startTimeVal) return;
+            
+            const [h, m] = startTimeVal.split(':').map(Number);
+            let targetH = (h + intervalVal) % 24;
             const formattedH = String(targetH).padStart(2, '0');
             const formattedM = String(m).padStart(2, '0');
             document.getElementById('form-endTime').value = `${formattedH}:${formattedM}`;
@@ -1062,17 +1189,53 @@
             }
 
             const nightHours = Math.round((nightMin / 60) * 100) / 100;
-            return { totalHours, nightHours };
+            return { totalHours, nightHours, rawDurationMin };
         }
 
-        // 개별 로우 급여 실시간 산출 함수 (야간가산 토글 즉시 적용 보정)
         function getShiftPayroll(s, optionNight) {
             const base = s.totalHours * s.hourlyRate;
             const nightAdd = optionNight ? (s.nightHours * s.hourlyRate * 0.5) : 0;
             return Math.round(base + nightAdd);
         }
 
-        // 특정 알바생의 월말 합산 급여 정밀 도출 (외상 공제액 마이너스 연산 완벽 수용)
+        // --- 주휴수당 달력 주차별(Calendar Week) 정밀 연산 엔진 ---
+        function getWeeklyHolidayAllowance(monthlyShifts, optionHoliday) {
+            if (!optionHoliday || monthlyShifts.length === 0) return 0;
+
+            const weeklyGroups = {};
+
+            monthlyShifts.forEach(s => {
+                const dateObj = new Date(s.date);
+                const day = dateObj.getDay();
+                const diff = dateObj.getDate() - day;
+                const sunday = new Date(dateObj.setDate(diff));
+                const weekKey = sunday.toISOString().split('T')[0];
+
+                if (!weeklyGroups[weekKey]) {
+                    weeklyGroups[weekKey] = {
+                        totalHours: 0,
+                        rates: []
+                    };
+                }
+                weeklyGroups[weekKey].totalHours += s.totalHours;
+                weeklyGroups[weekKey].rates.push(s.hourlyRate);
+            });
+
+            let totalHolidayPay = 0;
+
+            Object.keys(weeklyGroups).forEach(weekKey => {
+                const week = weeklyGroups[weekKey];
+                if (week.totalHours >= 15) {
+                    const avgRate = week.rates.reduce((sum, r) => sum + r, 0) / week.rates.length;
+                    const holidayHours = Math.min(8, (week.totalHours / 40) * 8);
+                    totalHolidayPay += Math.round(holidayHours * avgRate);
+                }
+            });
+
+            return totalHolidayPay;
+        }
+
+        // 특정 알바생의 월말 합산 급여 정밀 도출
         function getWorkerMonthlyStats(workerId, month) {
             const activeStore = stores.find(s => s.id === currentStoreId) || { optionNight: true, optionHoliday: true };
             const currentShifts = shiftsMap[currentStoreId] || [];
@@ -1098,15 +1261,7 @@
                 }
             });
 
-            const weeklyAvgHours = totalHours / 4.345;
-            let holidayAllowance = 0;
-            
-            if (activeStore.optionHoliday && weeklyAvgHours >= 15) {
-                const representativeRate = monthlyShifts.length > 0 ? monthlyShifts[0].hourlyRate : 10320;
-                const weeklyHolidayHours = Math.min(8, (weeklyAvgHours / 40) * 8);
-                holidayAllowance = Math.round(weeklyHolidayHours * representativeRate * 4.345);
-            }
-
+            const holidayAllowance = getWeeklyHolidayAllowance(monthlyShifts, activeStore.optionHoliday);
             const computedPay = basePay + nightAllowance + holidayAllowance;
             const finalPay = Math.max(0, Math.round(computedPay - deduction));
 
@@ -1122,21 +1277,10 @@
             };
         }
 
-        function toggleReportAccordion(workerId) {
-            const box = document.getElementById(`accordion-${workerId}`);
-            const icon = document.getElementById(`chevron-${workerId}`);
-            if (box.classList.contains('hidden')) {
-                box.classList.remove('hidden');
-                icon.style.transform = "rotate(180deg)";
-            } else {
-                box.classList.add('hidden');
-                icon.style.transform = "rotate(0deg)";
-            }
-        }
-
-        function toggleWorkerAccordion(workerId) {
-            const box = document.getElementById(`worker-accordion-content-${workerId}`);
-            const icon = document.getElementById(`worker-accordion-icon-${workerId}`);
+        // 통합 아코디언 제어 장치
+        function toggleAccordion(idPrefix, elementId) {
+            const box = document.getElementById(`${idPrefix}-${elementId}`);
+            const icon = document.getElementById(`${idPrefix}-icon-${elementId}`);
             if (box) {
                 box.classList.toggle('hidden');
                 if (icon) {
@@ -1145,14 +1289,83 @@
             }
         }
 
-        function toggleShiftAccordion(workerId) {
-            const box = document.getElementById(`shift-accordion-content-${workerId}`);
-            const icon = document.getElementById(`shift-accordion-icon-${workerId}`);
-            if (box) {
-                box.classList.toggle('hidden');
-                if (icon) {
-                    icon.classList.toggle('rotate-180');
+        // 📌 공지사항 저장
+        function saveStoreNotice(value) {
+            localStorage.setItem(`seven_notice_${currentStoreId}`, value);
+        }
+
+        // --- 📅 달력 렌더링 엔진 (누가 근무했는지 완벽 표현) ---
+        function renderCalendar() {
+            const [year, month] = selectedMonth.split('-').map(Number);
+            const calendarTitle = document.getElementById('calendar-title');
+            calendarTitle.innerText = `${year}년 ${String(month).padStart(2, '0')}월 스태프 종합 근무 달력`;
+
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay = new Date(year, month, 0);
+            
+            const startDayOfWeek = firstDay.getDay(); // 1일의 요일
+            const totalDays = lastDay.getDate();     // 당월 총 일수
+
+            const gridBody = document.getElementById('calendar-grid-body');
+            gridBody.innerHTML = '';
+
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const monthlyShifts = currentShifts.filter(s => s.date.startsWith(selectedMonth));
+
+            // 1일 시작 전 빈 칸 메우기
+            for (let i = 0; i < startDayOfWeek; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = "bg-slate-100/30 rounded-xl border border-slate-100 min-h-[80px]";
+                gridBody.appendChild(emptyCell);
+            }
+
+            // 날짜 셀 생성 및 알바생 교대 칩 밀어넣기
+            for (let day = 1; day <= totalDays; day++) {
+                const dayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayCell = document.createElement('div');
+                dayCell.className = "bg-white p-2 rounded-xl border border-slate-200/80 min-h-[90px] flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer";
+                
+                // 터치 시 해당 날짜로 폼 데이터 자동 연동
+                dayCell.onclick = () => {
+                    document.getElementById('form-date').value = dayStr;
+                    showToast(`${dayStr} 근무 등록 날짜가 세팅되었습니다.`);
+                    // 대시보드로 복귀하지 않고, 편의상 모바일에서 시선 유지만 제공
+                };
+
+                // 요일별 날짜 폰트 컬러 조정
+                const cellDate = new Date(year, month - 1, day);
+                const dayOfWeek = cellDate.getDay();
+                let dateColorClass = "text-slate-800";
+                if (dayOfWeek === 0) dateColorClass = "text-sevenRed font-bold";
+                else if (dayOfWeek === 6) dateColorClass = "text-blue-600 font-bold";
+
+                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-xs font-black">${day}</span></div>`;
+
+                // 해당 날짜 근무자 리스트 필터링 및 칩 생성
+                const dayShifts = monthlyShifts.filter(s => s.date === dayStr);
+                let shiftsHTML = '<div class="space-y-1 mt-1.5 flex-grow overflow-y-auto max-h-[70px] custom-scrollbar">';
+                if (dayShifts.length > 0) {
+                    dayShifts.forEach(s => {
+                        const bgChipClass = s.isSubstitute 
+                            ? 'bg-orange-50 text-sevenOrange border border-orange-100' 
+                            : 'bg-emerald-50 text-sevenGreen border border-emerald-100';
+                        shiftsHTML += `
+                            <div class="${bgChipClass} text-[9px] font-black p-1 rounded-md flex flex-col leading-tight" title="${s.startTime} ~ ${s.endTime}">
+                                <div class="flex justify-between items-center">
+                                    <span>${s.workerName}</span>
+                                    <span>${s.totalHours}H</span>
+                                </div>
+                                <span class="text-[8px] opacity-80 font-medium">${s.startTime}-${s.endTime}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    shiftsHTML += `<span class="text-[9px] text-slate-300 font-bold block text-center py-4">공석</span>`;
                 }
+                shiftsHTML += '</div>';
+
+                dayCell.innerHTML = headerHTML + shiftsHTML;
+                gridBody.appendChild(dayCell);
             }
         }
 
@@ -1181,7 +1394,6 @@
                 btnHoliday.querySelector('span').className = "bg-white w-4.5 h-4.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
             }
 
-            // 근무일지 정렬 조건: 근무일자가 1순위, 스태프 이름이 2순위
             const filteredShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
             filteredShifts.sort((a, b) => {
                 if (a.date !== b.date) {
@@ -1204,15 +1416,38 @@
             filteredShifts.forEach(s => {
                 totalHoursSum += s.totalHours;
             });
+
+            // 위생 보건증 디데이 만료 점검 경고창 세팅
+            const banner = document.getElementById('healthCardWarningBanner');
+            const bannerList = document.getElementById('healthCardWarningList');
+            let warningWorkers = [];
+
             workersList.forEach(w => {
                 const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                 totalPayrollSum += stats.finalPay;
                 
-                const weeklyAvgHours = stats.totalHours / 4.345;
-                if (activeStore.optionHoliday && weeklyAvgHours >= 15) {
+                if (stats.holidayAllowance > 0) {
                     holidayEligibleCount++;
                 }
+
+                // 보건증 D-Day 만료 예보 연산
+                if (w.healthDate) {
+                    const today = new Date();
+                    const targetDate = new Date(w.healthDate);
+                    const diffTime = targetDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays <= 30) {
+                        warningWorkers.push(`[${w.name}] 스태프 보건증 만료 ${diffDays}일 전 (${w.healthDate})`);
+                    }
+                }
             });
+
+            if (warningWorkers.length > 0) {
+                banner.classList.remove('hidden');
+                bannerList.innerHTML = warningWorkers.map(w => `• ${w}`).join('<br>');
+            } else {
+                banner.classList.add('hidden');
+            }
 
             document.getElementById('dashboard-workerCount').innerText = `${workersList.length}명`;
             document.getElementById('dashboard-totalHours').innerText = `${totalHoursSum.toFixed(1)}시간`;
@@ -1305,7 +1540,7 @@
 
                     shiftsGroupedContainer.innerHTML += `
                         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                            <div onclick="toggleShiftAccordion('${w.id}')" class="px-4 py-3.5 sm:px-5 sm:py-4 flex justify-between items-center cursor-pointer hover:bg-slate-50/70 transition-all select-none">
+                            <div onclick="toggleAccordion('shift-content', '${w.id}')" class="px-4 py-3.5 sm:px-5 sm:py-4 flex justify-between items-center cursor-pointer hover:bg-slate-50/70 transition-all select-none">
                                 <div class="flex items-center space-x-3 sm:space-x-3.5">
                                     <div class="w-9 h-9 rounded-xl bg-sevenGreen/10 text-sevenGreen flex items-center justify-center font-black text-sm flex-shrink-0">
                                         ${w.name.charAt(0)}
@@ -1323,11 +1558,11 @@
                                         <span class="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg text-[9px] sm:text-[11px]">근무 ${workerShifts.length}건</span>
                                         <span class="bg-sevenGreen/5 border border-sevenGreen/10 text-sevenGreen font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[11px]">실시수 ${stats.totalHours}H</span>
                                     </div>
-                                    <i data-lucide="chevron-down" id="shift-accordion-icon-${w.id}" class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 transition-transform duration-200"></i>
+                                    <i data-lucide="chevron-down" id="shift-content-icon-${w.id}" class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 transition-transform duration-200"></i>
                                 </div>
                             </div>
 
-                            <div id="shift-accordion-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
+                            <div id="shift-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
                                 <table class="w-full text-left text-xs border-collapse min-w-[850px]">
                                     <thead>
                                         <tr class="text-slate-400 border-b border-slate-200 text-[11px]">
@@ -1363,17 +1598,17 @@
             } else {
                 workersList.forEach(w => {
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
-                    const isWeeklyHolidayTarget = (stats.totalHours / 4.345) >= 15;
+                    const isWeeklyHolidayTarget = stats.holidayAllowance > 0;
 
                     reportContainer.innerHTML += `
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex flex-col justify-between space-y-3 cursor-pointer hover:border-sevenGreen transition-all" onclick="toggleReportAccordion('${w.id}')">
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex flex-col justify-between space-y-3 cursor-pointer hover:border-sevenGreen transition-all" onclick="toggleAccordion('report-content', '${w.id}')">
                             <div>
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <span class="bg-sevenGreen/10 text-sevenGreen text-[10px] font-bold px-2 py-0.5 rounded-full">세븐스태프</span>
                                         <div class="flex items-center gap-1.5 mt-1">
                                             <h4 class="text-base font-black text-slate-900">${w.name}</h4>
-                                            <i data-lucide="chevron-down" id="chevron-${w.id}" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                                            <i data-lucide="chevron-down" id="report-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform"></i>
                                         </div>
                                     </div>
                                     <div class="text-right">
@@ -1392,14 +1627,14 @@
                                         <p class="font-black text-slate-800 mt-0.5">${stats.totalHours}H</p>
                                     </div>
                                     <div>
-                                        <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold">주휴 요건</p>
+                                        <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold">주휴 지급</p>
                                         <p class="mt-0.5 font-bold ${isWeeklyHolidayTarget ? 'text-sevenGreen font-black' : 'text-slate-400'}">
-                                            ${isWeeklyHolidayTarget ? '지급대상' : '제외'}
+                                            ${isWeeklyHolidayTarget ? '지급됨' : '미대상'}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div id="accordion-${w.id}" class="hidden space-y-1.5 text-[11px] text-slate-600 font-semibold pt-2 border-t border-dashed border-slate-100 transition-all">
+                                <div id="report-content-${w.id}" class="hidden space-y-1.5 text-[11px] text-slate-600 font-semibold pt-2 border-t border-dashed border-slate-100 transition-all">
                                     <div class="flex justify-between">
                                         <span>실근로 기본 임금:</span>
                                         <span class="font-bold text-slate-800">₩${stats.basePay.toLocaleString()}원</span>
@@ -1409,7 +1644,7 @@
                                         <span class="font-bold text-slate-800">₩${stats.nightAllowance.toLocaleString()}원</span>
                                     </div>
                                     <div class="flex justify-between border-b pb-1">
-                                        <span>월 법정 주휴수당:</span>
+                                        <span>월 주휴수당(주차별 합산):</span>
                                         <span class="font-bold text-slate-800">₩${stats.holidayAllowance.toLocaleString()}원</span>
                                     </div>
                                     ${stats.deduction > 0 ? `
@@ -1467,7 +1702,7 @@
 
                     workersGrid.innerHTML += `
                         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                            <div onclick="toggleWorkerAccordion('${w.id}')" class="px-4 py-3.5 sm:px-5 sm:py-4 flex justify-between items-center cursor-pointer hover:bg-slate-50/70 transition-all select-none">
+                            <div onclick="toggleAccordion('worker-content', '${w.id}')" class="px-4 py-3.5 sm:px-5 sm:py-4 flex justify-between items-center cursor-pointer hover:bg-slate-50/70 transition-all select-none">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-9 h-9 rounded-xl bg-sevenGreen/10 text-sevenGreen flex items-center justify-center font-black text-sm flex-shrink-0">
                                         ${w.name.charAt(0)}
@@ -1486,16 +1721,20 @@
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-lg text-[9px] sm:text-[11px]">서류 ${submittedCount}/6</span>
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-lg text-[9px] sm:text-[11px]">출근 ${shiftsCount}건</span>
                                     </div>
-                                    <i data-lucide="chevron-down" id="worker-accordion-icon-${w.id}" class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 transition-transform duration-200"></i>
+                                    <i data-lucide="chevron-down" id="worker-content-icon-${w.id}" class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 transition-transform duration-200"></i>
                                 </div>
                             </div>
 
-                            <div id="worker-accordion-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 sm:p-5 space-y-4">
+                            <div id="worker-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 sm:p-5 space-y-4">
                                 <div class="flex justify-between items-start gap-2">
                                     <div class="space-y-1.5 text-xs flex-grow font-semibold">
                                         <p class="font-bold text-slate-600 flex items-center gap-1.5">
                                             <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
                                             <span>${w.phone || '연락처 미기입'}</span>
+                                        </p>
+                                        <p class="text-slate-500 flex items-center gap-1.5">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
+                                            <span>보건증 만료 예정일: ${w.healthDate || '미기입'}</span>
                                         </p>
                                         <p class="text-slate-500 flex items-center gap-1.5">
                                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
@@ -1556,8 +1795,107 @@
 
             document.getElementById('ai-auditMonthText').innerText = `${splitM[1]}월말 기준 지점 노무 감사 보고서`;
 
+            renderCalendar();
+            renderPosHistoryList();
             lucide.createIcons();
             saveStateToStorage();
+        }
+
+        // --- 시재 정산 전표 내역 렌더러 ---
+        function renderPosHistoryList() {
+            const listContainer = document.getElementById('posHistoryList');
+            listContainer.innerHTML = '';
+            const list = posHistoryMap[currentStoreId] || [];
+
+            if (list.length === 0) {
+                listContainer.innerHTML = `<span class="text-slate-400 text-[10px] block text-center py-8">저장된 교대 시재 전표가 없습니다.</span>`;
+                return;
+            }
+
+            // 최신 역순 출력
+            [...list].reverse().forEach(item => {
+                let diffText = '';
+                let diffClass = '';
+                if (item.discrepancy === 0) {
+                    diffText = '₩0 (정상)';
+                    diffClass = 'text-sevenGreen';
+                } else if (item.discrepancy > 0) {
+                    diffText = `+₩${item.discrepancy.toLocaleString()} (과잉)`;
+                    diffClass = 'text-blue-600';
+                } else {
+                    diffText = `-₩${Math.abs(item.discrepancy).toLocaleString()} (부족)`;
+                    diffClass = 'text-sevenRed';
+                }
+
+                listContainer.innerHTML += `
+                    <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1 text-[10px]">
+                        <div class="flex justify-between items-center text-slate-400 text-[9px] font-bold">
+                            <span>🕒 ${item.timestamp}</span>
+                            <span>담당: ${item.worker || '미정'}</span>
+                        </div>
+                        <div class="flex justify-between items-center font-black text-slate-800">
+                            <span>과부족: <span class="${diffClass}">${diffText}</span></span>
+                            <span class="text-slate-500 text-[9px]">현금: ₩${item.total.toLocaleString()}원</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function savePosHistoryRecord() {
+            const activeStore = stores.find(s => s.id === currentStoreId);
+            if (!activeStore) return;
+
+            const baseCash = Number(document.getElementById('pos-base-cash').value || 150000);
+            const table = {
+                '50000': 50000,
+                '10000': 10000,
+                '5000': 5000,   
+                '1000': 1000,
+                '500': 500,
+                '100': 100,
+                '50': 50,
+                '10': 10
+            };
+
+            let cashTotal = 0;
+            Object.keys(table).forEach(k => {
+                const inputVal = Number(document.getElementById(`pos-count-${k}`).value || 0);
+                cashTotal += inputVal * table[k];
+            });
+
+            const discrepancy = cashTotal - baseCash;
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+            // 최근 근무 기록을 토대로 시재 입력자 명명
+            const shiftsList = shiftsMap[currentStoreId] || [];
+            const activeWorker = shiftsList.length > 0 ? shiftsList[0].workerName : '교대근무자';
+
+            const newRecord = {
+                id: 'pos_' + Date.now(),
+                timestamp,
+                discrepancy,
+                total: cashTotal,
+                base: baseCash,
+                worker: activeWorker
+            };
+
+            if (!posHistoryMap[currentStoreId]) {
+                posHistoryMap[currentStoreId] = [];
+            }
+            posHistoryMap[currentStoreId].push(newRecord);
+
+            showToast(`₩${discrepancy.toLocaleString()} 과부족 정산 전표가 누적 대장에 등록되었습니다.`);
+            renderEverything();
+        }
+
+        function clearPosHistory() {
+            triggerConfirm("⚠️ 시재 전표 삭제", "이 매장의 누적된 모든 교대 시재 정산 내역을 삭제하시겠습니까?", () => {
+                posHistoryMap[currentStoreId] = [];
+                showToast("시재 전표가 리셋되었습니다.");
+                renderEverything();
+            });
         }
 
         // --- 7. 알바생 시급 연동 및 세부 서류 바인딩 ---
@@ -1578,6 +1916,7 @@
             document.getElementById('editWorkerName').value = worker.name;
             document.getElementById('editWorkerRate').value = worker.defaultHourlyRate;
             document.getElementById('editWorkerDeduction').value = worker.deduction || 0;
+            document.getElementById('editWorkerHealthDate').value = worker.healthDate || '';
             document.getElementById('editWorkerPhone').value = worker.phone || '';
             document.getElementById('editWorkerAddress').value = worker.address || '';
             document.getElementById('editWorkerNotes').value = worker.notes || '';
@@ -1598,7 +1937,6 @@
             const worker = workersList.find(w => w.id === id);
             
             if (worker) {
-                const prevName = worker.name;
                 const nextName = document.getElementById('editWorkerName').value.trim();
                 
                 if (!nextName) {
@@ -1609,6 +1947,7 @@
                 worker.name = nextName;
                 worker.defaultHourlyRate = Number(document.getElementById('editWorkerRate').value || 10320);
                 worker.deduction = Number(document.getElementById('editWorkerDeduction').value || 0);
+                worker.healthDate = document.getElementById('editWorkerHealthDate').value;
                 worker.phone = document.getElementById('editWorkerPhone').value.trim();
                 worker.address = document.getElementById('editWorkerAddress').value.trim();
                 worker.notes = document.getElementById('editWorkerNotes').value.trim();
@@ -1620,7 +1959,7 @@
                     }
                 });
 
-                showToast(`"${nextName}" 님의 정보를 수정 완료하였습니다.`);
+                showToast(`"${nextName}" 님의 정보가 업데이트되었습니다.`);
                 closeEditWorkerModal();
                 renderEverything();
             }
@@ -1640,11 +1979,12 @@
         }
 
         function saveStateToStorage() {
-            localStorage.setItem('seven_stores_live_v3', JSON.stringify(stores));
-            localStorage.setItem('seven_activeStore_id_v3', currentStoreId);
-            localStorage.setItem('seven_workers_live_v3', JSON.stringify(workersMap));
-            localStorage.setItem('seven_shifts_live_v3', JSON.stringify(shiftsMap));
-            localStorage.setItem('seven_selected_month_live_v3', selectedMonth);
+            localStorage.setItem('seven_stores_live_v4', JSON.stringify(stores));
+            localStorage.setItem('seven_activeStore_id_v4', currentStoreId);
+            localStorage.setItem('seven_workers_live_v4', JSON.stringify(workersMap));
+            localStorage.setItem('seven_shifts_live_v4', JSON.stringify(shiftsMap));
+            localStorage.setItem('seven_pos_history_v4', JSON.stringify(posHistoryMap));
+            localStorage.setItem('seven_selected_month_live_v4', selectedMonth);
         }
 
         function showToast(text) {
@@ -1676,9 +2016,22 @@
             onConfirmAction = null;
         }
 
-        document.getElementById('confirmSubmitBtn').onclick = function() {
-            closeConfirmModal(true);
-        };
+        // --- 무급 휴게시간 확인을 위한 모달 제어부 ---
+        function triggerBreakTimeAlert(message, callback) {
+            document.getElementById('breakTimeAlertMessage').innerText = message;
+            document.getElementById('breakTimeAlertModal').classList.remove('hidden');
+            document.getElementById('breakTimeAlertModal').classList.add('flex');
+            onBreakConfirmAction = callback;
+        }
+
+        function closeBreakTimeModal(isSubmit) {
+            document.getElementById('breakTimeAlertModal').classList.add('hidden');
+            document.getElementById('breakTimeAlertModal').classList.remove('flex');
+            if (isSubmit && onBreakConfirmAction) {
+                onBreakConfirmAction();
+            }
+            onBreakConfirmAction = null;
+        }
 
         function changeSelectedMonth(month) {
             selectedMonth = month;
@@ -1688,6 +2041,7 @@
 
         function changeSelectedStore(id) {
             currentStoreId = id;
+            document.getElementById('storeNoticeTextarea').value = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
             renderEverything();
             showToast(`관리 점포를 전환했습니다.`);
         }
@@ -1709,6 +2063,7 @@
             stores.push({ id, name, optionNight: true, optionHoliday: true });
             workersMap[id] = [];
             shiftsMap[id] = [];
+            posHistoryMap[id] = [];
 
             currentStoreId = id;
             input.value = '';
@@ -1731,6 +2086,7 @@
                     stores = stores.filter(st => st.id !== id);
                     delete workersMap[id];
                     delete shiftsMap[id];
+                    delete posHistoryMap[id];
 
                     if (currentStoreId === id) {
                         currentStoreId = stores[0].id;
@@ -1748,6 +2104,7 @@
             const rate = Number(document.getElementById('newWorkerRate').value);
             const deduction = Number(document.getElementById('newWorkerDeduction').value || 0);
             const phone = document.getElementById('newWorkerPhone').value.trim();
+            const healthDate = document.getElementById('newWorkerHealthDate').value;
             const address = document.getElementById('newWorkerAddress').value.trim();
             const notes = document.getElementById('newWorkerNotes').value.trim();
 
@@ -1774,6 +2131,7 @@
                 name,
                 defaultHourlyRate: rate,
                 deduction,
+                healthDate,
                 phone,
                 address,
                 notes,
@@ -1787,6 +2145,7 @@
             document.getElementById('newWorkerRate').value = '10320';
             document.getElementById('newWorkerDeduction').value = '0';
             document.getElementById('newWorkerPhone').value = '';
+            document.getElementById('newWorkerHealthDate').value = '';
             document.getElementById('newWorkerAddress').value = '';
             document.getElementById('newWorkerNotes').value = '';
             
@@ -1842,7 +2201,7 @@
                 return;
             }
 
-            const { totalHours, nightHours } = calculateDurationAndNight(startTime, endTime, breakMinutes);
+            const { totalHours, nightHours, rawDurationMin } = calculateDurationAndNight(startTime, endTime, breakMinutes);
             if (totalHours <= 0) {
                 showToast("실근무 시간이 0시간보다 적습니다. 시간을 다시 지정해 주세요.");
                 return;
@@ -1851,27 +2210,43 @@
             const workersList = workersMap[currentStoreId] || [];
             const worker = workersList.find(w => w.id === workerId);
 
-            const newS = {
-                id: 's_' + Date.now(),
-                workerId,
-                workerName: worker.name,
-                date,
-                startTime,
-                endTime,
-                breakMinutes,
-                hourlyRate,
-                totalHours,
-                nightHours,
-                isSubstitute,
-                memo
+            // 근로기준법상 의무 휴게시간 검증 로직 실행
+            const rawDurationHours = rawDurationMin / 60;
+            let breakTimeWarning = "";
+            if (rawDurationHours >= 8 && breakMinutes < 60) {
+                breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 8시간 이상으로, 법정 의무 무급 휴게시간은 최소 1시간(60분)이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
+            } else if (rawDurationHours >= 4 && breakMinutes < 30) {
+                breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 4시간 이상으로, 법정 의무 무급 휴게시간은 최소 30분이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
+            }
+
+            const saveAction = () => {
+                const newS = {
+                    id: 's_' + Date.now(),
+                    workerId,
+                    workerName: worker.name,
+                    date,
+                    startTime,
+                    endTime,
+                    breakMinutes,
+                    hourlyRate,
+                    totalHours,
+                    nightHours,
+                    isSubstitute,
+                    memo
+                };
+
+                shiftsMap[currentStoreId] = [newS, ...currentShifts];
+                document.getElementById('form-memo').value = '';
+                document.getElementById('form-isSubstitute').checked = false;
+                showToast(`[${worker.name}] 님의 ${date} 근무 일지가 추가되었습니다.`);
+                renderEverything();
             };
 
-            shiftsMap[currentStoreId] = [newS, ...currentShifts];
-
-            document.getElementById('form-memo').value = '';
-            document.getElementById('form-isSubstitute').checked = false;
-            showToast(`[${worker.name}] 님의 ${date} 근무 일지가 추가되었습니다.`);
-            renderEverything();
+            if (breakTimeWarning) {
+                triggerBreakTimeAlert(breakTimeWarning, saveAction);
+            } else {
+                saveAction();
+            }
         }
 
         function deleteShift(id) {
@@ -1891,7 +2266,7 @@
             document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-50";
             document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
 
-            if (tabId === 'workers' || tabId === 'aiConsult') {
+            if (tabId === 'workers' || tabId === 'aiConsult' || tabId === 'calendar') {
                 document.getElementById(`tabContent-${tabId}`).className = "grid grid-cols-1 lg:grid-cols-12 gap-4 animate-in fade-in duration-200";
             } else {
                 document.getElementById(`tabContent-${tabId}`).className = "space-y-4 animate-in fade-in duration-200";
@@ -1902,14 +2277,43 @@
             lucide.createIcons();
         }
 
-        // --- 12. GEMINI API 연동 모듈 (PC/모바일 호환성 및 v2.5 무료 최적화 구동형 탑재) ---
+        // --- 실시간 점포 Context 추출기 (AI 분석 전달용) ---
+        function getLiveStoreContextData() {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명', optionNight: true, optionHoliday: true };
+            const workersList = workersMap[currentStoreId] || [];
+            const shiftsList = shiftsMap[currentStoreId] || [];
+            const filteredShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
+
+            let summary = `[매장 환경]\n- 지점명: ${activeStore.name}\n- 야간가산수당(22~06시 1.5배): ${activeStore.optionNight ? '활성' : '비활성'}\n- 법정 주휴수당 연산: ${activeStore.optionHoliday ? '활성' : '비활성'}\n\n`;
+            
+            summary += `[등록 알바생 현황 (${workersList.length}명)]\n`;
+            workersList.forEach(w => {
+                const missingDocs = [];
+                if (w.documents) {
+                    if (!w.documents.idCard) missingDocs.push("신분증");
+                    if (!w.documents.contract) missingDocs.push("근로계약서");
+                    if (!w.documents.health) missingDocs.push("보건증");
+                    if (!w.documents.register) missingDocs.push("주민등록등본");
+                    if (!w.documents.resume) missingDocs.push("이력서");
+                }
+                summary += `- 이름: ${w.name} (계약시급: ${w.defaultHourlyRate}원, 매달공제: ${w.deduction || 0}원, 보건증만료일: ${w.healthDate || '미지정'})\n  * 누락서류: ${missingDocs.length > 0 ? missingDocs.join(', ') : '없음(완전구비)'}\n  * 특이사항: ${w.notes || '없음'}\n`;
+            });
+
+            summary += `\n[당월 근무 일지 내역 (총 ${filteredShifts.length}건)]\n`;
+            filteredShifts.forEach(s => {
+                summary += `- ${s.date} | ${s.workerName} | ${s.startTime}~${s.endTime} (무급휴게 ${s.breakMinutes}분) | 시급: ${s.hourlyRate}원 | 실근무: ${s.totalHours}H | 야간: ${s.nightHours}H | 구분: ${s.isSubstitute ? '대타' : '일반'} | 메모: ${s.memo || '없음'}\n`;
+            });
+
+            return summary;
+        }
+
+        // --- 12. GEMINI API 연동 모듈 (PC/모바일 호환성 최적화형 탑재) ---
         async function fetchGeminiEngine(systemPrompt, userPrompt, retries = 5, delay = 1000) {
             let activeKey = localStorage.getItem('gemini_api_key') || "";
             if (!activeKey) {
                 activeKey = typeof apiKey !== 'undefined' ? apiKey : "";
             }
 
-            // API 키가 아예 지정되지 않은 가상 테스트 상태에서는 모의 시뮬레이션을 정상 전개하여 오작동 차단
             if (!activeKey) {
                 return getMockAiResponse(systemPrompt, userPrompt);
             }
@@ -1960,11 +2364,11 @@
                     if (systemPrompt.includes("인수인계")) {
                         resolve(`[AI 모의 점장 컨설팅] 실시간 교대 인수인계 가이드
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. 포스(POS) 시재 정산 및 돈통 확인 (오차 범위 내 정산 일치 검수)
-2. 시식대 및 매대 전면 청소상태 확인
-3. 냉장고 쇼케이스 FF(삼각김밥, 샌드위치) 선입선출 및 페이스업 배치 완수
+1. 포스(POS) 시재 정산 및 돈통 확인 (오차 범위 내 정산 일치 검수 완료)
+2. 시식대 및 매대 전면 위생 청소상태 완수
+3. 냉장 쇼케이스 FF(삼각김밥, 도시락, 샌드위치 등) 선입선출 정렬 및 빈 공간 보충
 4. 워크인 음료 냉장고 후방 보충 진열 실시
-5. 폐기 예정 물품 스캐너 확인 후 수거함 안전 격리 처리`);
+5. 폐기 예정 등록 상품 스캐너 확인 및 즉시 수거함 안전 격리 처리`);
                     } else if (systemPrompt.includes("노무 정산")) {
                         let docReport = '';
                         let deductionReport = '';
@@ -1972,10 +2376,10 @@
                             const docs = w.documents || {};
                             const missing = Object.keys(docs).filter(k => !docs[k]);
                             if (missing.length > 0) {
-                                docReport += `\n- ⚠️ ${w.name}: 미제출 서류가 감지되었습니다. (벌금형 등 리스크 해소를 위해 신속한 구비 권장)`;
+                                docReport += `\n- ⚠️ ${w.name}: 미제출 서류가 감지되었습니다. (벌금형 예방 및 안전 지대 확보를 위해 보건증과 계약서를 속히 구비하십시오.)`;
                             }
                             if (w.deduction > 0) {
-                                deductionReport += `\n- 💸 ${w.name}: 매달 외상/시식 공제액 ₩${w.deduction.toLocaleString()}원이 설정되어 정산액에서 자동 차감 관리 중입니다.`;
+                                deductionReport += `\n- 💸 ${w.name}: 고정 외상/가불 공제액 ₩${w.deduction.toLocaleString()}원이 등록되어 당월 지급액에서 안전 차감 관리 중입니다.`;
                             }
                         });
                         resolve(`[AI 점포 정밀 노무 Audit 시뮬레이션 보고서]
@@ -1983,16 +2387,15 @@
 ■ 가맹점: 세븐일레븐 ${activeStore.name} 
 ■ 정산월: ${selectedMonth} 기준
 
-1. 2026 최저임금(10,320원) 검증 결과:
-- 등록된 모든 근무자의 기본 시급 요건이 최저임금을 정상 준수하고 있습니다.
+1. 2026 최저임금(10,320원) 준수 적법성 검증:
+- 등록된 모든 근무자의 기본 약정 시급 요건이 최저임금을 완벽히 준수하고 있습니다.
 
-2. 주휴수당 위험 관리 현황:
-- 주 평균 15시간 이상 근무자가 존재하므로 주휴수당 산출 방식에 주의하십시오.
-- 현재 주휴수당 법정 요건이 자동 연산 가동되어 정산에 정밀하게 취합되었습니다.
+2. 법정 주휴수당 지급 진단:
+- 주차별 달력(Calendar Week) 정밀 정산법에 따라 주 15시간 이상 실근로한 주만 선별 연산되어 합리적인 월 주휴수당 총액이 대장에 합산되었습니다.
 
-3. 외상/가불 공제 내역 진단:${deductionReport || '\n- 이번 달에 별도로 등록된 인건비 외상 차감 스태프는 없습니다.'}
+3. 고정 공제 내역 진단:${deductionReport || '\n- 이번 달에 별도로 등록된 인건비 외상 차감 스태프는 없습니다.'}
 
-4. 행정 서류 구비상태 진단:${docReport || '\n- 현재 모든 아르바이트생의 구비 서류 제출이 완료되어 안전한 상태입니다.'}
+4. 채용 구비서류 상태 진단:${docReport || '\n- 현재 모든 아르바이트생의 구비 서류 제출이 완료되어 안전한 상태입니다.'}
 
 ※ 안내: 상단 'AI API 키 설정' 버튼을 통해 개인 API Key를 등록하면 실시간 초거대 실무 진단 및 맞춤 노무법 자문 챗봇 무제한 이용이 활성화됩니다.`);
                     } else {
@@ -2116,7 +2519,7 @@
             
             log.innerHTML += `
                 <div class="flex justify-end animate-in fade-in">
-                    <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-sevenGreen text-white rounded-tr-none shadow-xs text-left">
+                    <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-sevenGreen text-white rounded-tr-none shadow-xs text-left font-sans">
                         <p class="leading-relaxed font-semibold">${userMsg}</p>
                     </div>
                 </div>
@@ -2259,11 +2662,12 @@
         function exportData() {
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
             const backupPayload = {
-                stores: localStorage.getItem('seven_stores_live_v3'),
-                activeStoreId: localStorage.getItem('seven_activeStore_id_v3'),
-                workers: localStorage.getItem('seven_workers_live_v3'),
-                shifts: localStorage.getItem('seven_shifts_live_v3'),
-                selectedMonth: localStorage.getItem('seven_selected_month_live_v3'),
+                stores: localStorage.getItem('seven_stores_live_v4'),
+                activeStoreId: localStorage.getItem('seven_activeStore_id_v4'),
+                workers: localStorage.getItem('seven_workers_live_v4'),
+                shifts: localStorage.getItem('seven_shifts_live_v4'),
+                posHistories: localStorage.getItem('seven_pos_history_v4'),
+                selectedMonth: localStorage.getItem('seven_selected_month_live_v4'),
                 apiKey: localStorage.getItem('gemini_api_key')
             };
 
@@ -2296,21 +2700,22 @@
                 try {
                     const parsed = JSON.parse(e.target.result);
                     if (parsed.stores && parsed.workers && parsed.shifts) {
-                        localStorage.setItem('seven_stores_live_v3', parsed.stores);
-                        localStorage.setItem('seven_activeStore_id_v3', parsed.activeStoreId);
-                        localStorage.setItem('seven_workers_live_v3', parsed.workers);
-                        localStorage.setItem('seven_shifts_live_v3', parsed.shifts);
+                        localStorage.setItem('seven_stores_live_v4', parsed.stores);
+                        localStorage.setItem('seven_activeStore_id_v4', parsed.activeStoreId);
+                        localStorage.setItem('seven_workers_live_v4', parsed.workers);
+                        localStorage.setItem('seven_shifts_live_v4', parsed.shifts);
                         
-                        if (parsed.selectedMonth) localStorage.setItem('seven_selected_month_live_v3', parsed.selectedMonth);
+                        if (parsed.posHistories) localStorage.setItem('seven_pos_history_v4', parsed.posHistories);
+                        if (parsed.selectedMonth) localStorage.setItem('seven_selected_month_live_v4', parsed.selectedMonth);
                         if (parsed.apiKey) localStorage.setItem('gemini_api_key', parsed.apiKey);
 
                         stores = JSON.parse(parsed.stores);
                         currentStoreId = parsed.activeStoreId;
                         workersMap = JSON.parse(parsed.workers);
                         shiftsMap = JSON.parse(parsed.shifts);
+                        posHistoryMap = parsed.posHistories ? JSON.parse(parsed.posHistories) : INITIAL_POS_HISTORIES;
                         selectedMonth = parsed.selectedMonth || selectedMonth;
 
-                        // 로드 데이터 예외 보정
                         stores.forEach(st => {
                             if (st.optionNight === undefined) st.optionNight = true;
                             if (st.optionHoliday === undefined) st.optionHoliday = true;
@@ -2331,27 +2736,28 @@
         }
 
         function switchCheckerTab(tab) {
-            if (tab === 'disposal') {
-                document.getElementById('checkerTab-disposal').classList.remove('hidden');
-                document.getElementById('checkerTab-pos').classList.add('hidden');
-                document.getElementById('btn-checker-disposal').className = "bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded";
-                document.getElementById('btn-checker-pos').className = "bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded";
-            } else {
-                document.getElementById('checkerTab-disposal').classList.add('hidden');
-                document.getElementById('checkerTab-pos').classList.remove('hidden');
-                document.getElementById('btn-checker-disposal').className = "bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded";
-                document.getElementById('btn-checker-pos').className = "bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded";
-            }
+            const tabs = ['disposal', 'pos', 'posHistory'];
+            tabs.forEach(t => {
+                const element = document.getElementById(`checkerTab-${t}`);
+                const btn = document.getElementById(`btn-checker-${t}`);
+                if (t === tab) {
+                    element.classList.remove('hidden');
+                    btn.className = "bg-sevenGreen text-white text-[9px] font-bold px-2 py-1 rounded";
+                } else {
+                    element.classList.add('hidden');
+                    btn.className = "bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-1 rounded";
+                }
+            });
             lucide.createIcons();
         }
 
-        // 대한민국 세븐일레븐 표준 폐기 골든타임 타임라인 연산
+        // 대한민국 세븐일레븐 표준 폐기 골든타임 타임라인 연산 & 오디오 알람
         function updateDisposalTimers() {
             const now = new Date();
             const targets = [
-                { time: '11:00', elId: 'disposal-timer-0' }, // 오전 11:00 마감
-                { time: '20:00', elId: 'disposal-timer-1' }, // 오후 20:00 마감
-                { time: '23:00', elId: 'disposal-timer-2' }  // 오후 23:00 마감
+                { time: '11:00', elId: 'disposal-timer-0', name: '오전 1차 FF 폐기' },
+                { time: '20:00', elId: 'disposal-timer-1', name: '오후 유제품 폐기' },
+                { time: '23:00', elId: 'disposal-timer-2', name: '야간 2차 FF 폐기' }
             ];
 
             targets.forEach(t => {
@@ -2370,6 +2776,13 @@
                 const displayBox = document.getElementById(t.elId);
                 if (displayBox) {
                     displayBox.innerText = `${diffHrs}시간 ${diffMins}분 ${diffSecs}초 남음`;
+                    
+                    // 정확히 10분 전에 음향 및 브라우저 알림 발송
+                    if (diffHrs === 0 && diffMins === 10 && diffSecs === 0) {
+                        playWebAudioAlarmBeep();
+                        triggerBrowserPushNotification(t.name);
+                    }
+
                     if (diffHrs === 0 && diffMins <= 30) {
                         displayBox.className = "text-[10px] font-black text-sevenRed animate-pulse";
                     } else {
@@ -2379,16 +2792,48 @@
             });
         }
 
+        // 웹 오디오 신시사이저 비프음 생성기 (외부 오디오 파일 없이 소리 전송)
+        function playWebAudioAlarmBeep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note (고음비프)
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
+                oscillator.start();
+                // 3번 연속 울리게 유도
+                setTimeout(() => { oscillator.stop(); }, 200);
+            } catch (err) {
+                console.log("웹오디오 컨텍스트 블로킹 감지");
+            }
+        }
+
+        function triggerBrowserPushNotification(taskName) {
+            if (Notification && Notification.permission === 'granted') {
+                new Notification(`7-ELEVEN 폐기 안내`, {
+                    body: `골든타임 10분 전입니다! 지금 바로 [${taskName}] 전표 및 진열대를 확인하세요.`,
+                    icon: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=128&q=80'
+                });
+            }
+        }
+
+        // 시재 정산기 연산 매핑 정상화 (ID 단위 완벽 맵 일치)
         function calculatePosCash() {
             const table = {
                 '50000': 50000,
                 '10000': 10000,
-                '500': 5000,   
-                '100': 1000,
-                '50': 500,
-                '10': 100,
-                '5': 50,
-                '1': 10
+                '5000': 5000,   
+                '1000': 1000,
+                '500': 500,
+                '100': 100,
+                '50': 50,
+                '10': 10
             };
 
             let cashTotal = 0;
