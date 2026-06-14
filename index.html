@@ -1080,6 +1080,7 @@
             document.getElementById('apiKeyModal').classList.remove('flex');
         }
 
+        // --- API 키 저장 장치 ---
         function saveApiKey() {
             const key = document.getElementById('geminiApiKeyInput').value.trim();
             if (key) {
@@ -1854,7 +1855,7 @@
 
             const discrepancy = cashTotal - baseCash;
             const now = new Date();
-            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}시 ${String(now.getMinutes()).padStart(2,'0')}분 ${String(now.getSeconds()).padStart(2,'0')}초`;
 
             const shiftsList = shiftsMap[currentStoreId] || [];
             const activeWorker = shiftsList.length > 0 ? shiftsList[0].workerName : '교대근무자';
@@ -2249,13 +2250,19 @@
             );
         }
 
+        // --- 탭 전환 로직 (가로 깨짐 오류 수정 완료) ---
         function switchTab(tabId) {
             document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50";
             document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
 
-            if (tabId === 'workers' || tabId === 'aiConsult' || tabId === 'calendar') {
+            if (tabId === 'workers' || tabId === 'aiConsult') {
+                // 다중 분할 Grid 레이아웃 전용 클래스 할당
                 document.getElementById(`tabContent-${tabId}`).className = "grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden animate-in fade-in duration-200";
+            } else if (tabId === 'calendar') {
+                // 달력 고유의 흰색 패널 레이아웃 적용 (grid-cols-12 grid에 강제 바인딩되어 세로로 찌부러지는 현상 해결)
+                document.getElementById(`tabContent-${tabId}`).className = "bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
             } else {
+                // 기본 세로 Flex 레이아웃 적용
                 document.getElementById(`tabContent-${tabId}`).className = "space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
             }
             
@@ -2463,7 +2470,7 @@
             - 스태프: ${targetShift.workerName}
             - 시간대: ${targetShift.startTime} ~ ${targetShift.endTime} (무급휴게 ${targetShift.breakMinutes}분 감산)
             - 대타(대근) 여부: ${targetShift.isSubstitute ? '대타 근무임' : '일반 정규 근무'}
-            - 메모: ${targetShift.memo || '없음'}
+            - 메모: ${targetShift.memo || '음성 인계 없음'}
             `;
 
             try {
@@ -2520,7 +2527,7 @@
             const log = document.getElementById('chat-messagesLog');
             
             log.innerHTML += `
-                <div class="flex justify-end animate-in fade-in">
+                <div class="flex justify-end animate-in fade-in font-sans">
                     <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-sevenGreen text-white rounded-tr-none shadow-xs text-left font-sans">
                         <p class="leading-relaxed font-semibold">${userMsg}</p>
                     </div>
@@ -2569,7 +2576,7 @@
                 if (loader) loader.remove();
                 log.innerHTML += `
                     <div class="flex justify-start">
-                        <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-red-50 text-red-700 rounded-tl-none border border-red-100">
+                        <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-red-50 text-red-700 rounded-tl-none border border-red-100 font-sans">
                             <p class="leading-relaxed">⚠️ 세븐봇의 연결이 잠시 혼잡합니다. 잠시 후 다시 입력해 주세요.</p>
                         </div>
                     </div>
