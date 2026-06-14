@@ -154,7 +154,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-2.5 md:p-3 space-y-2.5 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col w-full">
+    <main class="max-w-7xl mx-auto p-2.5 md:p-3 space-y-2.5 flex-grow md:flex-1 md:min-h-0 md:max-h-[calc(100vh-130px)] md:overflow-y-auto flex flex-col w-full">
 
         <!-- 보건증 만료 경고 알림판 (D-Day 배너) -->
         <div id="healthCardWarningBanner" class="hidden bg-rose-50 border border-rose-200 rounded-xl p-2.5 flex items-start space-x-2 text-[11px] flex-shrink-0 animate-in fade-in duration-200">
@@ -252,7 +252,7 @@
         </div>
 
         <!-- 탭 Content: 대시보드 (아이패드 한 화면 맞춤 플렉스 박스) -->
-        <div id="tabContent-dashboard" class="flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col space-y-2.5">
+        <div id="tabContent-dashboard" class="flex-grow md:flex-1 md:min-h-0 flex flex-col space-y-2.5">
             
             <!-- 📌 실시간 매장 전달사항 및 요약판 -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-shrink-0">
@@ -330,8 +330,8 @@
                 </button>
             </div>
 
-            <!-- 아이패드 한 화면 극대화 3단 그리드 (높이 세분화 차단 고정 구조) -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden">
+            <!-- 아이패드 한 화면 극대화 3단 그리드 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:min-h-0 md:max-h-[500px]">
                 
                 <!-- 1단: 출퇴근 일지 추가 폼 -->
                 <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-4 flex flex-col md:h-full md:overflow-hidden">
@@ -355,7 +355,7 @@
                             </div>
                             <div>
                                 <label class="block text-slate-500 font-bold mb-0.5">계약 체결 시급 (원)</label>
-                                <input type="number" id="form-hourlyRate" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800">
+                                <input type="number" id="form-hourlyRate" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800" min="0">
                             </div>
                         </div>
 
@@ -461,46 +461,46 @@
                         </div>
                     </div>
 
-                    <!-- 교대 시재 정산기 (연산 정상화) -->
+                    <!-- 교대 시재 정산기 -->
                     <div id="checkerTab-pos" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-0.5 text-[10px] space-y-1.5 pt-2">
                         <div class="grid grid-cols-2 gap-1.5">
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">50,000원</span>
-                                <input type="number" id="pos-count-50000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-50000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">10,000원</span>
-                                <input type="number" id="pos-count-10000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-10000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">5,000원</span>
-                                <input type="number" id="pos-count-5000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-5000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">1,000원</span>
-                                <input type="number" id="pos-count-1000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-1000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">500원</span>
-                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">100원</span>
-                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">50원</span>
-                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                             <div class="flex items-center justify-between border-b pb-0.5">
                                 <span class="font-bold text-slate-500">10원</span>
-                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black">
+                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
                             </div>
                         </div>
 
                         <div class="bg-slate-100 p-1.5 rounded-lg flex justify-between items-center mt-1 border border-slate-200">
                             <span class="font-bold text-slate-500">기본 준비금:</span>
-                            <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-16 bg-white border border-slate-200 rounded px-1 py-0.5 text-right font-black text-slate-800">
+                            <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-16 bg-white border border-slate-200 rounded px-1 py-0.5 text-right font-black text-slate-800" min="0" onkeypress="return event.charCode >= 48">
                         </div>
 
                         <div class="flex justify-between items-center px-1 font-black pt-0.5">
@@ -558,7 +558,7 @@
         </div>
 
         <!-- 📅 탭 Content: 월간 근무 달력 (아이패드 한 화면 맞춤 캘린더) -->
-        <div id="tabContent-calendar" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col">
+        <div id="tabContent-calendar" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 flex flex-col">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-1.5 flex-shrink-0">
                 <div>
                     <h3 class="font-black text-slate-900 text-xs flex items-center gap-1.5">
@@ -587,7 +587,7 @@
         </div>
 
         <!-- 탭 Content: 근무 일지 장부 -->
-        <div id="tabContent-shifts" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 sm:p-4 space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col">
+        <div id="tabContent-shifts" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 sm:p-4 space-y-3 flex-grow md:flex-1 md:min-h-0 flex flex-col">
             <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
                 <div>
                     <h3 class="font-black text-slate-900 text-xs flex items-center gap-1.5">
@@ -604,7 +604,7 @@
         </div>
 
         <!-- 탭 Content: 월말 급여 보고서 -->
-        <div id="tabContent-reports" class="hidden space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col">
+        <div id="tabContent-reports" class="hidden space-y-3 flex-grow md:flex-1 md:min-h-0 flex flex-col">
             <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 flex-shrink-0">
                 <h3 class="font-black text-slate-900 text-xs flex items-center gap-1.5 border-b pb-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sevenGreen"></i>
@@ -622,7 +622,7 @@
         </div>
 
         <!-- 탭 Content: 알바생 명부 및 구비 서류 -->
-        <div id="tabContent-workers" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden">
+        <div id="tabContent-workers" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0">
             
             <!-- 활성 스태프 목록 및 서류 현황판 -->
             <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 lg:col-span-7 flex flex-col md:h-full md:overflow-hidden order-1 lg:order-2">
@@ -652,11 +652,11 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">지정 시급 (원) *</label>
-                            <input type="number" id="newWorkerRate" value="10320" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                            <input type="number" id="newWorkerRate" value="10320" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen" min="0">
                         </div>
                         <div>
                             <label class="block text-sevenOrange font-bold mb-0.5">매달 고정 공제액</label>
-                            <input type="number" id="newWorkerDeduction" value="0" placeholder="예: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                            <input type="number" id="newWorkerDeduction" value="0" placeholder="예: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange" min="0">
                         </div>
                     </div>
 
@@ -721,7 +721,7 @@
         </div>
 
         <!-- 탭 Content: AI 스마트 컨설팅 -->
-        <div id="tabContent-aiConsult" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden">
+        <div id="tabContent-aiConsult" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0">
             <!-- 좌측 영역: 노동법 Audit & 인수인계서 리포트 -->
             <div class="lg:col-span-7 space-y-3 md:h-full md:overflow-y-auto custom-scrollbar pr-0.5">
                 <!-- 노동법 진단 분석기 -->
@@ -826,9 +826,9 @@
     </footer>
 
     <!-- 알림용 커스텀 토스트 메시지 -->
-    <div id="customToast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-3.5 py-2 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300">
+    <div id="customToast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-3.5 py-2 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold">
         <i data-lucide="check" class="w-3.5 h-3.5 text-yellow-300"></i>
-        <span id="customToastText" class="font-black"></span>
+        <span id="customToastText"></span>
     </div>
 
     <!-- 확인 창 대체를 위한 커스텀 모달 -->
@@ -862,13 +862,13 @@
                     </div>
                     <div>
                         <label class="block text-slate-500 font-bold mb-0.5">약정 시급(원)</label>
-                        <input type="number" id="editWorkerRate" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        <input type="number" id="editWorkerRate" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen" min="0">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sevenOrange font-bold mb-0.5">매달 고정 공제액</label>
-                        <input type="number" id="editWorkerDeduction" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                        <input type="number" id="editWorkerDeduction" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenOrange" min="0">
                     </div>
                     <div>
                         <label class="block text-rose-600 font-bold mb-0.5">보건증 만료 예정일</label>
@@ -1051,7 +1051,7 @@
             setInterval(updateDisposalTimers, 1000);
 
             // 브라우저 Notification 권한 사전 요청
-            if (Notification && Notification.permission === 'default') {
+            if (window.Notification && Notification.permission === 'default') {
                 Notification.requestPermission();
             }
         }
@@ -1648,7 +1648,7 @@
                                             <span class="font-bold">-₩${stats.deduction.toLocaleString()}</span>
                                         </div>
                                     ` : ''}
-                                    <div class="bg-emerald-50 p-1.5 rounded-[5px] text-[9px] text-sevenGreen mt-1 text-center">
+                                    <div class="bg-emerald-50 p-1.5 rounded-[5px] text-[9px] text-sevenGreen mt-1 text-center font-bold">
                                         ※ 터치하면 세부 정산 상세항목이 접힙니다.
                                     </div>
                                 </div>
@@ -1834,7 +1834,7 @@
             const activeStore = stores.find(s => s.id === currentStoreId);
             if (!activeStore) return;
 
-            const baseCash = Number(document.getElementById('pos-base-cash').value || 150000);
+            const baseCash = Math.max(0, Number(document.getElementById('pos-base-cash').value || 150000));
             const table = {
                 '50000': 50000,
                 '10000': 10000,
@@ -1848,7 +1848,7 @@
 
             let cashTotal = 0;
             Object.keys(table).forEach(k => {
-                const inputVal = Number(document.getElementById(`pos-count-${k}`).value || 0);
+                const inputVal = Math.max(0, Number(document.getElementById(`pos-count-${k}`).value || 0));
                 cashTotal += inputVal * table[k];
             });
 
@@ -1932,8 +1932,8 @@
                 }
 
                 worker.name = nextName;
-                worker.defaultHourlyRate = Number(document.getElementById('editWorkerRate').value || 10320);
-                worker.deduction = Number(document.getElementById('editWorkerDeduction').value || 0);
+                worker.defaultHourlyRate = Math.max(0, Number(document.getElementById('editWorkerRate').value || 10320));
+                worker.deduction = Math.max(0, Number(document.getElementById('editWorkerDeduction').value || 0));
                 worker.healthDate = document.getElementById('editWorkerHealthDate').value;
                 worker.phone = document.getElementById('editWorkerPhone').value.trim();
                 worker.address = document.getElementById('editWorkerAddress').value.trim();
@@ -1979,10 +1979,10 @@
             const toastText = document.getElementById('customToastText');
             toastText.innerText = text;
             
-            toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300";
+            toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
             
             setTimeout(() => {
-                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300";
+                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
             }, 2500);
         }
 
@@ -2088,8 +2088,8 @@
 
         function addWorker() {
             const name = document.getElementById('newWorkerName').value.trim();
-            const rate = Number(document.getElementById('newWorkerRate').value);
-            const deduction = Number(document.getElementById('newWorkerDeduction').value || 0);
+            const rate = Math.max(0, Number(document.getElementById('newWorkerRate').value));
+            const deduction = Math.max(0, Number(document.getElementById('newWorkerDeduction').value || 0));
             const phone = document.getElementById('newWorkerPhone').value.trim();
             const healthDate = document.getElementById('newWorkerHealthDate').value;
             const address = document.getElementById('newWorkerAddress').value.trim();
@@ -2169,7 +2169,7 @@
 
             const workerId = document.getElementById('form-worker').value;
             const date = document.getElementById('form-date').value;
-            const hourlyRate = Number(document.getElementById('form-hourlyRate').value);
+            const hourlyRate = Math.max(0, Number(document.getElementById('form-hourlyRate').value));
             const startTime = document.getElementById('form-startTime').value;
             const endTime = document.getElementById('form-endTime').value;
             const breakMinutes = Number(document.getElementById('form-breakMinutes').value || 0);
@@ -2469,14 +2469,15 @@
             try {
                 const response = await fetchGeminiEngine(systemPrompt, userPrompt);
                 handoverBox.innerHTML = `
-                    <div class="space-y-3 text-left">
+                    <div class="space-y-3 text-left animate-in fade-in">
                         <div class="flex justify-between items-center bg-purple-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg">
                             <span>대상: ${targetShift.workerName} (${targetShift.startTime}~${targetShift.endTime})</span>
-                            <button onclick="copyHandoverChecklist()" class="bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded text-[9px]">카톡전송 복사</button>
+                            <button onclick="copyHandoverChecklist()" class="bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded text-[9px] font-bold">카톡전송 복사</button>
                         </div>
                         <div id="handoverTextValue" class="prose max-w-none text-slate-700 whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-xl border border-purple-100 font-semibold font-sans">${response}</div>
                     </div>
                 `;
+                lucide.createIcons();
                 showToast("AI 인수인계 지침서가 생성되었습니다.");
             } catch (err) {
                 handoverBox.innerHTML = `<p class="text-slate-400 font-bold py-10 text-center">체크리스트 생성 실패. 다시 시도해 주세요.</p>`;
@@ -2484,14 +2485,28 @@
         }
 
         function copyHandoverChecklist() {
-            const text = document.getElementById('handoverTextValue').innerText;
+            const textElement = document.getElementById('handoverTextValue');
+            if (!textElement) return;
+            const text = textElement.innerText;
+            
             const temp = document.createElement('textarea');
             temp.value = text;
+            temp.style.position = 'fixed'; // 화면 밖 배치
+            temp.style.opacity = '0';
             document.body.appendChild(temp);
             temp.select();
-            document.execCommand('copy');
+            
+            try {
+                const success = document.execCommand('copy');
+                if (success) {
+                    showToast("클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
+                } else {
+                    showToast("복사에 실패했습니다.");
+                }
+            } catch (err) {
+                showToast("브라우저 보안 제약으로 복사가 금지되었습니다.");
+            }
             document.body.removeChild(temp);
-            showToast("클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
         }
 
         async function sendChatMessage(e) {
@@ -2536,7 +2551,8 @@
 
             try {
                 const response = await fetchGeminiEngine(systemPrompt, userMsg);
-                document.getElementById(loaderId).remove();
+                const loader = document.getElementById(loaderId);
+                if (loader) loader.remove();
                 
                 log.innerHTML += `
                     <div class="flex justify-start animate-in fade-in">
@@ -2549,7 +2565,8 @@
                     </div>
                 `;
             } catch (err) {
-                document.getElementById(loaderId).remove();
+                const loader = document.getElementById(loaderId);
+                if (loader) loader.remove();
                 log.innerHTML += `
                     <div class="flex justify-start">
                         <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-red-50 text-red-700 rounded-tl-none border border-red-100">
@@ -2592,6 +2609,8 @@
 
             const textarea = document.createElement('textarea');
             textarea.value = tsvText;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
             document.body.appendChild(textarea);
             textarea.select();
             
@@ -2801,7 +2820,7 @@
         }
 
         function triggerBrowserPushNotification(taskName) {
-            if (Notification && Notification.permission === 'granted') {
+            if (window.Notification && Notification.permission === 'granted') {
                 new Notification(`7-ELEVEN 폐기 안내`, {
                     body: `골든타임 10분 전입니다! 지금 바로 [${taskName}] 진열대를 확인하세요.`,
                     icon: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=128&q=80'
@@ -2809,7 +2828,7 @@
             }
         }
 
-        // 시재 정산기 연산 매핑 정상화
+        // 시재 정산기 연산 매핑 정상화 (음수 방지 적용)
         function calculatePosCash() {
             const table = {
                 '50000': 50000,
@@ -2824,25 +2843,38 @@
 
             let cashTotal = 0;
             Object.keys(table).forEach(k => {
-                const inputVal = Number(document.getElementById(`pos-count-${k}`).value || 0);
-                cashTotal += inputVal * table[k];
+                const inputEl = document.getElementById(`pos-count-${k}`);
+                if (inputEl) {
+                    let inputVal = Number(inputEl.value || 0);
+                    if (inputVal < 0) {
+                        inputVal = 0;
+                        inputEl.value = 0;
+                    }
+                    cashTotal += inputVal * table[k];
+                }
             });
 
-            document.getElementById('pos-total-cash').innerText = `현금총합: ₩${cashTotal.toLocaleString()}원`;
+            const totalDisplay = document.getElementById('pos-total-cash');
+            if (totalDisplay) {
+                totalDisplay.innerText = `현금총합: ₩${cashTotal.toLocaleString()}원`;
+            }
 
-            const baseCash = Number(document.getElementById('pos-base-cash').value || 150000);
+            const baseCashInput = document.getElementById('pos-base-cash');
+            const baseCash = baseCashInput ? Math.max(0, Number(baseCashInput.value || 150000)) : 150000;
             const discrepancy = cashTotal - baseCash;
             const diffDisplay = document.getElementById('pos-diff-cash');
 
-            if (discrepancy === 0) {
-                diffDisplay.innerText = `과부족: ₩0원 (정상)`;
-                diffDisplay.className = "text-sevenGreen font-black";
-            } else if (discrepancy > 0) {
-                diffDisplay.innerText = `과부족: +₩${discrepancy.toLocaleString()}원 (과잉)`;
-                diffDisplay.className = "text-blue-600 font-black";
-            } else {
-                diffDisplay.innerText = `과부족: -₩${Math.abs(discrepancy).toLocaleString()}원 (부족)`;
-                diffDisplay.className = "text-sevenRed font-black";
+            if (diffDisplay) {
+                if (discrepancy === 0) {
+                    diffDisplay.innerText = `과부족: ₩0원 (정상)`;
+                    diffDisplay.className = "text-sevenGreen font-black";
+                } else if (discrepancy > 0) {
+                    diffDisplay.innerText = `과부족: +₩${discrepancy.toLocaleString()}원 (과잉)`;
+                    diffDisplay.className = "text-blue-600 font-black";
+                } else {
+                    diffDisplay.innerText = `과부족: -₩${Math.abs(discrepancy).toLocaleString()}원 (부족)`;
+                    diffDisplay.className = "text-sevenRed font-black";
+                }
             }
         }
     </script>
