@@ -67,8 +67,6 @@
             transition: max-height 0.3s ease-out, padding 0.3s ease;
         }
         @media print {
-            body > *:not(#invoice-print-wrapper) { display: none !important; }
-            #invoice-print-wrapper { display: block !important; }
             .no-print { display: none !important; }
         }
     </style>
@@ -1505,7 +1503,20 @@
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
 
         // --- 3. 최초 실행 등록 ---
-        window.onload = function() {
+        // 데이터 영속성 통합 저장 함수
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('seven_stores_live_v4', JSON.stringify(stores));
+                localStorage.setItem('seven_activeStore_id_v4', currentStoreId);
+                localStorage.setItem('seven_workers_live_v4', JSON.stringify(workersMap));
+                localStorage.setItem('seven_shifts_live_v4', JSON.stringify(shiftsMap));
+                localStorage.setItem('seven_selected_month_live_v4', selectedMonth);
+            } catch(e) {
+                console.warn('localStorage 저장 실패:', e);
+            }
+        }
+
+                window.onload = function() {
             document.getElementById('monthSelector').value = selectedMonth;
             
             if (!stores.some(st => st.id === currentStoreId)) {
@@ -1519,6 +1530,8 @@
             updateApiKeyStatusButton();
             renderPresetButtons();
             renderEverything();
+            // 초기 아이콘 렌더링 보장
+            if (typeof lucide !== 'undefined') lucide.createIcons();
 
             // 실시간 폐기 타이머 가동
             updateDisposalTimers();
@@ -2121,9 +2134,22 @@
             s.totalHours = totalHours;
             s.nightHours = nightHours;
 
+            // 현재 열린 아코디언 workerId 목록 저장 후 재렌더 후 복원
+            const openAccordions = [...document.querySelectorAll('[id^="shift-content-"]')]
+                .filter(el => !el.classList.contains('hidden'))
+                .map(el => el.id.replace('shift-content-', ''));
+
             showToast(`[${s.workerName}] 근무일지가 수정되었습니다.`);
             closeShiftEditModal();
             renderEverything();
+
+            // 아코디언 상태 복원
+            openAccordions.forEach(wid => {
+                const box  = document.getElementById(`shift-content-${wid}`);
+                const icon = document.getElementById(`shift-content-icon-${wid}`);
+                if (box)  { box.classList.remove('hidden'); }
+                if (icon) { icon.classList.add('rotate-180'); }
+            });
         }
 
         function closeQuickShiftModal() {
@@ -2179,7 +2205,19 @@
             const sel = document.getElementById('inv-worker-select');
             if (!sel) return;
             const workers = workersMap[currentStoreId] || [];
-            sel.innerHTML = workers.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+            // 임시 스태프도 포함
+            const shiftsList = shiftsMap[currentStoreId] || [];
+            const monthShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
+            const tmpWorkers = [];
+            const seen = new Set();
+            monthShifts.forEach(s => {
+                if (s.workerId.startsWith('tmp_') && !seen.has(s.workerId)) {
+                    seen.add(s.workerId);
+                    tmpWorkers.push({ id: s.workerId, name: s.workerName, defaultHourlyRate: s.hourlyRate });
+                }
+            });
+            const allW = [...workers, ...tmpWorkers];
+            sel.innerHTML = allW.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
             // 오늘 날짜 기본값
             const today = new Date().toISOString().split('T')[0];
             const issueEl = document.getElementById('inv-issue-date');
@@ -2201,7 +2239,7 @@
             if (w) {
                 document.getElementById('inv-hourly-rate').value = w.defaultHourlyRate;
             }
-            recalcInvoice();
+            renderInvoice();
         }
 
         function addInvoiceRow(label, days, hours, rate) {
@@ -2269,10 +2307,7 @@
             showToast(`${m[1]}월 합산: ${totalDays}일 출근 / ${totalHours}H / 시급 ₩${dominantRate.toLocaleString()}`);
         }
 
-        function recalcInvoice() {
-            // 행별 rate를 inv-hourly-rate 변경 시 동기화하지 않음 (개별 설정 유지)
-            renderInvoice();
-        }
+
 
         function renderInvoice() {
             const tbody = document.getElementById('invoice-rows-body');
@@ -2371,12 +2406,7 @@
             document.getElementById('inv-grand-total').innerText   = `₩${totalPay.toLocaleString()}`;
         }
 
-        function updateInvoiceRow(id, field, value) {
-            const r = invoiceRows.find(r => r.id === id);
-            if (!r) return;
-            r[field] = (field === 'label') ? value : Number(value || 0);
-            renderInvoice();
-        }
+
 
         function printInvoice() {
             // 현재 포커스된 input 값 먼저 동기화
@@ -2577,25 +2607,8 @@
             const totalHours = invoiceRows.reduce((s,r) => s+Number(r.hours||0), 0);
             text += `합계: ${totalDays}일 / ${totalHours}H / 최종 청구금액 ₩${totalPay.toLocaleString()}`;
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => showToast("청구서 텍스트가 복사되었습니다."));
-            } else {
-                const ta = document.createElement('textarea');
-                ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
-                document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); showToast("청구서 텍스트가 복사되었습니다."); } catch(e) {}
-                document.body.removeChild(ta);
-            }
+            copyToClipboard(text, "청구서 텍스트가 복사되었습니다.");
         }
-
-        // 보고서 탭 진입 시 청구서 스태프 목록 동기화
-        const _origSwitchTab = switchTab;
-        switchTab = function(tabId) {
-            _origSwitchTab(tabId);
-            if (tabId === 'reports') {
-                initInvoiceWorkerSelect();
-            }
-        };
 
         // ===== 사용자 등록형 프리셋 시스템 =====
         const DEFAULT_PRESETS = [
@@ -2863,20 +2876,26 @@
             const btnNight = document.getElementById('toggleNightAllowance');
             const btnHoliday = document.getElementById('toggleHolidayAllowance');
 
-            if (activeStore.optionNight) {
-                btnNight.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                btnNight.querySelector('span').className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
-            } else {
-                btnNight.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                btnNight.querySelector('span').className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+            if (btnNight) {
+                const spanN = btnNight.querySelector('span');
+                if (activeStore.optionNight) {
+                    btnNight.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (spanN) spanN.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
+                } else {
+                    btnNight.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (spanN) spanN.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+                }
             }
 
-            if (activeStore.optionHoliday) {
-                btnHoliday.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                btnHoliday.querySelector('span').className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
-            } else {
-                btnHoliday.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                btnHoliday.querySelector('span').className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+            if (btnHoliday) {
+                const spanH = btnHoliday.querySelector('span');
+                if (activeStore.optionHoliday) {
+                    btnHoliday.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (spanH) spanH.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
+                } else {
+                    btnHoliday.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (spanH) spanH.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+                }
             }
 
             const filteredShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
@@ -3028,7 +3047,9 @@
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const tempBadge = w._isTemp ? `<span class="text-[8px] bg-purple-100 text-purple-600 px-1 py-0.5 rounded font-black">임시</span>` : '';
 
+                    // ★ 매 스태프마다 초기화 (선언 누락 버그 수정)
                     let workerShiftsRows = '';
+
                     if (workerShifts.length === 0) {
                         workerShiftsRows = `
                             <tr>
@@ -3037,11 +3058,17 @@
                         `;
                     } else {
                         workerShifts.forEach(s => {
+                            const advBadge = s.advance > 0
+                                ? `<span class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.2 rounded font-black ml-0.5">가불 ₩${s.advance.toLocaleString()}</span>`
+                                : '';
                             workerShiftsRows += `
-                                <tr class="hover:bg-slate-50 text-[11px] border-b border-slate-100">
-                                    <td class="px-3 py-2 font-bold text-slate-950 flex items-center gap-0.5">
-                                        ${s.isSubstitute ? '<span class="text-[8px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
-                                        <span>${s.date}</span>
+                                <tr class="hover:bg-sevenGreen/5 text-[11px] border-b border-slate-100 transition-colors group">
+                                    <td class="px-3 py-2 font-bold text-slate-950">
+                                        <div class="flex items-center gap-0.5 flex-wrap">
+                                            ${s.isSubstitute ? '<span class="text-[8px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
+                                            <span>${s.date}</span>
+                                            ${advBadge}
+                                        </div>
                                     </td>
                                     <td class="px-3 py-2 font-semibold text-slate-700">${s.startTime}</td>
                                     <td class="px-3 py-2 font-semibold text-slate-700">${s.endTime}</td>
@@ -3051,15 +3078,20 @@
                                     <td class="px-3 py-2 text-right text-amber-600 font-black">${s.nightHours > 0 ? `${s.nightHours}H` : '-'}</td>
                                     <td class="px-3 py-2 text-right font-black text-sevenGreen">₩${getShiftPayroll(s, activeStore.optionNight).toLocaleString()}</td>
                                     <td class="px-3 py-2 text-slate-400 max-w-[120px] truncate" title="${s.memo || ''}">${s.memo || '-'}</td>
-                                    <td class="px-3 py-2 text-center">
-                                        <button onclick="event.stopPropagation(); triggerAiHandover('${s.id}')" class="bg-purple-100 text-purple-700 hover:bg-purple-200 text-[9px] font-black px-1.5 py-1 rounded-md inline-flex items-center gap-0.5">
+                                    <td class="px-3 py-2 text-center" onclick="event.stopPropagation()">
+                                        <button onclick="triggerAiHandover('${s.id}')" class="bg-purple-100 text-purple-700 hover:bg-purple-200 text-[9px] font-black px-1.5 py-1 rounded-md inline-flex items-center gap-0.5">
                                             <i data-lucide="sparkles" class="w-2.5 h-2.5 text-purple-600 animate-pulse"></i>
                                             <span>Checklist</span>
                                         </button>
                                     </td>
-                                    <td class="px-3 py-2 text-center">
-                                        <button onclick="event.stopPropagation(); deleteShift('${s.id}')" class="text-slate-400 hover:text-sevenRed transition-colors p-1">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    <td class="px-3 py-2 text-center whitespace-nowrap" onclick="event.stopPropagation()">
+                                        <button onclick="openShiftEditModal('${s.id}')"
+                                            class="inline-flex items-center gap-0.5 bg-sevenGreen/10 hover:bg-sevenGreen text-sevenGreen hover:text-white transition-all px-2 py-1 rounded-md font-black text-[9px] mr-0.5">
+                                            <i data-lucide="pencil" class="w-3 h-3"></i> 수정
+                                        </button>
+                                        <button onclick="deleteShift('${s.id}')"
+                                            class="inline-flex items-center gap-0.5 bg-rose-50 hover:bg-sevenRed text-sevenRed hover:text-white transition-all px-2 py-1 rounded-md font-black text-[9px]">
+                                            <i data-lucide="trash-2" class="w-3 h-3"></i> 삭제
                                         </button>
                                     </td>
                                 </tr>
@@ -3105,7 +3137,7 @@
                                             <th class="px-3 py-1 text-right font-bold">급여</th>
                                             <th class="px-3 py-1 font-bold">메모</th>
                                             <th class="px-3 py-1 text-center font-bold">인수인계</th>
-                                            <th class="px-3 py-1 text-center font-bold">작동</th>
+                                            <th class="px-3 py-1 text-center font-bold text-sevenGreen">수정/삭제</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 text-slate-600 font-semibold">
@@ -3849,14 +3881,29 @@
         }
 
         function deleteShift(id) {
+            // 삭제할 근무의 workerId 미리 저장 (해당 아코디언 복원용)
+            const targetShift = (shiftsMap[currentStoreId] || []).find(s => s.id === id);
             triggerConfirm(
                 "📋 교대 일지 삭제",
                 "선택한 아르바이트 출근 장부 내용을 대장에서 영구 배제하시겠습니까?",
                 () => {
+                    // 현재 열린 아코디언 저장
+                    const openAccordions = [...document.querySelectorAll('[id^="shift-content-"]')]
+                        .filter(el => !el.classList.contains('hidden'))
+                        .map(el => el.id.replace('shift-content-', ''));
+
                     const currentShifts = shiftsMap[currentStoreId] || [];
                     shiftsMap[currentStoreId] = currentShifts.filter(s => s.id !== id);
                     showToast("기록 삭제가 완료되었습니다.");
                     renderEverything();
+
+                    // 아코디언 복원 (삭제된 스태프의 근무가 0건이면 아코디언 자체가 사라지므로 제외)
+                    openAccordions.forEach(wid => {
+                        const box  = document.getElementById(`shift-content-${wid}`);
+                        const icon = document.getElementById(`shift-content-icon-${wid}`);
+                        if (box)  { box.classList.remove('hidden'); }
+                        if (icon) { icon.classList.add('rotate-180'); }
+                    });
                 }
             );
         }
@@ -3865,6 +3912,11 @@
         function switchTab(tabId) {
             document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50";
             document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
+
+            // 보고서 탭 진입 시 청구서 스태프 목록 동기화
+            if (tabId === 'reports') {
+                setTimeout(() => initInvoiceWorkerSelect(), 50);
+            }
 
             if (tabId === 'workers' || tabId === 'aiConsult') {
                 document.getElementById(`tabContent-${tabId}`).className = "grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden animate-in fade-in duration-200";
@@ -4128,26 +4180,7 @@
         function copyHandoverChecklist() {
             const textElement = document.getElementById('handoverTextValue');
             if (!textElement) return;
-            const text = textElement.innerText;
-            
-            const temp = document.createElement('textarea');
-            temp.value = text;
-            temp.style.position = 'fixed'; // 화면 밖 배치
-            temp.style.opacity = '0';
-            document.body.appendChild(temp);
-            temp.select();
-            
-            try {
-                const success = document.execCommand('copy');
-                if (success) {
-                    showToast("클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
-                } else {
-                    showToast("복사에 실패했습니다.");
-                }
-            } catch (err) {
-                showToast("브라우저 보안 제약으로 복사가 금지되었습니다.");
-            }
-            document.body.removeChild(temp);
+            copyToClipboard(textElement.innerText, "클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
         }
 
         async function sendChatMessage(e) {
@@ -4248,24 +4281,7 @@
 
             const tsvText = [headers.join('\t'), ...rows.map(r => r.join('\t'))].join('\n');
 
-            const textarea = document.createElement('textarea');
-            textarea.value = tsvText;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                const isCopied = document.execCommand('copy');
-                if (isCopied) {
-                    showToast(`${selectedMonth.split('-')[1]}월분 시트 클립보드 복사 성공!`);
-                } else {
-                    showToast("복사 처리에 실패했습니다.");
-                }
-            } catch (err) {
-                showToast("클립보드 액세스가 제한되어 있습니다.");
-            }
-            document.body.removeChild(textarea);
+            copyToClipboard(tsvText, `${selectedMonth.split('-')[1]}월분 시트 클립보드 복사 성공!`);
         }
 
         function exportToCSV() {
@@ -4456,7 +4472,7 @@
                 oscillator.start();
                 setTimeout(() => { oscillator.stop(); }, 200);
             } catch (err) {
-                console.log("웹오디오 컨텍스트 블로킹 감지");
+                // 웹오디오 컨텍스트 차단됨
             }
         }
 
@@ -4467,6 +4483,36 @@
                     icon: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=128&q=80'
                 });
             }
+        }
+
+
+        // 클립보드 복사 유틸 (iOS/Android 호환)
+        function copyToClipboard(text, successMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showToast(successMsg || '복사 완료!'))
+                    .catch(() => fallbackCopy(text, successMsg));
+            } else {
+                fallbackCopy(text, successMsg);
+            }
+        }
+        function fallbackCopy(text, successMsg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '-9999px';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg || '복사 완료!');
+            } catch(e) {
+                showToast('클립보드 복사에 실패했습니다.');
+            }
+            document.body.removeChild(ta);
         }
 
         // 시재 정산기 연산 매핑 정상화 (음수 방지 적용)
