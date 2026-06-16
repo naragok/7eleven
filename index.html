@@ -95,11 +95,6 @@
 
             <!-- 실시간 매장/정산월/API 설정 제어부 -->
             <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto justify-end">
-                <!-- API 키 설정기 -->
-                <button onclick="openApiKeyModal()" class="flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[10px] px-2 py-1.5 rounded-lg border border-amber-200 transition-all">
-                    <i data-lucide="key" class="w-3 h-3 text-sevenOrange"></i>
-                    <span id="apiKeyStatusLabel">AI API 키 설정</span>
-                </button>
 
                 <!-- 월별 정산 선택기 -->
                 <div class="flex items-center space-x-1 bg-sevenGreen/5 rounded-lg px-2 py-1 border border-sevenGreen/10">
@@ -148,10 +143,6 @@
                         <i data-lucide="users" class="w-3 h-3"></i>
                         <span>알바생 명부 & 서류</span>
                     </button>
-                    <button id="tab-aiConsult" onclick="switchTab('aiConsult')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50">
-                        <i data-lucide="sparkles" class="w-3 h-3 text-purple-600 animate-pulse"></i>
-                        <span class="text-purple-700">AI 스마트 컨설팅</span>
-                    </button>
                 </nav>
             </div>
         </div>
@@ -167,6 +158,17 @@
             <div class="flex-grow space-y-0.5">
                 <h4 class="font-black text-rose-950">위생법 무단 미갱신 과태료 경보</h4>
                 <p id="healthCardWarningList" class="text-rose-700 font-semibold"></p>
+            </div>
+        </div>
+
+        <!-- 근무 시간 중복 경고 배너 -->
+        <div id="overlapWarningBanner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex items-start space-x-2 text-[11px] flex-shrink-0 animate-in fade-in duration-200">
+            <div class="p-1 bg-amber-400 text-white rounded-lg flex-shrink-0">
+                <i data-lucide="triangle-alert" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-grow space-y-0.5">
+                <h4 class="font-black text-amber-900">⚠️ 근무 시간 중복 감지</h4>
+                <p id="overlapWarningList" class="text-amber-800 font-semibold leading-relaxed"></p>
             </div>
         </div>
 
@@ -313,24 +315,6 @@
                     </div>
                     <textarea id="storeNoticeTextarea" oninput="saveStoreNotice(this.value)" placeholder="예: 시방 및 금고 시재 마감 철저, 물품 배송 시 삼각김밥 선입선출 검토 바랍니다." class="w-full text-[9px] text-slate-700 font-medium bg-transparent border-0 focus:ring-0 focus:outline-none resize-none h-6 mt-0.5 leading-tight" rows="1"></textarea>
                 </div>
-            </div>
-
-            <!-- AI 퀵 리링크 배너 (아이패드 맞춤 콤팩트 패널) -->
-            <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-emerald-900 text-white rounded-xl p-3 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 relative overflow-hidden flex-shrink-0">
-                <div class="absolute right-0 top-0 opacity-10 translate-x-12 translate-y-2 select-none pointer-events-none">
-                    <i data-lucide="sparkles" class="w-24 h-24 text-yellow-400"></i>
-                </div>
-                <div class="space-y-0.5 z-10">
-                    <span class="inline-flex items-center gap-1 text-[7px] bg-yellow-400 text-slate-900 px-1.5 py-0.2 rounded-full font-black">
-                        <i data-lucide="sparkles" class="w-2 h-2"></i> GEMINI AI
-                    </span>
-                    <h3 class="font-extrabold text-[11px] text-slate-100">이번 달 노무 리스크를 단 1초만에 AI 검증 받으세요.</h3>
-                    <p class="text-[9px] text-emerald-200/90 font-medium">최저시급 미만 여부, 법정 주휴수당 해당 여부, 야근 가산 연산까지 모두 교차 진단합니다.</p>
-                </div>
-                <button onclick="switchTab('aiConsult'); startAiLaborAudit();" class="z-10 bg-yellow-400 hover:bg-yellow-500 text-slate-950 font-black text-[9px] px-2.5 py-1.5 rounded-lg shadow-xs flex items-center space-x-1 transition-transform active:scale-95">
-                    <i data-lucide="shield-alert" class="w-3 h-3"></i>
-                    <span>AI 종합 노동 감사 시작</span>
-                </button>
             </div>
 
             <!-- 아이패드 한 화면 극대화 3단 그리드 -->
@@ -994,99 +978,6 @@
         </div>
 
         <!-- 탭 Content: AI 스마트 컨설팅 -->
-        <div id="tabContent-aiConsult" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0">
-            <!-- 좌측 영역: 노동법 Audit & 인수인계서 리포트 -->
-            <div class="lg:col-span-7 space-y-3 md:h-full md:overflow-y-auto custom-scrollbar pr-0.5">
-                <!-- 노동법 진단 분석기 -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/80 space-y-2">
-                    <div class="flex justify-between items-center border-b pb-1.5">
-                        <div class="flex items-center space-x-2">
-                            <div class="p-1 bg-emerald-50 text-sevenGreen rounded-lg">
-                                <i data-lucide="shield-check" class="w-4 h-4 pulse-light"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-slate-950 text-xs">Gemini AI 노동법 정밀 정산 진단</h3>
-                                <p id="ai-auditMonthText" class="text-[8px] text-slate-400">0월말 전산 마감분 지점 분석 보고서</p>
-                            </div>
-                        </div>
-                        <button onclick="startAiLaborAudit()" id="ai-auditBtn" class="bg-sevenGreen hover:bg-sevenGreen/90 text-white font-bold text-[9px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1">
-                            <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
-                            <span>실시간 분석 요청</span>
-                        </button>
-                    </div>
-
-                    <div id="ai-auditResultBox" class="min-h-32 max-h-48 overflow-y-auto bg-slate-50 rounded-lg p-2.5 border border-slate-200 custom-scrollbar text-[10px] leading-relaxed font-semibold font-sans">
-                        <!-- AI 진단 텍스트 출력창 -->
-                        <div class="flex flex-col items-center justify-center py-6 text-slate-400 text-center space-y-1">
-                            <i data-lucide="shield-alert" class="w-6 h-6 text-slate-300"></i>
-                            <div>
-                                <p class="text-slate-500 font-bold">AI 노동법 감사 진단 보고서가 비어 있습니다.</p>
-                                <p class="text-[8px] text-slate-400 mt-0.5">실시간 분석 요청을 누르면 초거대 AI가 법률 검토를 시작합니다.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 근무지 인수인계 Checklist 자동 발출기 -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/80 space-y-2">
-                    <div class="flex items-center space-x-2 border-b pb-1.5">
-                        <div class="p-1 bg-purple-50 text-purple-700 rounded-lg">
-                            <i data-lucide="check-square" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-slate-950 text-xs">AI 시간대별 퇴근 전 인수인계 지침서</h3>
-                            <p class="text-[8px] text-slate-400">편의점 매장 실무 특화 자동 체크리스트</p>
-                        </div>
-                    </div>
-
-                    <div id="ai-handoverResultBox" class="min-h-24 overflow-y-auto bg-purple-50/30 rounded-lg p-2.5 border border-purple-100/80 text-[10px]">
-                        <div class="flex flex-col items-center justify-center py-4 text-slate-400 text-center space-y-1">
-                            <i data-lucide="list-todo" class="w-6 h-6 text-slate-300"></i>
-                            <div>
-                                <p class="text-slate-500 font-bold">인수인계 가이드라인이 생성되지 않았습니다.</p>
-                                <p class="text-[8px] text-slate-400 mt-0.5">[근무 일지 장부] 탭에서 알바생 교대 우측의 'Checklist'를 터치하시면 작동합니다.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 우측 영역: 라이브 AI 세븐봇 편의점 노무 자문 챗창 -->
-            <div class="lg:col-span-5 flex flex-col md:h-full bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-sevenGreen to-emerald-900 p-2.5 text-white flex justify-between items-center flex-shrink-0">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                            <i data-lucide="message-square" class="w-3.5 h-3.5 text-yellow-300 animate-bounce"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-[10px]">AI 점장 컨설턴트 '세븐봇'</h3>
-                            <p class="text-[7px] text-emerald-200">우리 매장 급여 데이터를 이해하는 노무 도우미</p>
-                        </div>
-                    </div>
-                    <span class="text-[7px] bg-emerald-800 border border-emerald-700 text-emerald-100 px-1.5 py-0.5 rounded-full font-bold">Gemini Live</span>
-                </div>
-
-                <!-- 메시지 로그 -->
-                <div id="chat-messagesLog" class="flex-1 p-2.5 overflow-y-auto space-y-2 bg-slate-50 custom-scrollbar text-[10px] font-semibold">
-                    <div class="flex justify-start">
-                        <div class="max-w-[85%] rounded-xl px-2.5 py-1.5 bg-white text-slate-800 rounded-tl-none border border-slate-200 shadow-xs">
-                            <div class="text-[7px] font-black text-sevenOrange mb-0.5 tracking-wider uppercase flex items-center gap-0.5">
-                                <i data-lucide="sparkles" class="w-1.5 h-1.5"></i> SEVEN BOT
-                            </div>
-                            <p class="leading-relaxed">반갑습니다 점주님! AI 컨설턴트 세븐봇입니다. 궁금하신 노무 법률이나 당사 전산 내역을 간편하게 물어봐 주세요.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 전송 폼 -->
-                <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-1.5 bg-white border-t border-slate-100 flex gap-1.5 flex-shrink-0">
-                    <input type="text" id="chatInput" placeholder="예: 보건증 누락 스태프가 누구야?" required class="flex-1 bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                    <button type="submit" class="bg-sevenGreen hover:bg-sevenGreen/95 text-white p-1.5 rounded-lg transition-all">
-                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
 
     </main>
 
@@ -1094,7 +985,7 @@
     <footer class="bg-white border-t border-slate-200 py-2.5 text-center text-[8px] text-slate-400 flex-shrink-0">
         <div class="max-w-7xl mx-auto px-4 space-y-0.5">
             <p class="font-extrabold text-slate-500">7-ELEVEN 파트타임 시스템</p>
-            <p>본 장비는 LocalStorage 데이터 캐싱 기술과 Gemini 초거대 AI 노무 법률 감사 모델을 통합 구동합니다.</p>
+            <p>본 장비는 LocalStorage 데이터 캐싱 기술을 통해 오프라인에서도 데이터를 안전하게 보관합니다.</p>
         </div>
     </footer>
 
@@ -1198,31 +1089,6 @@
     </div>
 
     <!-- API 키 설정 모달 -->
-    <div id="apiKeyModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
-            <div class="flex items-center space-x-1.5 text-amber-600 border-b pb-1.5">
-                <i data-lucide="key" class="w-4 h-4 flex-shrink-0"></i>
-                <h3 class="font-black text-slate-900">Gemini AI API 설정</h3>
-            </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed font-semibold">
-                개인 Google Gemini API Key를 등록하시면 실시간 노무진단 분석 및 스마트 봇 상담을 고속 연계 사용하실 수 있습니다. 
-                <span class="text-sevenGreen font-black">API 키가 없어도 시뮬레이션 감사는 100% 정상 작동합니다!</span>
-            </p>
-            <div class="space-y-1.5">
-                <div>
-                    <label class="block text-slate-500 font-bold mb-0.5">API Key 입력</label>
-                    <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                </div>
-            </div>
-            <div class="flex justify-between items-center pt-2 border-t">
-                <a href="https://aistudio.google.com/" target="_blank" class="text-[9px] text-blue-600 hover:underline font-black">무료 API Key 발급 &rarr;</a>
-                <div class="flex space-x-1.5">
-                    <button onclick="closeApiKeyModal()" class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-bold hover:bg-slate-200">닫기</button>
-                    <button onclick="saveApiKey()" class="bg-sevenGreen text-white px-2.5 py-1 rounded-lg font-bold hover:bg-emerald-700">저장</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- 무급 휴게시간 확인을 위한 임시 모달 -->
     <div id="breakTimeAlertModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
@@ -1479,7 +1345,6 @@
             document.getElementById('storeNoticeTextarea').value = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
             initStoreSelectorDOM();
-            updateApiKeyStatusButton();
             renderPresetButtons();
             renderEverything();
             // 초기 아이콘 렌더링 보장
@@ -1507,45 +1372,7 @@
         }
 
         // --- API 키 모달 관리 장치 ---
-        function openApiKeyModal() {
-            const savedKey = localStorage.getItem('gemini_api_key') || '';
-            document.getElementById('geminiApiKeyInput').value = savedKey;
-            document.getElementById('apiKeyModal').classList.remove('hidden');
-            document.getElementById('apiKeyModal').classList.add('flex');
-        }
-
-        function closeApiKeyModal() {
-            document.getElementById('apiKeyModal').classList.add('hidden');
-            document.getElementById('apiKeyModal').classList.remove('flex');
-        }
-
         // --- API 키 저장 장치 ---
-        function saveApiKey() {
-            const key = document.getElementById('geminiApiKeyInput').value.trim();
-            if (key) {
-                localStorage.setItem('gemini_api_key', key);
-                showToast("개인 Gemini API 키가 활성화되었습니다!");
-            } else {
-                localStorage.removeItem('gemini_api_key');
-                showToast("무료 모의 시뮬레이션 감사 모드로 변경되었습니다.");
-            }
-            closeApiKeyModal();
-            updateApiKeyStatusButton();
-            startAiLaborAudit();
-        }
-
-        function updateApiKeyStatusButton() {
-            const hasKey = localStorage.getItem('gemini_api_key');
-            const label = document.getElementById('apiKeyStatusLabel');
-            if (hasKey) {
-                label.innerText = "API 키: 설정 완료 (무제한 AI)";
-                label.className = "text-emerald-800 font-extrabold text-[10px]";
-            } else {
-                label.innerText = "AI API 키 설정 (모의 실행)";
-                label.className = "text-amber-800 font-semibold text-[10px]";
-            }
-        }
-
         function initStoreSelectorDOM() {
             const selector = document.getElementById('storeSelector');
             selector.innerHTML = '';
@@ -1656,7 +1483,39 @@
             return newStartMin < existEnd && existStart < newEndMin;
         }
 
-        // --- 주휴수당 달력 주차별(Calendar Week) 정밀 연산 엔진 ---
+        // --- 전체 데이터 중복 근무 감지 ---
+        function detectOverlappingShifts(storeId) {
+            const shifts = shiftsMap[storeId] || [];
+            const overlaps = []; // { workerId, workerName, date, a, b }
+
+            // 같은 스태프 × 같은 날짜 조합만 비교
+            const byWorkerDay = {};
+            shifts.forEach(s => {
+                const key = `${s.workerId}__${s.date}`;
+                if (!byWorkerDay[key]) byWorkerDay[key] = [];
+                byWorkerDay[key].push(s);
+            });
+
+            Object.values(byWorkerDay).forEach(group => {
+                if (group.length < 2) return;
+                for (let i = 0; i < group.length; i++) {
+                    for (let j = i + 1; j < group.length; j++) {
+                        if (isShiftTimeOverlapping(group[i], group[j].startTime, group[j].endTime)) {
+                            overlaps.push({
+                                workerId:   group[i].workerId,
+                                workerName: group[i].workerName,
+                                date:       group[i].date,
+                                a:          group[i],
+                                b:          group[j],
+                            });
+                        }
+                    }
+                }
+            });
+            return overlaps;
+        }
+
+
         function getWeeklyHolidayAllowance(monthlyShifts, optionHoliday) {
             if (!optionHoliday || monthlyShifts.length === 0) return 0;
 
@@ -2320,9 +2179,6 @@
             lucide.createIcons();
         }
 
-
-
-
         function printInvoice() {
             // 현재 포커스된 input 값 먼저 동기화
             invoiceRows.forEach(r => {
@@ -2893,6 +2749,23 @@
                 banner.classList.add('hidden');
             }
 
+            // ── 근무 시간 중복 감지 배너 ──
+            const overlapBanner = document.getElementById('overlapWarningBanner');
+            const overlapList   = document.getElementById('overlapWarningList');
+            if (overlapBanner && overlapList) {
+                const overlaps = detectOverlappingShifts(currentStoreId);
+                // 이번 달 것만 필터
+                const monthOverlaps = overlaps.filter(o => o.date.startsWith(selectedMonth));
+                if (monthOverlaps.length > 0) {
+                    overlapBanner.classList.remove('hidden');
+                    overlapList.innerHTML = monthOverlaps.map(o =>
+                        `• <b>${o.workerName}</b> · ${o.date} · ${o.a.startTime}~${o.a.endTime} ↔ ${o.b.startTime}~${o.b.endTime}`
+                    ).join('<br>');
+                } else {
+                    overlapBanner.classList.add('hidden');
+                }
+            }
+
             document.getElementById('dashboard-workerCount').innerText = `${allRenderWorkers.length}명`;
             document.getElementById('dashboard-totalHours').innerText = `${totalHoursSum.toFixed(1)}시간`;
             document.getElementById('dashboard-totalPayroll').innerText = `₩${totalPayrollSum.toLocaleString()}원`;
@@ -2926,7 +2799,6 @@
                     }
                 }
             }
-
 
             const recentTableBody = document.getElementById('dashboard-recentShiftsTable');
             recentTableBody.innerHTML = '';
@@ -2962,6 +2834,13 @@
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const tempBadge = w._isTemp ? `<span class="text-[8px] bg-purple-100 text-purple-600 px-1 py-0.5 rounded font-black">임시</span>` : '';
 
+                    // 이 스태프의 이번 달 중복 근무 건수
+                    const workerOverlaps = detectOverlappingShifts(currentStoreId)
+                        .filter(o => o.workerId === w.id && o.date.startsWith(selectedMonth));
+                    const overlapBadge = workerOverlaps.length > 0
+                        ? `<span class="text-[8px] bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded font-black flex items-center gap-0.5"><i data-lucide="triangle-alert" class="w-2.5 h-2.5"></i> 중복 ${workerOverlaps.length}건</span>`
+                        : '';
+
                     // ★ 매 스태프마다 초기화 (선언 누락 버그 수정)
                     let workerShiftsRows = '';
 
@@ -2976,13 +2855,22 @@
                             const advBadge = s.advance > 0
                                 ? `<span class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.2 rounded font-black ml-0.5">가불 ₩${s.advance.toLocaleString()}</span>`
                                 : '';
+                            // 이 근무가 중복 목록에 있으면 행 강조
+                            const isOverlapped = workerOverlaps.some(o => o.a.id === s.id || o.b.id === s.id);
+                            const rowClass = isOverlapped
+                                ? 'bg-amber-50 border-l-2 border-amber-400 text-[11px] border-b border-amber-100 transition-colors group'
+                                : 'hover:bg-sevenGreen/5 text-[11px] border-b border-slate-100 transition-colors group';
+                            const overlapIcon = isOverlapped
+                                ? `<span class="text-[8px] bg-amber-400 text-white px-1 py-0.2 rounded font-black ml-0.5 flex-shrink-0" title="시간 중복">⚠</span>`
+                                : '';
                             workerShiftsRows += `
-                                <tr class="hover:bg-sevenGreen/5 text-[11px] border-b border-slate-100 transition-colors group">
+                                <tr class="${rowClass}">
                                     <td class="px-3 py-2 font-bold text-slate-950">
                                         <div class="flex items-center gap-0.5 flex-wrap">
                                             ${s.isSubstitute ? '<span class="text-[8px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
                                             <span>${s.date}</span>
                                             ${advBadge}
+                                            ${overlapIcon}
                                         </div>
                                     </td>
                                     <td class="px-3 py-2 font-semibold text-slate-700">${s.startTime}</td>
@@ -2994,10 +2882,6 @@
                                     <td class="px-3 py-2 text-right font-black text-sevenGreen">₩${getShiftPayroll(s, activeStore.optionNight).toLocaleString()}</td>
                                     <td class="px-3 py-2 text-slate-400 max-w-[120px] truncate" title="${s.memo || ''}">${s.memo || '-'}</td>
                                     <td class="px-3 py-2 text-center" onclick="event.stopPropagation()">
-                                        <button onclick="triggerAiHandover('${s.id}')" class="bg-purple-100 text-purple-700 hover:bg-purple-200 text-[9px] font-black px-1.5 py-1 rounded-md inline-flex items-center gap-0.5">
-                                            <i data-lucide="sparkles" class="w-2.5 h-2.5 text-purple-600 animate-pulse"></i>
-                                            <span>Checklist</span>
-                                        </button>
                                     </td>
                                     <td class="px-3 py-2 text-center whitespace-nowrap" onclick="event.stopPropagation()">
                                         <button onclick="openShiftEditModal('${s.id}')"
@@ -3025,6 +2909,7 @@
                                         <div class="flex items-center gap-1.5">
                                             <h4 class="font-black text-xs text-slate-900">${w.name}</h4>
                                             ${tempBadge}
+                                            ${overlapBadge}
                                             <span class="text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.2 rounded font-bold">₩${w.defaultHourlyRate.toLocaleString()}</span>
                                         </div>
                                     </div>
@@ -3276,7 +3161,6 @@
                 `;
             });
 
-            document.getElementById('ai-auditMonthText').innerText = `${splitM[1]}월말 기준 지점 노무 감사 보고서`;
 
             renderCalendar();
             renderPosHistoryList();
@@ -3828,12 +3712,7 @@
             document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50";
             document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
 
-            // 보고서 탭 진입 시 청구서 스태프 목록 동기화
-            if (tabId === 'reports') {
-                setTimeout(() => initInvoiceWorkerSelect(), 50);
-            }
-
-            if (tabId === 'workers' || tabId === 'aiConsult') {
+            if (tabId === 'workers') {
                 document.getElementById(`tabContent-${tabId}`).className = "grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden animate-in fade-in duration-200";
             } else if (tabId === 'calendar') {
                 document.getElementById(`tabContent-${tabId}`).className = "bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
@@ -3849,11 +3728,11 @@
             }
 
             // 모바일 바텀 네비 상태 업데이트
-            ['dashboard','shifts','reports','workers','aiConsult','calendar'].forEach(id => {
+            ['dashboard','shifts','reports','workers','calendar'].forEach(id => {
                 const btn = document.getElementById('bnav-' + id);
                 if (!btn) return;
                 btn.className = (id === tabId)
-                    ? (id === 'aiConsult' ? 'flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-purple-600' : 'flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-sevenGreen')
+                    ? 'flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-sevenGreen'
                     : 'flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-slate-400';
             });
 
@@ -3862,94 +3741,7 @@
         }
 
         // --- 실시간 점포 Context 추출기 (AI 분석 전달용) ---
-        function getLiveStoreContextData() {
-            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명', optionNight: true, optionHoliday: true };
-            const workersList = workersMap[currentStoreId] || [];
-            const shiftsList = shiftsMap[currentStoreId] || [];
-            const filteredShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
-
-            let summary = `[매장 환경]\n- 지점명: ${activeStore.name}\n- 야간가산수당(22~06시 1.5배): ${activeStore.optionNight ? '활성' : '비활성'}\n- 법정 주휴수당 연산: ${activeStore.optionHoliday ? '활성' : '비활성'}\n\n`;
-            
-            summary += `[등록 알바생 현황 (${workersList.length}명)]\n`;
-            workersList.forEach(w => {
-                const missingDocs = [];
-                if (w.documents) {
-                    if (!w.documents.idCard) missingDocs.push("신분증");
-                    if (!w.documents.contract) missingDocs.push("근로계약서");
-                    if (!w.documents.health) missingDocs.push("보건증");
-                    if (!w.documents.register) missingDocs.push("주민등록등본");
-                    if (!w.documents.resume) missingDocs.push("이력서");
-                }
-                summary += `- 이름: ${w.name} (계약시급: ${w.defaultHourlyRate}원, 매달공제: ${w.deduction || 0}원, 보건증만료일: ${w.healthDate || '미지정'})\n  * 누락서류: ${missingDocs.length > 0 ? missingDocs.join(', ') : '없음(완전구비)'}\n  * 특이사항: ${w.notes || '없음'}\n`;
-            });
-
-            // 임시 스태프 목록도 AI에 전달
-            const tmpShifts = filteredShifts.filter(s => s.workerId.startsWith('tmp_'));
-            const tmpNames = [...new Set(tmpShifts.map(s => s.workerName))];
-            if (tmpNames.length > 0) {
-                summary += `[임시(직접입력) 스태프 (${tmpNames.length}명) - 명부 미등록]\n`;
-                tmpNames.forEach(name => {
-                    const myShifts = tmpShifts.filter(s => s.workerName === name);
-                    summary += `- 이름: ${name} (임시투입, ${myShifts.length}회 근무)\n`;
-                });
-            }
-
-            summary += `\n[당월 근무 일지 내역 (총 ${filteredShifts.length}건)]\n`;
-            filteredShifts.forEach(s => {
-                summary += `- ${s.date} | ${s.workerName} | ${s.startTime}~${s.endTime} (무급휴게 ${s.breakMinutes}분) | 시급: ${s.hourlyRate}원 | 실근무: ${s.totalHours}H | 야간: ${s.nightHours}H | 구분: ${s.isSubstitute ? '대타' : '일반'} | 메모: ${s.memo || '없음'}\n`;
-            });
-
-            return summary;
-        }
-
         // --- 12. GEMINI API 연동 모듈 (PC/모바일 호환성 최적화형 탑재) ---
-        async function fetchGeminiEngine(systemPrompt, userPrompt, retries = 5, delay = 1000) {
-            let activeKey = localStorage.getItem('gemini_api_key') || "";
-            if (!activeKey) {
-                activeKey = typeof apiKey !== 'undefined' ? apiKey : "";
-            }
-
-            if (!activeKey) {
-                return getMockAiResponse(systemPrompt, userPrompt);
-            }
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    if ((response.status === 429 || response.status >= 500) && retries > 0) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        return fetchGeminiEngine(systemPrompt, userPrompt, retries - 1, delay * 2);
-                    }
-                    throw new Error(`API 오류 상태 코드: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text) throw new Error("API로부터 응답 텍스트를 받지 못했습니다.");
-                return text;
-            } catch (err) {
-                if (retries > 0) {
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    return fetchGeminiEngine(systemPrompt, userPrompt, retries - 1, delay * 2);
-                }
-                console.error("Gemini 호출 최종 실패:", err);
-                throw err;
-            }
-        }
-
         function getMockAiResponse(systemPrompt, userPrompt) {
             return new Promise((resolve) => {
                 setTimeout(() => {
@@ -4005,167 +3797,10 @@
             });
         }
 
-        async function startAiLaborAudit() {
-            const workersList = workersMap[currentStoreId] || [];
-            if (workersList.length === 0) {
-                showToast("먼저 알바생을 등록해야 AI 검증이 활성화됩니다.");
-                return;
-            }
-
-            const resultBox = document.getElementById('ai-auditResultBox');
-            resultBox.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-16 space-y-3">
-                    <div class="w-8 h-8 border-4 border-sevenGreen border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-[11px] text-sevenGreen font-black animate-pulse">Gemini 2.5 초거대 노무 감사가 가동 중입니다...</p>
-                </div>
-            `;
-
-            const systemPrompt = `
-            당신은 대한민국 1등 공인노무사이자 세븐일레븐 지점 노무 컨설턴트입니다.
-            전달된 매장 데이터(스태프 서류, 연락처, 세부 휴게시간 감산 근무표, 수당 셋업, 외상 공제액, 대타 근무 이력 등)를 정밀 분석하여 가독성 높은 한국어 보고서(마크다운 형식)로 작성해 주세요.
-            - 2026년 기준 법정최저임금(10,320원) 준수 여부 진단
-            - 주 15시간 이상 근무자 주휴수당 지급 적법 여부
-            - 누락된 법정 보관 서류(보건증, 근로계약서, 주민등록등본 등) 리스크 알림
-            - 무급 휴게시간이 적법하게 부여되고 연산에서 안전하게 차감되었는지 검토
-            - 점주가 입력한 매달 고정 공제액(외상 차감)이 잘 정산되고 있는지에 대한 설명
-            `;
-
-            const context = getLiveStoreContextData();
-            const userPrompt = `
-            다음은 우리 매장의 실시간 스태프 정보 및 근무 데이터 대장입니다. 2026 대한민국 노동법 관점에서 우리 지점이 안전한지 완벽히 분석 및 진단해 줘.
-
-            ${context}
-            `;
-
-            try {
-                const response = await fetchGeminiEngine(systemPrompt, userPrompt);
-                resultBox.innerHTML = `<div class="prose max-w-none text-slate-700 whitespace-pre-wrap leading-relaxed text-left font-sans">${response}</div>`;
-                showToast("AI 지점 노무 감사가 발급되었습니다.");
-            } catch (err) {
-                resultBox.innerHTML = `<p class="text-red-500 font-bold py-12 text-center">⚠️ AI 노무 보고서를 작성하는 도중 통신 장애가 생겼습니다. 잠시 후 재생성해 주세요.</p>`;
-            }
-        }
-
-        async function triggerAiHandover(shiftId) {
-            switchTab('aiConsult');
-
-            const shiftsList = shiftsMap[currentStoreId] || [];
-            const targetShift = shiftsList.find(s => s.id === shiftId);
-            if (!targetShift) return;
-
-            const handoverBox = document.getElementById('ai-handoverResultBox');
-            handoverBox.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-12 space-y-2">
-                    <div class="w-6 h-6 border-3 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-[10px] text-purple-700 font-black animate-pulse">해당 스케줄 맞춤형 교대 Checklist 생성 중...</p>
-                </div>
-            `;
-
-            const systemPrompt = `
-            당신은 세븐일레븐 전국 직영점 출신의 마스터 편의점 점장입니다.
-            전달된 특정 아르바이트생의 근무 시간대를 보고, 그 알바생이 퇴근 직전 완수해야 할 세븐일레븐 맞춤형 일일 인수인계 체크리스트(최소 5개 항목)와 다음 근무자 전파 사항을 작성해 주세요.
-            `;
-
-            const userPrompt = `
-            다음 스태프의 교대 정보에 적합한 편의점 최적화 퇴근 미션 및 인수인계 체크리스트를 뽑아줘:
-            - 스태프: ${targetShift.workerName}
-            - 시간대: ${targetShift.startTime} ~ ${targetShift.endTime} (무급휴게 ${targetShift.breakMinutes}분 감산)
-            - 대타(대근) 여부: ${targetShift.isSubstitute ? '대타 근무임' : '일반 정규 근무'}
-            - 메모: ${targetShift.memo || '음성 인계 없음'}
-            `;
-
-            try {
-                const response = await fetchGeminiEngine(systemPrompt, userPrompt);
-                handoverBox.innerHTML = `
-                    <div class="space-y-3 text-left animate-in fade-in">
-                        <div class="flex justify-between items-center bg-purple-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg">
-                            <span>대상: ${targetShift.workerName} (${targetShift.startTime}~${targetShift.endTime})</span>
-                            <button onclick="copyHandoverChecklist()" class="bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded text-[9px] font-bold">카톡전송 복사</button>
-                        </div>
-                        <div id="handoverTextValue" class="prose max-w-none text-slate-700 whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-xl border border-purple-100 font-semibold font-sans">${response}</div>
-                    </div>
-                `;
-                lucide.createIcons();
-                showToast("AI 인수인계 지침서가 생성되었습니다.");
-            } catch (err) {
-                handoverBox.innerHTML = `<p class="text-slate-400 font-bold py-10 text-center">체크리스트 생성 실패. 다시 시도해 주세요.</p>`;
-            }
-        }
-
         function copyHandoverChecklist() {
             const textElement = document.getElementById('handoverTextValue');
             if (!textElement) return;
             copyToClipboard(textElement.innerText, "클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
-        }
-
-        async function sendChatMessage(e) {
-            e.preventDefault();
-            const inputDOM = document.getElementById('chatInput');
-            const userMsg = inputDOM.value.trim();
-            if (!userMsg) return;
-
-            inputDOM.value = '';
-
-            const log = document.getElementById('chat-messagesLog');
-            
-            log.innerHTML += `
-                <div class="flex justify-end animate-in fade-in font-sans">
-                    <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-sevenGreen text-white rounded-tr-none shadow-xs text-left font-sans">
-                        <p class="leading-relaxed font-semibold">${userMsg}</p>
-                    </div>
-                </div>
-            `;
-            log.scrollTop = log.scrollHeight;
-
-            const loaderId = 'chat-loader-' + Date.now();
-            log.innerHTML += `
-                <div id="${loaderId}" class="flex justify-start animate-pulse">
-                    <div class="bg-white border text-slate-400 rounded-2xl rounded-tl-none px-4 py-3 text-[11px] flex items-center space-x-1.5 shadow-xs">
-                        <div class="flex space-x-1">
-                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
-                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
-                        </div>
-                        <span class="font-bold">세븐봇이 장부 대조 연산 중...</span>
-                    </div>
-                </div>
-            `;
-            log.scrollTop = log.scrollHeight;
-
-            const systemPrompt = `
-            당신은 전국 세븐일레븐 지점의 노무 정산 마스터 AI '세븐봇'입니다.
-            현재 지점의 정보(${getLiveStoreContextData()})를 완전히 꿰뚫어보고 있으며 질문에 답할 때 매장의 수당 적용 옵션 상태 및 알바생 서류 제출 상태, 무급 휴게시간 설정 등의 정보를 적극 인용하십시오.
-            언제나 친절하고 다정한 존댓말로 응대해 주세요.
-            `;
-
-            try {
-                const response = await fetchGeminiEngine(systemPrompt, userMsg);
-                const loader = document.getElementById(loaderId);
-                if (loader) loader.remove();
-                
-                log.innerHTML += `
-                    <div class="flex justify-start animate-in fade-in">
-                        <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-white text-slate-800 rounded-tl-none border border-slate-200 shadow-xs text-left font-sans">
-                            <div class="text-[9px] font-black text-sevenOrange mb-1 tracking-wider uppercase flex items-center gap-1">
-                                <i data-lucide="sparkles" class="w-2.5 h-2.5"></i> SEVEN BOT
-                            </div>
-                            <p class="leading-relaxed whitespace-pre-wrap">${response}</p>
-                        </div>
-                    </div>
-                `;
-            } catch (err) {
-                const loader = document.getElementById(loaderId);
-                if (loader) loader.remove();
-                log.innerHTML += `
-                    <div class="flex justify-start">
-                        <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs bg-red-50 text-red-700 rounded-tl-none border border-red-100 font-sans">
-                            <p class="leading-relaxed">⚠️ 세븐봇의 연결이 잠시 혼잡합니다. 잠시 후 다시 입력해 주세요.</p>
-                        </div>
-                    </div>
-                `;
-            }
-            log.scrollTop = log.scrollHeight;
-            lucide.createIcons();
         }
 
         function copyForGoogleSheets() {
@@ -4246,7 +3881,6 @@
                 shifts: localStorage.getItem('seven_shifts_live_v4'),
                 posHistories: localStorage.getItem('seven_pos_history_v4'),
                 selectedMonth: localStorage.getItem('seven_selected_month_live_v4'),
-                apiKey: localStorage.getItem('gemini_api_key')
             };
 
             const jsonString = JSON.stringify(backupPayload, null, 2);
@@ -4285,7 +3919,6 @@
                         
                         if (parsed.posHistories) localStorage.setItem('seven_pos_history_v4', parsed.posHistories);
                         if (parsed.selectedMonth) localStorage.setItem('seven_selected_month_live_v4', parsed.selectedMonth);
-                        if (parsed.apiKey) localStorage.setItem('gemini_api_key', parsed.apiKey);
 
                         stores = JSON.parse(parsed.stores);
                         currentStoreId = parsed.activeStoreId;
@@ -4399,7 +4032,6 @@
                 });
             }
         }
-
 
         // 클립보드 복사 유틸 (iOS/Android 호환)
         function copyToClipboard(text, successMsg) {
