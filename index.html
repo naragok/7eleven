@@ -10,6 +10,68 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="세븐스태프">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- 캔버스 기반 PWA 홈 화면 아이콘 자동 생성 -->
+    <script>
+        (function() {
+            function drawIcon(size) {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#008938';
+                ctx.fillRect(0, 0, size, size);
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(size * 0.5, 0);
+                ctx.lineTo(size, 0);
+                ctx.lineTo(size, size);
+                ctx.lineTo(size * 0.35, size);
+                ctx.closePath();
+                ctx.fillStyle = '#F26722';
+                ctx.fill();
+                ctx.restore();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `italic 900 ${size * 0.62}px Georgia, serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('7', size * 0.5, size * 0.56);
+                return canvas.toDataURL('image/png');
+            }
+
+            const icon180 = drawIcon(180);
+            const icon192 = drawIcon(192);
+            const icon512 = drawIcon(512);
+
+            const appleTouchIcon = document.createElement('link');
+            appleTouchIcon.rel = 'apple-touch-icon';
+            appleTouchIcon.href = icon180;
+            document.head.appendChild(appleTouchIcon);
+
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.href = icon192;
+            document.head.appendChild(favicon);
+
+            const manifest = {
+                name: '7-ELEVEN 파트타임 시스템',
+                short_name: '세븐스태프',
+                start_url: '.',
+                display: 'standalone',
+                background_color: '#ffffff',
+                theme_color: '#008938',
+                icons: [
+                    { src: icon192, sizes: '192x192', type: 'image/png' },
+                    { src: icon512, sizes: '512x512', type: 'image/png' }
+                ]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = URL.createObjectURL(manifestBlob);
+            document.head.appendChild(manifestLink);
+        })();
+    </script>
     
     <!-- Tailwind CSS 및 폰트 CDN 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,6 +79,9 @@
     
     <!-- Lucide Icons 로드 -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- SheetJS (xlsx) 엑셀 내보내기용 로드 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -69,6 +134,30 @@
         @media print {
             .no-print { display: none !important; }
         }
+
+        /* 다크 모드: 기존 Tailwind 유틸리티 클래스를 전역 오버라이드 방식으로 재도색 */
+        html.dark-mode body { background-color: #0f172a; color: #e2e8f0; }
+        html.dark-mode .bg-white { background-color: #1e293b !important; }
+        html.dark-mode .bg-slate-50,
+        html.dark-mode .bg-slate-50\/50,
+        html.dark-mode .bg-slate-50\/70 { background-color: #0f172a !important; }
+        html.dark-mode .bg-slate-100 { background-color: #334155 !important; }
+        html.dark-mode .border-slate-200,
+        html.dark-mode .border-slate-200\/80,
+        html.dark-mode .border-slate-150,
+        html.dark-mode .border-slate-100 { border-color: #334155 !important; }
+        html.dark-mode .text-slate-900,
+        html.dark-mode .text-slate-800 { color: #f1f5f9 !important; }
+        html.dark-mode .text-slate-700,
+        html.dark-mode .text-slate-600 { color: #cbd5e1 !important; }
+        html.dark-mode .text-slate-500,
+        html.dark-mode .text-slate-400 { color: #94a3b8 !important; }
+        html.dark-mode input,
+        html.dark-mode select,
+        html.dark-mode textarea { background-color: #334155 !important; color: #f1f5f9 !important; }
+        html.dark-mode .shadow-xs,
+        html.dark-mode .shadow-sm,
+        html.dark-mode .shadow-md { box-shadow: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen md:h-screen md:overflow-hidden flex flex-col justify-between">
@@ -88,6 +177,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
+                        <span class="text-[8px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V1.7</span>
                     </div>
                     <p class="text-[9px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -115,6 +205,10 @@
                 <button onclick="toggleStoreManagerPanel()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all">
                     <i data-lucide="settings" class="w-3 h-3"></i>
                     <span>지점설정</span>
+                </button>
+                <!-- 다크 모드 토글 -->
+                <button id="darkModeToggleBtn" onclick="toggleDarkMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all border border-slate-200">
+                    <i data-lucide="moon" class="w-3 h-3 pointer-events-none"></i>
                 </button>
             </div>
         </div>
@@ -207,6 +301,10 @@
                     <i data-lucide="download" class="w-3 h-3"></i>
                     <span>CSV 다운로드</span>
                 </button>
+                <button onclick="exportToExcel()" class="flex-1 lg:flex-initial bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all">
+                    <i data-lucide="file-spreadsheet" class="w-3 h-3"></i>
+                    <span>Excel 다운로드</span>
+                </button>
             </div>
         </div>
 
@@ -252,6 +350,21 @@
                         <span>백업 복구하기 (JSON)</span>
                     </button>
                     <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
+                </div>
+            </div>
+
+            <div class="border-t pt-2 border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="space-y-1">
+                    <button onclick="backupToGithub()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1">
+                        <i data-lucide="github" class="w-3.5 h-3.5"></i>
+                        <span>GitHub에 백업</span>
+                    </button>
+                </div>
+                <div class="space-y-1">
+                    <button onclick="openGithubSettingsModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 border border-slate-200">
+                        <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                        <span>GitHub 연동 설정</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -887,6 +1000,11 @@
                         </div>
                     </div>
 
+                    <label class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1.5 cursor-pointer">
+                        <input type="checkbox" id="newWorkerTaxWithholding" class="w-3 h-3 accent-indigo-600">
+                        <span class="text-indigo-700 font-bold">3.3% 사업소득세 원천징수 적용 (프리랜서/단기 계약)</span>
+                    </label>
+
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">연락처 *</label>
@@ -1039,6 +1157,10 @@
                         <input type="date" id="editWorkerHealthDate" class="w-full bg-slate-50 border border-rose-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-rose-500">
                     </div>
                 </div>
+                <label class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1.5 cursor-pointer">
+                    <input type="checkbox" id="editWorkerTaxWithholding" class="w-3 h-3 accent-indigo-600">
+                    <span class="text-indigo-700 font-bold">3.3% 사업소득세 원천징수 적용 (프리랜서/단기 계약)</span>
+                </label>
                 <div>
                     <label class="block text-slate-500 font-bold mb-0.5">연락처</label>
                     <input type="tel" id="editWorkerPhone" oninput="autoHyphen(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
@@ -1088,7 +1210,38 @@
         </div>
     </div>
 
-    <!-- API 키 설정 모달 -->
+    <!-- GitHub 백업 설정 모달 -->
+    <div id="githubSettingsModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
+            <div class="flex items-center space-x-1.5 text-slate-800 border-b pb-1.5">
+                <i data-lucide="github" class="w-4.5 h-4.5 flex-shrink-0"></i>
+                <h3 class="font-black text-slate-900">GitHub 백업 연동 설정</h3>
+            </div>
+            <div class="space-y-2">
+                <div>
+                    <label class="block text-slate-500 font-bold mb-0.5">GitHub 계정/조직명 (owner)</label>
+                    <input type="text" id="githubOwner" placeholder="예: myaccount" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-slate-500">
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-bold mb-0.5">저장소명 (repo)</label>
+                    <input type="text" id="githubRepo" placeholder="예: seven-staff-backup" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-slate-500">
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-bold mb-0.5">저장 파일 경로</label>
+                    <input type="text" id="githubPath" placeholder="예: backup/seven_staff_backup.json" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-slate-500">
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-bold mb-0.5">Personal Access Token</label>
+                    <input type="password" id="githubToken" placeholder="ghp_..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-slate-500">
+                    <p class="text-[9px] text-slate-400 font-semibold mt-0.5">토큰은 이 브라우저의 localStorage에만 저장되며 외부로 전송되지 않습니다. (repo 쓰기 권한 필요)</p>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2 border-t">
+                <button onclick="closeGithubSettingsModal()" class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg font-bold hover:bg-slate-200">취소</button>
+                <button onclick="saveGithubSettings()" class="bg-slate-800 text-white px-3 py-1 rounded-lg font-bold hover:bg-slate-900">저장</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 무급 휴게시간 확인을 위한 임시 모달 -->
     <div id="breakTimeAlertModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
@@ -1306,6 +1459,9 @@
             'st_tongil': []
         };
 
+        // 2026년 대한민국 법정 최저시급
+        const MINIMUM_WAGE_2026 = 10320;
+
         // --- 2. 로컬 저장소 바인딩 ---
         let stores = JSON.parse(localStorage.getItem('seven_stores_live_v4')) || INITIAL_STORES;
         let currentStoreId = localStorage.getItem('seven_activeStore_id_v4') || 'st_thesharp';
@@ -1321,6 +1477,27 @@
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
 
         // --- 3. 최초 실행 등록 ---
+        // 다크 모드 상태 복원 및 토글
+        function initDarkMode() {
+            const isDark = localStorage.getItem('seven_dark_mode') === '1';
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            updateDarkModeIcon(isDark);
+        }
+
+        function toggleDarkMode() {
+            const isDark = !document.documentElement.classList.contains('dark-mode');
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('seven_dark_mode', isDark ? '1' : '0');
+            updateDarkModeIcon(isDark);
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const btn = document.getElementById('darkModeToggleBtn');
+            if (!btn) return;
+            btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-3 h-3 pointer-events-none"></i>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
         // 데이터 영속성 통합 저장 함수
         function saveToLocalStorage() {
             try {
@@ -1347,6 +1524,7 @@
             initStoreSelectorDOM();
             renderPresetButtons();
             renderEverything();
+            initDarkMode();
             // 초기 아이콘 렌더링 보장
             if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -1583,7 +1761,10 @@
             // 기능 2: 해당 월의 가불금 누적 합산 차감
             const totalAdvance = monthlyShifts.reduce((sum, s) => sum + (s.advance || 0), 0);
             const computedPay = basePay + nightAllowance + holidayAllowance;
-            const finalPay = Math.max(0, Math.round(computedPay - deduction - totalAdvance));
+            const preTaxPay = Math.max(0, Math.round(computedPay - deduction - totalAdvance));
+            // 3.3% 사업소득세 원천징수 (프리랜서/단기 계약직 대상)
+            const withholdingTax = worker.taxWithholding ? Math.round(preTaxPay * 0.033) : 0;
+            const finalPay = preTaxPay - withholdingTax;
 
             return {
                 totalDays,
@@ -1594,6 +1775,7 @@
                 holidayAllowance: Math.round(holidayAllowance),
                 deduction,
                 totalAdvance: Math.round(totalAdvance),
+                withholdingTax,
                 finalPay
             };
         }
@@ -2177,6 +2359,87 @@
             }).join('');
             updateInvoiceTotals();
             lucide.createIcons();
+        }
+
+        function printPayslip(workerId) {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
+            const workersList = workersMap[currentStoreId] || [];
+            const worker = workersList.find(w => w.id === workerId);
+            if (!worker) return;
+
+            const stats = getWorkerMonthlyStats(workerId, selectedMonth);
+            const splitM = selectedMonth.split('-');
+            const title = `${splitM[0]}년 ${splitM[1]}월 급여명세서`;
+
+            const rowsHtml = `
+                <tr><td class="c-label">기본 임금</td><td class="c-r">₩${stats.basePay.toLocaleString()}</td></tr>
+                <tr><td class="c-label">야간 가산액(1.5배)</td><td class="c-r">₩${stats.nightAllowance.toLocaleString()}</td></tr>
+                <tr><td class="c-label">주휴수당</td><td class="c-r">₩${stats.holidayAllowance.toLocaleString()}</td></tr>
+                ${stats.deduction > 0 ? `<tr><td class="c-label">고정 공제액(-)</td><td class="c-r">-₩${stats.deduction.toLocaleString()}</td></tr>` : ''}
+                ${stats.totalAdvance > 0 ? `<tr><td class="c-label">가불금 차감(-)</td><td class="c-r">-₩${stats.totalAdvance.toLocaleString()}</td></tr>` : ''}
+                ${stats.withholdingTax > 0 ? `<tr><td class="c-label">3.3% 사업소득세 원천징수(-)</td><td class="c-r">-₩${stats.withholdingTax.toLocaleString()}</td></tr>` : ''}
+            `;
+
+            const html = `<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>${title}</title>
+<style>
+  @page { size: A4 portrait; margin: 16mm 18mm 14mm 18mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    font-size: 11pt; color: #1e293b; background: #fff; width: 100%; }
+  .hd { display: flex; justify-content: space-between; align-items: flex-end;
+        border-bottom: 2.5pt solid #1e293b; padding-bottom: 10pt; margin-bottom: 18pt; }
+  .hd-l .tag { font-size: 8pt; color: #94a3b8; font-weight: 700; margin-bottom: 4pt; letter-spacing:.5px; }
+  .hd-l h1 { font-size: 18pt; font-weight: 900; line-height: 1.2; }
+  .hd-l .wkr { font-size: 10pt; color: #475569; margin-top: 5pt; font-weight: 700; }
+  .hd-r { text-align: right; }
+  .hd-r .tag { font-size: 8pt; color: #94a3b8; font-weight: 700; margin-bottom: 3pt; }
+  .hd-r .dt { font-size: 12pt; font-weight: 900; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 14pt; }
+  td { padding: 7pt 4pt; border-bottom: 0.75pt solid #e2e8f0; font-size: 10.5pt; }
+  .c-label { color: #475569; font-weight: 600; }
+  .c-r { text-align: right; font-weight: 700; }
+  .sum { display: flex; justify-content: space-between; align-items: center;
+         border-top: 2pt solid #1e293b; padding-top: 10pt; margin-top: 6pt; }
+  .sum .rlbl { font-size: 11pt; font-weight: 900; }
+  .sum .ramt { font-size: 16pt; font-weight: 900; color: #008938; }
+  .meta { display: flex; gap: 16pt; font-size: 9.5pt; color: #64748b; font-weight: 600; margin-bottom: 12pt; }
+  .ftr { text-align: center; font-size: 8.5pt; color: #94a3b8; margin-top: 20pt; }
+</style>
+</head><body>
+  <div class="hd">
+    <div class="hd-l">
+      <p class="tag">PAYSLIP</p>
+      <h1>${title}</h1>
+      <p class="wkr">${activeStore.name} · ${worker.name} 님</p>
+    </div>
+    <div class="hd-r">
+      <p class="tag">발행일</p>
+      <p class="dt">${new Date().toISOString().split('T')[0]}</p>
+    </div>
+  </div>
+  <div class="meta">
+    <span>당월 출근: ${stats.totalDays}일</span>
+    <span>실근무 시간: ${stats.totalHours}H</span>
+    <span>지정 시급: ₩${worker.defaultHourlyRate.toLocaleString()}</span>
+  </div>
+  <table>${rowsHtml}</table>
+  <div class="sum">
+    <p class="rlbl">최종 지급액</p>
+    <p class="ramt">₩${stats.finalPay.toLocaleString()}</p>
+  </div>
+  <p class="ftr">세븐스태프 · 급여명세서</p>
+</body></html>`;
+
+            const win = window.open('', '_blank', 'width=860,height=1100');
+            win.document.open();
+            win.document.write(html);
+            win.document.close();
+            win.focus();
+            setTimeout(() => { win.print(); }, 700);
         }
 
         function printInvoice() {
@@ -3021,6 +3284,12 @@
                                             <span>-₩${stats.totalAdvance.toLocaleString()}</span>
                                         </div>
                                     ` : ''}
+                                    ${stats.withholdingTax > 0 ? `
+                                        <div class="flex justify-between text-indigo-700 font-bold">
+                                            <span>3.3% 사업소득세 원천징수(-):</span>
+                                            <span>-₩${stats.withholdingTax.toLocaleString()}</span>
+                                        </div>
+                                    ` : ''}
                                     <div class="bg-emerald-50 p-1.5 rounded-[5px] text-[9px] text-sevenGreen mt-1 text-center font-bold">
                                         ※ 터치하면 세부 정산 상세항목이 접힙니다.
                                     </div>
@@ -3029,7 +3298,12 @@
 
                             <div class="pt-1.5 border-t border-slate-100 flex justify-between items-center">
                                 <span class="font-black text-slate-900 text-[11px]">최종 월 정산액:</span>
-                                <span class="text-sm font-black text-sevenGreen">₩${stats.finalPay.toLocaleString()}원</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-sm font-black text-sevenGreen">₩${stats.finalPay.toLocaleString()}원</span>
+                                    <button onclick="event.stopPropagation(); printPayslip('${w.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-1 rounded-md" title="급여명세서 인쇄/PDF">
+                                        <i data-lucide="printer" class="w-3 h-3 pointer-events-none"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -3085,6 +3359,7 @@
                                 <div class="flex items-center space-x-2">
                                     <div class="flex items-center gap-1 text-[10px] font-bold">
                                         ${w.deduction > 0 ? `<span class="bg-orange-50 text-sevenOrange px-1.5 py-0.5 rounded">공제 ₩${w.deduction.toLocaleString()}</span>` : ''}
+                                        ${w.taxWithholding ? `<span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">3.3% 원천징수</span>` : ''}
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">서류 ${submittedCount}/6</span>
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">출근 ${shiftsCount}건</span>
                                     </div>
@@ -3297,6 +3572,7 @@
             document.getElementById('editWorkerName').value = worker.name;
             document.getElementById('editWorkerRate').value = worker.defaultHourlyRate;
             document.getElementById('editWorkerDeduction').value = worker.deduction || 0;
+            document.getElementById('editWorkerTaxWithholding').checked = !!worker.taxWithholding;
             document.getElementById('editWorkerHealthDate').value = worker.healthDate || '';
             document.getElementById('editWorkerPhone').value = worker.phone || '';
             document.getElementById('editWorkerAddress').value = worker.address || '';
@@ -3328,27 +3604,43 @@
                     return;
                 }
 
-                worker.name = nextName;
-                worker.defaultHourlyRate = Math.max(0, Number(document.getElementById('editWorkerRate').value || 10320));
-                worker.deduction = Math.max(0, Number(document.getElementById('editWorkerDeduction').value || 0));
-                worker.healthDate = document.getElementById('editWorkerHealthDate').value;
-                worker.phone = document.getElementById('editWorkerPhone').value.trim();
-                worker.address = document.getElementById('editWorkerAddress').value.trim();
-                worker.notes = document.getElementById('editWorkerNotes').value.trim();
-                worker.defaultStart = document.getElementById('editWorkerDefaultStart').value || '09:00';
-                worker.defaultEnd   = document.getElementById('editWorkerDefaultEnd').value   || '18:00';
-                worker.defaultBreak = Number(document.getElementById('editWorkerDefaultBreak').value || 30);
+                const nextRate = Math.max(0, Number(document.getElementById('editWorkerRate').value || 10320));
 
-                const currentShifts = shiftsMap[currentStoreId] || [];
-                currentShifts.forEach(s => {
-                    if (s.workerId === id) {
-                        s.workerName = nextName;
-                    }
-                });
+                const applyEdit = () => {
+                    worker.name = nextName;
+                    worker.defaultHourlyRate = nextRate;
+                    worker.deduction = Math.max(0, Number(document.getElementById('editWorkerDeduction').value || 0));
+                    worker.taxWithholding = document.getElementById('editWorkerTaxWithholding').checked;
+                    worker.healthDate = document.getElementById('editWorkerHealthDate').value;
+                    worker.phone = document.getElementById('editWorkerPhone').value.trim();
+                    worker.address = document.getElementById('editWorkerAddress').value.trim();
+                    worker.notes = document.getElementById('editWorkerNotes').value.trim();
+                    worker.defaultStart = document.getElementById('editWorkerDefaultStart').value || '09:00';
+                    worker.defaultEnd   = document.getElementById('editWorkerDefaultEnd').value   || '18:00';
+                    worker.defaultBreak = Number(document.getElementById('editWorkerDefaultBreak').value || 30);
 
-                showToast(`"${nextName}" 님의 정보가 업데이트되었습니다.`);
-                closeEditWorkerModal();
-                renderEverything();
+                    const currentShifts = shiftsMap[currentStoreId] || [];
+                    currentShifts.forEach(s => {
+                        if (s.workerId === id) {
+                            s.workerName = nextName;
+                        }
+                    });
+
+                    showToast(`"${nextName}" 님의 정보가 업데이트되었습니다.`);
+                    closeEditWorkerModal();
+                    renderEverything();
+                };
+
+                if (nextRate < MINIMUM_WAGE_2026) {
+                    triggerConfirm(
+                        "⚠️ 최저임금 미달 경고",
+                        `입력하신 시급 ${nextRate.toLocaleString()}원은 2026년 법정 최저시급(${MINIMUM_WAGE_2026.toLocaleString()}원)보다 낮습니다. 이대로 저장하시겠습니까?`,
+                        applyEdit
+                    );
+                    return;
+                }
+
+                applyEdit();
             }
         }
 
@@ -3513,6 +3805,7 @@
             const name = document.getElementById('newWorkerName').value.trim();
             const rate = Math.max(0, Number(document.getElementById('newWorkerRate').value));
             const deduction = Math.max(0, Number(document.getElementById('newWorkerDeduction').value || 0));
+            const taxWithholding = document.getElementById('newWorkerTaxWithholding').checked;
             const phone = document.getElementById('newWorkerPhone').value.trim();
             const healthDate = document.getElementById('newWorkerHealthDate').value;
             const address = document.getElementById('newWorkerAddress').value.trim();
@@ -3530,6 +3823,19 @@
                 return;
             }
 
+            if (rate < MINIMUM_WAGE_2026) {
+                triggerConfirm(
+                    "⚠️ 최저임금 미달 경고",
+                    `입력하신 시급 ${rate.toLocaleString()}원은 2026년 법정 최저시급(${MINIMUM_WAGE_2026.toLocaleString()}원)보다 낮습니다. 이대로 등록하시겠습니까?`,
+                    () => finalizeAddWorker(name, rate, deduction, taxWithholding, phone, healthDate, address, notes, defaultStart, defaultEnd, defaultBreak)
+                );
+                return;
+            }
+
+            finalizeAddWorker(name, rate, deduction, taxWithholding, phone, healthDate, address, notes, defaultStart, defaultEnd, defaultBreak);
+        }
+
+        function finalizeAddWorker(name, rate, deduction, taxWithholding, phone, healthDate, address, notes, defaultStart, defaultEnd, defaultBreak) {
             const docs = {
                 idCard: document.getElementById('doc-idCard').checked,
                 contract: document.getElementById('doc-contract').checked,
@@ -3544,6 +3850,7 @@
                 name,
                 defaultHourlyRate: rate,
                 deduction,
+                taxWithholding,
                 healthDate,
                 phone,
                 address,
@@ -3560,6 +3867,7 @@
             document.getElementById('newWorkerName').value = '';
             document.getElementById('newWorkerRate').value = '10320';
             document.getElementById('newWorkerDeduction').value = '0';
+            document.getElementById('newWorkerTaxWithholding').checked = false;
             document.getElementById('newWorkerPhone').value = '';
             document.getElementById('newWorkerHealthDate').value = '';
             document.getElementById('newWorkerAddress').value = '';
@@ -3872,6 +4180,46 @@
             showToast(`${selectedMonth.split('-')[1]}월 간편급여대장 CSV 파일이 다운로드 되었습니다.`);
         }
 
+        function exportToExcel() {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
+            const workersList = workersMap[currentStoreId] || [];
+
+            if (workersList.length === 0) {
+                showToast("내보낼 대장 데이터가 없습니다.");
+                return;
+            }
+            if (typeof XLSX === 'undefined') {
+                showToast("Excel 라이브러리 로드에 실패했습니다. 네트워크 연결을 확인해 주세요.");
+                return;
+            }
+
+            const headers = ['이름', '지정 시급', '당월 출근일', '실근무 시간(H)', '기본 임금', '야간 가산액', '주휴수당', '고정 공제액', '가불금 차감', '3.3% 원천징수', '최종 정산액'];
+            const rows = workersList.map(w => {
+                const stats = getWorkerMonthlyStats(w.id, selectedMonth);
+                return [
+                    w.name,
+                    w.defaultHourlyRate,
+                    stats.totalDays,
+                    stats.totalHours,
+                    stats.basePay,
+                    stats.nightAllowance,
+                    stats.holidayAllowance,
+                    stats.deduction,
+                    stats.totalAdvance,
+                    stats.withholdingTax,
+                    stats.finalPay
+                ];
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, `${selectedMonth}급여대장`);
+
+            const cleanStoreName = activeStore.name.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+            XLSX.writeFile(workbook, `${cleanStoreName}_${selectedMonth}_급여대장.xlsx`);
+            showToast(`${selectedMonth.split('-')[1]}월 급여대장 Excel 파일이 다운로드 되었습니다.`);
+        }
+
         function exportData() {
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
             const backupPayload = {
@@ -3897,6 +4245,106 @@
             link.click();
             document.body.removeChild(link);
             showToast("🎉 매장 전산 전체 데이터 백업 파일 다운로드 완료!");
+        }
+
+        // --- GitHub 백업 연동 ---
+        function openGithubSettingsModal() {
+            document.getElementById('githubOwner').value = localStorage.getItem('seven_github_owner') || '';
+            document.getElementById('githubRepo').value = localStorage.getItem('seven_github_repo') || '';
+            document.getElementById('githubPath').value = localStorage.getItem('seven_github_path') || 'backup/seven_staff_backup.json';
+            document.getElementById('githubToken').value = localStorage.getItem('seven_github_token') || '';
+            const modal = document.getElementById('githubSettingsModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeGithubSettingsModal() {
+            const modal = document.getElementById('githubSettingsModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveGithubSettings() {
+            const owner = document.getElementById('githubOwner').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            const path = document.getElementById('githubPath').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
+
+            if (!owner || !repo || !path || !token) {
+                showToast("모든 GitHub 연동 항목을 입력해 주세요.");
+                return;
+            }
+
+            localStorage.setItem('seven_github_owner', owner);
+            localStorage.setItem('seven_github_repo', repo);
+            localStorage.setItem('seven_github_path', path);
+            localStorage.setItem('seven_github_token', token);
+
+            showToast("GitHub 연동 설정이 저장되었습니다.");
+            closeGithubSettingsModal();
+        }
+
+        async function backupToGithub() {
+            const owner = localStorage.getItem('seven_github_owner');
+            const repo = localStorage.getItem('seven_github_repo');
+            const path = localStorage.getItem('seven_github_path');
+            const token = localStorage.getItem('seven_github_token');
+
+            if (!owner || !repo || !path || !token) {
+                showToast("먼저 [GitHub 연동 설정]에서 저장소 정보를 등록해 주세요.");
+                openGithubSettingsModal();
+                return;
+            }
+
+            const backupPayload = {
+                stores: localStorage.getItem('seven_stores_live_v4'),
+                activeStoreId: localStorage.getItem('seven_activeStore_id_v4'),
+                workers: localStorage.getItem('seven_workers_live_v4'),
+                shifts: localStorage.getItem('seven_shifts_live_v4'),
+                posHistories: localStorage.getItem('seven_pos_history_v4'),
+                selectedMonth: localStorage.getItem('seven_selected_month_live_v4'),
+            };
+            const jsonString = JSON.stringify(backupPayload, null, 2);
+            const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+            showToast("GitHub로 백업 전송 중...");
+
+            try {
+                let sha = null;
+                const getRes = await fetch(apiUrl, {
+                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' }
+                });
+                if (getRes.ok) {
+                    const getData = await getRes.json();
+                    sha = getData.sha;
+                }
+
+                const putBody = {
+                    message: `세븐스태프 백업 (${new Date().toISOString().split('T')[0]})`,
+                    content: contentBase64,
+                };
+                if (sha) putBody.sha = sha;
+
+                const putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (putRes.ok) {
+                    showToast("🎉 GitHub 백업 완료!");
+                } else {
+                    const errData = await putRes.json().catch(() => ({}));
+                    showToast(`GitHub 백업 실패: ${errData.message || putRes.status}`);
+                }
+            } catch (err) {
+                showToast("GitHub 백업 중 네트워크 오류가 발생했습니다.");
+            }
         }
 
         function triggerImport() {
