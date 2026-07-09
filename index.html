@@ -177,7 +177,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[8px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V1.7</span>
+                        <span class="text-[8px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V1.8</span>
                     </div>
                     <p class="text-[9px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -703,7 +703,20 @@
                         <i data-lucide="calendar" class="w-4 h-4 text-sevenGreen"></i>
                         <span id="calendar-title">2026년 06월 근무자 종합 달력</span>
                     </h3>
-                    <p class="text-[9px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.</p>
+                    <p id="calendar-help-text" class="text-[9px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.</p>
+                </div>
+                <button id="bulkSelectToggleBtn" onclick="toggleBulkSelectMode()" class="flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                    <i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i>
+                    <span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>
+                </button>
+            </div>
+
+            <!-- 일괄 등록 도구모음: 다중 선택 모드에서만 노출 -->
+            <div id="bulkSelectToolbar" class="hidden items-center justify-between gap-2 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-1.5 text-[10px] flex-shrink-0">
+                <span class="font-black text-indigo-700"><span id="bulkSelectCount">0</span>일 선택됨</span>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="clearBulkSelection()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 px-2 py-1 rounded-md font-bold">선택 초기화</button>
+                    <button onclick="openBulkShiftModal()" class="bg-sevenGreen hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-black">선택 날짜 일괄 등록</button>
                 </div>
             </div>
 
@@ -1475,6 +1488,10 @@
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
+        // 달력 다중 날짜 선택(일괄 등록) 상태
+        let bulkSelectMode = false;
+        let selectedBulkDates = new Set();
+        let isBulkShiftSubmit = false;
 
         // --- 3. 최초 실행 등록 ---
         // 다크 모드 상태 복원 및 토글
@@ -1798,6 +1815,72 @@
         }
 
         // --- 📅 달력 렌더링 엔진 (반응형 및 PC 가로세로 확장 기능 강화) ---
+        // --- 📌 달력 다중 날짜 선택(일괄 등록) 제어부 ---
+        function toggleBulkSelectMode() {
+            bulkSelectMode = !bulkSelectMode;
+            selectedBulkDates.clear();
+
+            const btn = document.getElementById('bulkSelectToggleBtn');
+            const helpText = document.getElementById('calendar-help-text');
+            if (bulkSelectMode) {
+                btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-sevenGreen text-white border border-sevenGreen px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = `<i data-lucide="x" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">선택 모드 종료</span>`;
+                helpText.innerHTML = `※ 등록할 <span class="text-indigo-600 font-bold">날짜를 여러 개 선택</span>한 뒤 하단의 "일괄 등록" 버튼을 눌러 주세요.`;
+            } else {
+                btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = `<i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
+                helpText.innerHTML = `※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.`;
+            }
+            lucide.createIcons();
+            updateBulkToolbar();
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        function toggleBulkDateSelection(dayStr) {
+            if (selectedBulkDates.has(dayStr)) {
+                selectedBulkDates.delete(dayStr);
+            } else {
+                selectedBulkDates.add(dayStr);
+            }
+            updateBulkToolbar();
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        function clearBulkSelection() {
+            selectedBulkDates.clear();
+            updateBulkToolbar();
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        function updateBulkToolbar() {
+            const toolbar = document.getElementById('bulkSelectToolbar');
+            const countEl = document.getElementById('bulkSelectCount');
+            countEl.innerText = selectedBulkDates.size;
+            if (bulkSelectMode && selectedBulkDates.size > 0) {
+                toolbar.classList.remove('hidden');
+                toolbar.classList.add('flex');
+            } else {
+                toolbar.classList.add('hidden');
+                toolbar.classList.remove('flex');
+            }
+        }
+
+        // 선택된 날짜들에 동일 근무 스케줄을 한 번에 등록 (기존 빠른 등록 모달 재사용)
+        function openBulkShiftModal() {
+            if (selectedBulkDates.size === 0) {
+                showToast("먼저 일괄 등록할 날짜를 선택해 주세요.");
+                return;
+            }
+            isBulkShiftSubmit = true;
+            const sortedDates = Array.from(selectedBulkDates).sort();
+            selectedQuickDate = sortedDates[0]; // 중복 검사용 대표값, 실제 저장 시 전체 날짜에 적용
+            openQuickShiftModal(sortedDates[0]);
+            document.getElementById('quickShiftDateTitle').innerText = `선택한 ${sortedDates.length}일 (${sortedDates[0]} ~ ${sortedDates[sortedDates.length - 1]})`;
+        }
+
         function renderCalendar() {
             const [year, month] = selectedMonth.split('-').map(Number);
             const calendarTitle = document.getElementById('calendar-title');
@@ -1825,12 +1908,19 @@
             // 날짜 셀 생성 및 알바생 교대 칩 밀어넣기
             for (let day = 1; day <= totalDays; day++) {
                 const dayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isSelectedBulk = bulkSelectMode && selectedBulkDates.has(dayStr);
                 const dayCell = document.createElement('div');
-                dayCell.className = "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
-                
-                // 달력 셀 터치/클릭: 근무 있으면 일일 허브, 없으면 빠른 등록
+                dayCell.className = isSelectedBulk
+                    ? "bg-indigo-50 p-1.5 rounded-lg border-2 border-indigo-500 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between transition-all cursor-pointer shadow-sm"
+                    : "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
+
+                // 달력 셀 터치/클릭: 다중 선택 모드면 선택 토글, 아니면 근무 있으면 일일 허브, 없으면 빠른 등록
                 dayCell.onclick = (e) => {
                     e.stopPropagation();
+                    if (bulkSelectMode) {
+                        toggleBulkDateSelection(dayStr);
+                        return;
+                    }
                     const dayShiftsCheck = (shiftsMap[currentStoreId] || []).filter(s => s.date === dayStr);
                     if (dayShiftsCheck.length > 0) {
                         openDailyHub(dayStr);
@@ -1848,7 +1938,8 @@
                 const todayStr = new Date().toISOString().split('T')[0];
                 const isToday = (dayStr === todayStr);
                 const todayDot = isToday ? `<span class="w-1.5 h-1.5 rounded-full bg-sevenOrange inline-block ml-0.5 mb-0.5"></span>` : '';
-                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[10px] md:text-xs font-black">${day}${todayDot}</span></div>`;
+                const bulkCheckDot = isSelectedBulk ? `<i data-lucide="check-circle-2" class="w-3 h-3 text-indigo-600"></i>` : (bulkSelectMode ? `<i data-lucide="circle" class="w-3 h-3 text-slate-300"></i>` : '');
+                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[10px] md:text-xs font-black">${day}${todayDot}</span>${bulkCheckDot}</div>`;
 
                 const dayShifts = monthlyShifts.filter(s => s.date === dayStr);
                 
@@ -2149,6 +2240,7 @@
             const modal = document.getElementById('quickShiftModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+            isBulkShiftSubmit = false;
         }
 
         function onQuickWorkerSelected(workerId) {
@@ -2841,15 +2933,19 @@
             }
 
             const currentShifts = shiftsMap[currentStoreId] || [];
+            const targetDates = isBulkShiftSubmit ? Array.from(selectedBulkDates).sort() : [selectedQuickDate];
+
             // 임시 스태프는 시간 중복 체크 생략 (workerId가 tmp_ 로 시작하면)
             if (!workerId.startsWith('tmp_')) {
-                const isOverlapping = currentShifts.some(s =>
-                    s.workerId === workerId &&
-                    s.date === selectedQuickDate &&
-                    isShiftTimeOverlapping(s, startTime, endTime)
+                const overlappingDate = targetDates.find(dateStr =>
+                    currentShifts.some(s =>
+                        s.workerId === workerId &&
+                        s.date === dateStr &&
+                        isShiftTimeOverlapping(s, startTime, endTime)
+                    )
                 );
-                if (isOverlapping) {
-                    showToast("⚠️ 해당 날짜에 동일 스태프의 근무 시간대가 중복(겹침)됩니다! 분할 근무라면 시간대를 다르게 지정해 주세요.");
+                if (overlappingDate) {
+                    showToast(`⚠️ ${overlappingDate} 날짜에 동일 스태프의 근무 시간대가 중복(겹침)됩니다! 분할 근무라면 시간대를 다르게 지정해 주세요.`);
                     return;
                 }
             }
@@ -2873,11 +2969,11 @@
             }
 
             const saveAction = () => {
-                const newS = {
-                    id: 's_' + Date.now(),
+                const newShifts = targetDates.map((dateStr, idx) => ({
+                    id: 's_' + Date.now() + '_' + idx,
                     workerId,
                     workerName: worker ? worker.name : workerName,
-                    date: selectedQuickDate,
+                    date: dateStr,
                     startTime,
                     endTime,
                     breakMinutes,
@@ -2887,11 +2983,30 @@
                     isSubstitute,
                     memo,
                     advance: advanceAmount
-                };
+                }));
 
-                shiftsMap[currentStoreId] = [newS, ...currentShifts];
+                shiftsMap[currentStoreId] = [...newShifts, ...currentShifts];
                 const advMsg = advanceAmount > 0 ? ` (가불 ₩${advanceAmount.toLocaleString()} 등록)` : '';
-                showToast(`[${newS.workerName}] 님의 달력 스케줄 추가 완료!${advMsg}`);
+                if (isBulkShiftSubmit) {
+                    showToast(`[${newShifts[0].workerName}] 님의 근무 스케줄을 ${newShifts.length}일 일괄 등록 완료!${advMsg}`);
+                } else {
+                    showToast(`[${newShifts[0].workerName}] 님의 달력 스케줄 추가 완료!${advMsg}`);
+                }
+
+                if (isBulkShiftSubmit) {
+                    isBulkShiftSubmit = false;
+                    bulkSelectMode = false;
+                    selectedBulkDates.clear();
+                    const btn = document.getElementById('bulkSelectToggleBtn');
+                    if (btn) {
+                        btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                        btn.innerHTML = `<i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
+                    }
+                    const helpText = document.getElementById('calendar-help-text');
+                    if (helpText) helpText.innerHTML = `※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.`;
+                    updateBulkToolbar();
+                }
+
                 closeQuickShiftModal();
                 renderEverything();
             };
