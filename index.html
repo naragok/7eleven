@@ -104,6 +104,7 @@
         body {
             -webkit-tap-highlight-color: rgba(0, 137, 56, 0.05);
             overscroll-behavior-y: contain;
+            font-variant-numeric: tabular-nums;
         }
         /* 부드러운 스크롤 */
         .custom-scrollbar::-webkit-scrollbar {
@@ -177,9 +178,9 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[8px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V1.8</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V3.6</span>
                     </div>
-                    <p class="text-[9px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
+                    <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
             </div>
 
@@ -188,27 +189,27 @@
 
                 <!-- 월별 정산 선택기 -->
                 <div class="flex items-center space-x-1 bg-sevenGreen/5 rounded-lg px-2 py-1 border border-sevenGreen/10">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-sevenOrange"></i>
-                    <span class="text-[10px] font-bold text-sevenGreen">정산월:</span>
-                    <input type="month" id="monthSelector" onchange="changeSelectedMonth(this.value)" class="bg-transparent font-extrabold text-[10px] text-slate-800 focus:outline-none cursor-pointer">
+                    <i data-lucide="calendar" class="w-4 h-4 text-sevenOrange"></i>
+                    <span class="text-[12px] font-bold text-sevenGreen">정산월:</span>
+                    <input type="month" id="monthSelector" onchange="changeSelectedMonth(this.value)" class="bg-transparent font-extrabold text-[12px] text-slate-800 focus:outline-none cursor-pointer">
                 </div>
                 
                 <!-- 매장 스위처 -->
                 <div class="flex items-center space-x-1 bg-slate-100 rounded-lg px-2 py-1 border border-slate-200">
-                    <i data-lucide="store" class="w-3.5 h-3.5 text-sevenGreen flex-shrink-0"></i>
-                    <select id="storeSelector" onchange="changeSelectedStore(this.value)" class="bg-transparent font-bold text-[10px] text-slate-800 focus:outline-none cursor-pointer max-w-[120px]">
+                    <i data-lucide="store" class="w-4 h-4 text-sevenGreen flex-shrink-0"></i>
+                    <select id="storeSelector" onchange="changeSelectedStore(this.value)" class="bg-transparent font-bold text-[12px] text-slate-800 focus:outline-none cursor-pointer max-w-[120px]">
                         <!-- JS에서 동적 로드 -->
                     </select>
                 </div>
 
                 <!-- 지점 세팅 -->
-                <button onclick="toggleStoreManagerPanel()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all">
-                    <i data-lucide="settings" class="w-3 h-3"></i>
+                <button onclick="toggleStoreManagerPanel()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-[12px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
                     <span>지점설정</span>
                 </button>
                 <!-- 다크 모드 토글 -->
-                <button id="darkModeToggleBtn" onclick="toggleDarkMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all border border-slate-200">
-                    <i data-lucide="moon" class="w-3 h-3 pointer-events-none"></i>
+                <button id="darkModeToggleBtn" onclick="toggleDarkMode()" aria-label="다크 모드 전환" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[12px] min-w-[44px] min-h-[44px] px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all border border-slate-200">
+                    <i data-lucide="moon" class="w-3.5 h-3.5 pointer-events-none"></i>
                 </button>
             </div>
         </div>
@@ -217,24 +218,24 @@
         <div class="bg-sevenGreen/5 border-t border-slate-100">
             <div class="max-w-7xl mx-auto px-2 py-1 flex overflow-x-auto custom-scrollbar justify-start md:justify-center">
                 <nav class="flex space-x-1 bg-white p-0.5 rounded-lg shadow-xs border border-slate-200">
-                    <button id="tab-dashboard" onclick="switchTab('dashboard')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all bg-sevenGreen text-white shadow-xs">
-                        <i data-lucide="layout-dashboard" class="w-3 h-3"></i>
+                    <button id="tab-dashboard" onclick="switchTab('dashboard')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all bg-sevenGreen text-white shadow-xs">
+                        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
                         <span>종합 현황판</span>
                     </button>
-                    <button id="tab-calendar" onclick="switchTab('calendar')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50">
-                        <i data-lucide="calendar" class="w-3 h-3"></i>
+                    <button id="tab-calendar" onclick="switchTab('calendar')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                         <span>월간 근무 달력</span>
                     </button>
-                    <button id="tab-shifts" onclick="switchTab('shifts')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50">
-                        <i data-lucide="calendar-range" class="w-3 h-3"></i>
+                    <button id="tab-shifts" onclick="switchTab('shifts')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>
                         <span>근무 일지 장부</span>
                     </button>
-                    <button id="tab-reports" onclick="switchTab('reports')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50">
-                        <i data-lucide="file-spreadsheet" class="w-3 h-3"></i>
+                    <button id="tab-reports" onclick="switchTab('reports')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
                         <span>월말 급여 보고서</span>
                     </button>
-                    <button id="tab-workers" onclick="switchTab('workers')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50">
-                        <i data-lucide="users" class="w-3 h-3"></i>
+                    <button id="tab-workers" onclick="switchTab('workers')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
                         <span>알바생 명부 & 서류</span>
                     </button>
                 </nav>
@@ -245,7 +246,7 @@
     <main class="max-w-7xl mx-auto p-2.5 md:p-3 space-y-2.5 flex-grow md:flex-1 md:min-h-0 md:max-h-[calc(100vh-130px)] md:overflow-y-auto flex flex-col w-full">
 
         <!-- 보건증 만료 경고 알림판 (D-Day 배너) -->
-        <div id="healthCardWarningBanner" class="hidden bg-rose-50 border border-rose-200 rounded-xl p-2.5 flex items-start space-x-2 text-[11px] flex-shrink-0 animate-in fade-in duration-200">
+        <div id="healthCardWarningBanner" class="hidden bg-rose-50 border border-rose-200 rounded-xl p-2.5 flex items-start space-x-2 text-[13px] flex-shrink-0 animate-in fade-in duration-200">
             <div class="p-1 bg-rose-500 text-white rounded-lg">
                 <i data-lucide="alert-octagon" class="w-4 h-4 pulse-light"></i>
             </div>
@@ -256,7 +257,7 @@
         </div>
 
         <!-- 근무 시간 중복 경고 배너 -->
-        <div id="overlapWarningBanner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex items-start space-x-2 text-[11px] flex-shrink-0 animate-in fade-in duration-200">
+        <div id="overlapWarningBanner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex items-start space-x-2 text-[13px] flex-shrink-0 animate-in fade-in duration-200">
             <div class="p-1 bg-amber-400 text-white rounded-lg flex-shrink-0">
                 <i data-lucide="triangle-alert" class="w-4 h-4"></i>
             </div>
@@ -273,46 +274,46 @@
                     <span class="w-2 h-2 rounded-full bg-sevenGreen pulse-light"></span>
                     <h2 id="currentStoreNameTitle" class="text-sm font-black text-slate-900">지점명 불러오는 중...</h2>
                 </div>
-                <p id="currentMonthMetaText" class="text-[9px] text-slate-400 mt-0.5 font-semibold">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
+                <p id="currentMonthMetaText" class="text-[11px] text-slate-400 mt-0.5 font-semibold">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
             </div>
 
             <!-- 법정 수당 스위치 설정부 -->
             <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-full lg:w-auto">
                 <div class="flex items-center space-x-1.5">
-                    <span class="text-[9px] font-bold text-slate-500">야간 가산(1.5배):</span>
+                    <span class="text-[11px] font-bold text-slate-500">야간 가산(1.5배):</span>
                     <button id="toggleNightAllowance" onclick="toggleOption('night')" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
-                        <span class="bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
+                        <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
                     </button>
                 </div>
                 <div class="flex items-center space-x-1.5 border-l pl-2 border-slate-200">
-                    <span class="text-[9px] font-bold text-slate-500">법정 주휴수당:</span>
+                    <span class="text-[11px] font-bold text-slate-500">법정 주휴수당:</span>
                     <button id="toggleHolidayAllowance" onclick="toggleOption('holiday')" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
-                        <span class="bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
+                        <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 w-full lg:w-auto text-[10px]">
+            <div class="flex items-center gap-1.5 w-full lg:w-auto text-[12px]">
                 <button onclick="copyForGoogleSheets()" class="flex-1 lg:flex-initial bg-slate-100 hover:bg-slate-200 border text-slate-700 font-bold px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all">
-                    <i data-lucide="copy" class="w-3 h-3 text-sevenOrange"></i>
+                    <i data-lucide="copy" class="w-3.5 h-3.5 text-sevenOrange"></i>
                     <span>구글 시트 복사</span>
                 </button>
                 <button onclick="exportToCSV()" class="flex-1 lg:flex-initial bg-sevenGreen hover:bg-sevenGreen/90 text-white font-bold px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all">
-                    <i data-lucide="download" class="w-3 h-3"></i>
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
                     <span>CSV 다운로드</span>
                 </button>
                 <button onclick="exportToExcel()" class="flex-1 lg:flex-initial bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all">
-                    <i data-lucide="file-spreadsheet" class="w-3 h-3"></i>
+                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
                     <span>Excel 다운로드</span>
                 </button>
             </div>
         </div>
 
         <!-- 매점 및 데이터 편집 패널 (드로어 형식) -->
-        <div id="storeManagerPanel" class="hidden bg-white p-3 rounded-xl shadow-sm border border-sevenGreen/20 space-y-2 animate-in fade-in duration-200 text-[11px] flex-shrink-0">
+        <div id="storeManagerPanel" class="hidden bg-white p-3 rounded-xl shadow-sm border border-sevenGreen/20 space-y-2 animate-in fade-in duration-200 text-[13px] flex-shrink-0">
             <div class="flex justify-between items-center border-b pb-1">
                 <h3 class="font-black text-slate-900 flex items-center gap-1">
-                    <i data-lucide="store" class="w-3.5 h-3.5 text-sevenGreen"></i>
+                    <i data-lucide="store" class="w-4 h-4 text-sevenGreen"></i>
                     다중 점포(매장) 및 시스템 데이터 대장
                 </h3>
                 <button onclick="toggleStoreManagerPanel()" class="text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
@@ -323,8 +324,8 @@
                 <div class="space-y-1">
                     <h4 class="font-bold text-slate-500">새 가맹지점 추가</h4>
                     <div class="flex gap-1.5">
-                        <input type="text" id="newStoreNameInput" placeholder="예: 세븐일레븐 원주더샾점" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] font-semibold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                        <button onclick="addStore()" class="bg-sevenGreen hover:bg-sevenGreen/90 text-white text-[11px] font-black px-3 py-1 rounded-lg">등록</button>
+                        <input type="text" id="newStoreNameInput" placeholder="예: 세븐일레븐 원주더샾점" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        <button onclick="addStore()" class="bg-sevenGreen hover:bg-sevenGreen/90 text-white text-[13px] font-black px-3 py-1 rounded-lg">등록</button>
                     </div>
                 </div>
 
@@ -340,13 +341,13 @@
             <div class="border-t pt-2 border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div class="space-y-1">
                     <button onclick="exportData()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 border border-emerald-150">
-                        <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-sevenGreen"></i>
+                        <i data-lucide="upload-cloud" class="w-4 h-4 text-sevenGreen"></i>
                         <span>전체 데이터 백업 (JSON)</span>
                     </button>
                 </div>
                 <div class="space-y-1">
                     <button onclick="triggerImport()" class="w-full bg-orange-50 hover:bg-orange-100 text-orange-800 font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 border border-orange-150">
-                        <i data-lucide="download-cloud" class="w-3.5 h-3.5 text-sevenOrange"></i>
+                        <i data-lucide="download-cloud" class="w-4 h-4 text-sevenOrange"></i>
                         <span>백업 복구하기 (JSON)</span>
                     </button>
                     <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
@@ -355,14 +356,14 @@
 
             <div class="border-t pt-2 border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div class="space-y-1">
-                    <button onclick="backupToGithub()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1">
-                        <i data-lucide="github" class="w-3.5 h-3.5"></i>
-                        <span>GitHub에 백업</span>
+                    <button id="githubBackupBtn" onclick="backupToGithub()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span id="githubBackupBtnLabel">GitHub에 백업</span>
                     </button>
                 </div>
                 <div class="space-y-1">
                     <button onclick="openGithubSettingsModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 border border-slate-200">
-                        <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="settings" class="w-4 h-4"></i>
                         <span>GitHub 연동 설정</span>
                     </button>
                 </div>
@@ -381,7 +382,7 @@
                             <i data-lucide="users" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">이 지점 알바생</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">이 지점 알바생</p>
                             <h3 id="dashboard-workerCount" class="text-xs font-black text-slate-950 mt-0.5">0명</h3>
                         </div>
                     </div>
@@ -391,7 +392,7 @@
                             <i data-lucide="clock" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p id="dashboard-monthlyHoursLabel" class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">0월 총시수</p>
+                            <p id="dashboard-monthlyHoursLabel" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">0월 총시수</p>
                             <h3 id="dashboard-totalHours" class="text-xs font-black text-slate-950 mt-0.5">0.0H</h3>
                         </div>
                     </div>
@@ -401,7 +402,7 @@
                             <i data-lucide="alert-triangle" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">주휴 정밀 대상</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">주휴 정밀 대상</p>
                             <h3 id="dashboard-weeklyHolidayCount" class="text-xs font-black text-amber-600 mt-0.5">0명</h3>
                         </div>
                     </div>
@@ -411,7 +412,7 @@
                             <i data-lucide="coins" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p id="dashboard-monthlyPayrollLabel" class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">0월 예정 인건비</p>
+                            <p id="dashboard-monthlyPayrollLabel" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">0월 예정 인건비</p>
                             <h3 id="dashboard-totalPayroll" class="text-xs font-black text-sevenGreen mt-0.5">₩0</h3>
                         </div>
                     </div>
@@ -420,27 +421,27 @@
                 <!-- 📌 점주 전달사항 공지 핀보드 (md:col-span-4) -->
                 <div class="md:col-span-4 bg-white p-2 rounded-xl shadow-xs border border-slate-200/60 flex flex-col justify-between">
                     <div class="flex items-center justify-between border-b pb-0.5">
-                        <h4 class="font-black text-[10px] text-slate-900 flex items-center gap-0.5">
-                            <i data-lucide="pin" class="w-3 h-3 text-sevenRed"></i>
+                        <h4 class="font-black text-[12px] text-slate-900 flex items-center gap-0.5">
+                            <i data-lucide="pin" class="w-3.5 h-3.5 text-sevenRed"></i>
                             지점 일일 공지사항
                         </h4>
-                        <span class="text-[7px] bg-slate-100 text-slate-500 px-1 rounded">인수인계</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-500 px-1 rounded">인수인계</span>
                     </div>
-                    <textarea id="storeNoticeTextarea" oninput="saveStoreNotice(this.value)" placeholder="예: 시방 및 금고 시재 마감 철저, 물품 배송 시 삼각김밥 선입선출 검토 바랍니다." class="w-full text-[9px] text-slate-700 font-medium bg-transparent border-0 focus:ring-0 focus:outline-none resize-none h-6 mt-0.5 leading-tight" rows="1"></textarea>
+                    <textarea id="storeNoticeTextarea" oninput="saveStoreNotice(this.value)" placeholder="예: 시방 및 금고 시재 마감 철저, 물품 배송 시 삼각김밥 선입선출 검토 바랍니다." class="w-full text-[11px] text-slate-700 font-medium bg-transparent border-0 focus:ring-0 focus:outline-none resize-none h-6 mt-0.5 leading-tight" rows="1"></textarea>
                 </div>
             </div>
 
-            <!-- 아이패드 한 화면 극대화 3단 그리드 -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:min-h-0 md:max-h-[500px]">
+            <!-- 아이패드/PC 화면 높이에 자동 맞춤되는 3단 그리드 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:flex-1 md:min-h-0">
                 
                 <!-- 1단: 출퇴근 일지 추가 폼 -->
-                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-4 flex flex-col md:h-full md:overflow-hidden">
-                    <h3 class="font-black text-slate-950 text-[11px] flex items-center gap-1 border-b pb-1.5 flex-shrink-0">
-                        <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-sevenOrange"></i>
+                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col md:h-full md:overflow-hidden">
+                    <h3 class="font-black text-slate-950 text-[13px] flex items-center gap-1 border-b pb-1.5 flex-shrink-0">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-sevenOrange"></i>
                         <span>교대 근무 기록 추가</span>
                     </h3>
 
-                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[10px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
+                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[12px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">근무자 알바생 선택</label>
                             <select id="form-worker" onchange="onWorkerSelected(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:ring-1 focus:ring-sevenGreen focus:outline-none">
@@ -467,7 +468,7 @@
                             <div>
                                 <div class="flex items-center justify-between mb-0.5">
                                     <label class="text-slate-500 font-bold">퇴근 시각</label>
-                                    <select id="form-shift-interval" onchange="onIntervalChanged(this.value)" class="text-[8px] bg-slate-100 rounded px-1 text-slate-600 focus:outline-none">
+                                    <select id="form-shift-interval" onchange="onIntervalChanged(this.value)" class="text-[10px] bg-slate-100 rounded px-1 text-slate-600 focus:outline-none">
                                         <option value="6">6H 교대</option>
                                         <option value="7" selected>7H 교대</option>
                                         <option value="8">8H 교대</option>
@@ -481,9 +482,9 @@
                         <!-- 교대 시간 프리셋 (사용자 등록형) -->
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-slate-500 font-bold text-[10px]">교대 프리셋</span>
-                                <button type="button" onclick="openPresetSettingModal()" class="flex items-center gap-0.5 text-[8px] text-slate-400 hover:text-sevenGreen font-bold transition-all">
-                                    <i data-lucide="settings-2" class="w-2.5 h-2.5"></i> 편집
+                                <span class="text-slate-500 font-bold text-[12px]">교대 프리셋</span>
+                                <button type="button" onclick="openPresetSettingModal()" class="flex items-center gap-0.5 text-[10px] text-slate-400 hover:text-sevenGreen font-bold transition-all">
+                                    <i data-lucide="settings-2" class="w-3.5 h-3.5"></i> 편집
                                 </button>
                             </div>
                             <div id="form-preset-buttons" class="grid grid-cols-3 gap-1">
@@ -520,13 +521,13 @@
                         <!-- 가불금 입력 -->
                         <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 space-y-1">
                             <div class="flex items-center justify-between">
-                                <label class="text-amber-800 font-black text-[9px] flex items-center gap-1">
-                                    <i data-lucide="banknote" class="w-3 h-3"></i>
+                                <label class="text-amber-800 font-black text-[11px] flex items-center gap-1">
+                                    <i data-lucide="banknote" class="w-3.5 h-3.5"></i>
                                     가불금(선지급금)
                                 </label>
                                 <label class="flex items-center gap-1 cursor-pointer">
                                     <input type="checkbox" id="form-advance-toggle" onchange="toggleFormAdvance()" class="rounded text-amber-500 focus:ring-amber-400">
-                                    <span class="text-[9px] font-bold text-amber-700">이 근무에 가불 있음</span>
+                                    <span class="text-[11px] font-bold text-amber-700">이 근무에 가불 있음</span>
                                 </label>
                             </div>
                             <div id="form-advance-wrap" class="hidden">
@@ -536,148 +537,32 @@
                         </div>
 
                         <button type="submit" class="w-full bg-sevenGreen hover:bg-sevenGreen/95 text-white font-extrabold py-2 px-3 rounded-lg shadow-xs flex items-center justify-center space-x-1 transition-all mt-1">
-                            <i data-lucide="plus" class="w-3 h-3"></i>
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                             <span>근무일지 등록</span>
                         </button>
                     </form>
                 </div>
 
-                <!-- 2단: 세븐일레븐 일과 체커 & 시재 정산기 (시재 누적 기록 연동형) -->
-                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-4 flex flex-col md:h-full md:overflow-hidden">
-                    <div class="flex justify-between items-center border-b pb-1.5 flex-shrink-0">
-                        <h3 class="font-extrabold text-slate-900 text-[11px] flex items-center gap-1">
-                            <i data-lucide="store" class="w-3.5 h-3.5 text-sevenGreen"></i>
-                            <span>세븐 일과 & 시재 정산기</span>
-                        </h3>
-                        <div class="flex space-x-0.5">
-                            <button onclick="switchCheckerTab('disposal')" id="btn-checker-disposal" class="bg-sevenGreen text-white text-[8px] font-bold px-1.5 py-0.5 rounded">FF 폐기</button>
-                            <button onclick="switchCheckerTab('pos')" id="btn-checker-pos" class="bg-slate-100 text-slate-600 text-[8px] font-bold px-1.5 py-0.5 rounded">시재 정산</button>
-                            <button onclick="switchCheckerTab('posHistory')" id="btn-checker-posHistory" class="bg-slate-100 text-slate-600 text-[8px] font-bold px-1.5 py-0.5 rounded">정산대장</button>
-                        </div>
-                    </div>
-
-                    <!-- FF 폐기 목록 -->
-                    <div id="checkerTab-disposal" class="flex-grow overflow-y-auto custom-scrollbar pr-0.5 space-y-1.5 text-[10px] pt-2">
-                        <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-100">
-                            <div class="flex justify-between items-center mb-0.5">
-                                <span class="font-black text-sevenGreen flex items-center gap-0.5">
-                                    <i data-lucide="alarm-clock" class="w-3 h-3"></i>
-                                    오전 11:00 타임 (1차 FF 폐기)
-                                </span>
-                                <span id="disposal-timer-0" class="text-[9px] font-black text-slate-700">계산 중...</span>
-                            </div>
-                            <p class="text-slate-500 font-semibold text-[8px]">대상 품목: 도시락, 김밥, 삼각김밥, 샌드위치 아침 마감분</p>
-                        </div>
-
-                        <div class="p-2 bg-amber-50 rounded-lg border border-amber-100">
-                            <div class="flex justify-between items-center mb-0.5">
-                                <span class="font-black text-sevenOrange flex items-center gap-0.5">
-                                    <i data-lucide="alarm-clock" class="w-3 h-3"></i>
-                                    오후 20:00 타임 (디저트/유제품 폐기)
-                                </span>
-                                <span id="disposal-timer-1" class="text-[9px] font-black text-slate-700">계산 중...</span>
-                            </div>
-                            <p class="text-slate-500 font-semibold text-[8px]">대상 품목: 냉장 마카롱/케이크 디저트, 즉석 냉장 안주류</p>
-                        </div>
-
-                        <div class="p-2 bg-rose-50 rounded-lg border border-rose-100">
-                            <div class="flex justify-between items-center mb-0.5">
-                                <span class="font-black text-sevenRed flex items-center gap-0.5">
-                                    <i data-lucide="alarm-clock" class="w-3 h-3"></i>
-                                    야간 23:00 타임 (2차 FF 폐기)
-                                </span>
-                                <span id="disposal-timer-2" class="text-[9px] font-black text-slate-700">계산 중...</span>
-                            </div>
-                            <p class="text-slate-500 font-semibold text-[8px]">대상 품목: 햄버거, 샐러드, 야간 입고분 일일 총 마감 상품</p>
-                        </div>
-                    </div>
-
-                    <!-- 교대 시재 정산기 -->
-                    <div id="checkerTab-pos" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-0.5 text-[10px] space-y-1.5 pt-2">
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">50,000원</span>
-                                <input type="number" id="pos-count-50000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">10,000원</span>
-                                <input type="number" id="pos-count-10000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">5,000원</span>
-                                <input type="number" id="pos-count-5000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">1,000원</span>
-                                <input type="number" id="pos-count-1000" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">500원</span>
-                                <input type="number" id="pos-count-500" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">100원</span>
-                                <input type="number" id="pos-count-100" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">50원</span>
-                                <input type="number" id="pos-count-50" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                            <div class="flex items-center justify-between border-b pb-0.5">
-                                <span class="font-bold text-slate-500">10원</span>
-                                <input type="number" id="pos-count-10" oninput="calculatePosCash()" placeholder="0" class="w-14 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-right font-black" min="0" onkeypress="return event.charCode >= 48">
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-100 p-1.5 rounded-lg flex justify-between items-center border border-slate-200">
-                            <span class="font-bold text-slate-500">정산 담당자:</span>
-                            <select id="pos-worker-select" class="w-28 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-right font-black text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                                <!-- JS 동적 생성 -->
-                            </select>
-                        </div>
-
-                        <div class="bg-slate-100 p-1.5 rounded-lg flex justify-between items-center mt-1 border border-slate-200">
-                            <span class="font-bold text-slate-500">기본 준비금:</span>
-                            <input type="number" id="pos-base-cash" value="150000" oninput="calculatePosCash()" class="w-16 bg-white border border-slate-200 rounded px-1 py-0.5 text-right font-black text-slate-800" min="0" onkeypress="return event.charCode >= 48">
-                        </div>
-
-                        <div class="flex justify-between items-center px-1 font-black pt-0.5">
-                            <span id="pos-diff-cash" class="text-sevenGreen text-[9px]">과부족: ₩0원</span>
-                            <span id="pos-total-cash" class="text-slate-800 text-[9px]">현금: ₩0원</span>
-                        </div>
-
-                        <button onclick="savePosHistoryRecord()" class="w-full bg-sevenGreen hover:bg-sevenGreen/95 text-white font-black py-1.5 rounded-lg text-[9px] shadow-xs flex items-center justify-center space-x-1 transition-all mt-1">
-                            <i data-lucide="file-check-2" class="w-3 h-3"></i>
-                            <span>현재 과부족 시재 대장 저장</span>
-                        </button>
-                    </div>
-
-                    <!-- 저장된 정산대장 리스트업 -->
-                    <div id="checkerTab-posHistory" class="hidden flex-grow overflow-y-auto custom-scrollbar pr-0.5 text-[10px] space-y-1.5 pt-2">
-                        <div class="flex justify-between items-center border-b pb-1">
-                            <span class="font-bold text-slate-500">최근 정산 전표 내역</span>
-                            <button onclick="clearPosHistory()" class="text-[8px] text-sevenRed hover:underline font-bold">전체 삭제</button>
-                        </div>
-                        <div id="posHistoryList" class="space-y-1.5">
-                            <!-- 동적 대장 리스트 삽입 -->
-                        </div>
-                    </div>
-                </div>
-
                 <!-- 3단: 최근 근무 내역 목록 -->
-                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-4 flex flex-col md:h-full md:overflow-hidden">
+                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col md:h-full md:overflow-hidden">
                     <div class="flex justify-between items-center border-b pb-1.5 flex-shrink-0">
-                        <h3 class="font-extrabold text-slate-900 text-[11px] flex items-center gap-1">
-                            <i data-lucide="history" class="w-3.5 h-3.5 text-sevenOrange"></i>
+                        <h3 class="font-extrabold text-slate-900 text-[13px] flex items-center gap-1">
+                            <i data-lucide="history" class="w-4 h-4 text-sevenOrange"></i>
                             <span id="dashboard-recentListLabel">최근 교대 장부</span>
                         </h3>
-                        <button onclick="switchTab('shifts')" class="text-[8px] font-bold text-sevenGreen hover:underline">
-                            전체장부 &rarr;
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="copyTomorrowShiftsSummary()" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-0.5">
+                                <i data-lucide="clipboard-copy" class="w-3.5 h-3.5"></i>
+                                내일 근무자 요약
+                            </button>
+                            <button onclick="switchTab('shifts')" class="text-[10px] font-bold text-sevenGreen hover:underline">
+                                전체장부 &rarr;
+                            </button>
+                        </div>
                     </div>
 
                     <div class="overflow-y-auto flex-grow custom-scrollbar pr-0.5 pt-1">
-                        <table class="w-full text-left text-[10px] border-collapse">
+                        <table class="w-full text-left text-[12px] border-collapse">
                             <thead class="sticky top-0 bg-white z-10">
                                 <tr class="border-b border-slate-100 text-slate-400">
                                     <th class="py-1 font-bold">스태프</th>
@@ -703,16 +588,16 @@
                         <i data-lucide="calendar" class="w-4 h-4 text-sevenGreen"></i>
                         <span id="calendar-title">2026년 06월 근무자 종합 달력</span>
                     </h3>
-                    <p id="calendar-help-text" class="text-[9px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.</p>
+                    <p id="calendar-help-text" class="text-[11px] text-slate-400 mt-0.5">※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.</p>
                 </div>
-                <button id="bulkSelectToggleBtn" onclick="toggleBulkSelectMode()" class="flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
-                    <i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i>
+                <button id="bulkSelectToggleBtn" onclick="toggleBulkSelectMode()" class="flex-shrink-0 flex items-center gap-1 text-[12px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                    <i data-lucide="check-square" class="w-3.5 h-3.5 pointer-events-none"></i>
                     <span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>
                 </button>
             </div>
 
             <!-- 일괄 등록 도구모음: 다중 선택 모드에서만 노출 -->
-            <div id="bulkSelectToolbar" class="hidden items-center justify-between gap-2 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-1.5 text-[10px] flex-shrink-0">
+            <div id="bulkSelectToolbar" class="hidden items-center justify-between gap-2 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-1.5 text-[12px] flex-shrink-0">
                 <span class="font-black text-indigo-700"><span id="bulkSelectCount">0</span>일 선택됨</span>
                 <div class="flex items-center gap-1.5">
                     <button onclick="clearBulkSelection()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 px-2 py-1 rounded-md font-bold">선택 초기화</button>
@@ -721,7 +606,7 @@
             </div>
 
             <!-- 요일 헤더 -->
-            <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] font-black text-slate-500 border-b pb-1 flex-shrink-0">
+            <div class="grid grid-cols-7 gap-1.5 text-center text-[12px] font-black text-slate-500 border-b pb-1 flex-shrink-0">
                 <div class="text-sevenRed">일</div>
                 <div>월</div>
                 <div>화</div>
@@ -746,6 +631,11 @@
                         <span id="shifts-monthlyTitle">정산월별 상세 근무 일지 장부</span>
                     </h3>
                 </div>
+                <div class="relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input type="text" id="shiftsSearchInput" oninput="updateShiftsSearch(this.value)" placeholder="스태프 이름 검색"
+                        class="pl-6 pr-2 py-1 text-[12px] bg-slate-50 border border-slate-200 rounded-lg font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen w-28 sm:w-40">
+                </div>
             </div>
 
             <!-- 스태프별 교대 아코디언 컨테이너 -->
@@ -764,10 +654,11 @@
                     <span id="reports-headerTitle">0월말 기준 파트타이머 정산 명세 보고서</span>
                 </h3>
                 <div class="flex items-center gap-1.5">
+                    <span id="reports-unpaidSummary" class="hidden text-[11px] font-black px-2 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100"></span>
                     <button onclick="setReportsView('auto')" id="reports-view-auto"
-                        class="text-[9px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all">자동 보고서</button>
+                        class="text-[11px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all">자동 보고서</button>
                     <button onclick="setReportsView('invoice')" id="reports-view-invoice"
-                        class="text-[9px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all">수동 청구서</button>
+                        class="text-[11px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all">수동 청구서</button>
                 </div>
             </div>
 
@@ -785,39 +676,39 @@
                 <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-2.5 flex-shrink-0">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
                         <div>
-                            <label class="block text-[9px] text-slate-400 font-bold mb-0.5">스태프</label>
+                            <label class="block text-[11px] text-slate-400 font-bold mb-0.5">스태프</label>
                             <select id="inv-worker-select" onchange="onInvoiceWorkerSelected()"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[11px]">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[13px]">
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[9px] text-slate-400 font-bold mb-0.5">기본 시급 (원)</label>
+                            <label class="block text-[11px] text-slate-400 font-bold mb-0.5">기본 시급 (원)</label>
                             <input type="number" id="inv-hourly-rate" value="10320" min="0" oninput="renderInvoice()"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[11px]">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[13px]">
                         </div>
                         <div>
-                            <label class="block text-[9px] text-slate-400 font-bold mb-0.5">청구서 제목</label>
+                            <label class="block text-[11px] text-slate-400 font-bold mb-0.5">청구서 제목</label>
                             <input type="text" id="inv-title" placeholder="6월 급여 청구서" oninput="renderInvoiceMeta()"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[11px]">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[13px]">
                         </div>
                         <div>
-                            <label class="block text-[9px] text-slate-400 font-bold mb-0.5">발행일</label>
+                            <label class="block text-[11px] text-slate-400 font-bold mb-0.5">발행일</label>
                             <input type="date" id="inv-issue-date" oninput="renderInvoiceMeta()"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[11px]">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen text-[13px]">
                         </div>
                     </div>
                     <div class="flex gap-1.5 flex-wrap border-t pt-2">
                         <button onclick="addInvoiceRow()"
-                            class="flex items-center gap-1 bg-sevenGreen text-white font-black px-3 py-1.5 rounded-lg hover:bg-emerald-700 active:scale-95 transition-all text-[10px]">
-                            <i data-lucide="plus" class="w-3 h-3"></i> 행 추가
+                            class="flex items-center gap-1 bg-sevenGreen text-white font-black px-3 py-1.5 rounded-lg hover:bg-emerald-700 active:scale-95 transition-all text-[12px]">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 행 추가
                         </button>
                         <button onclick="fillInvoiceFromShifts()"
-                            class="flex items-center gap-1 bg-emerald-50 text-sevenGreen border border-emerald-200 font-black px-3 py-1.5 rounded-lg hover:bg-emerald-100 active:scale-95 transition-all text-[10px]">
-                            <i data-lucide="zap" class="w-3 h-3"></i> 근무일지 자동 불러오기
+                            class="flex items-center gap-1 bg-emerald-50 text-sevenGreen border border-emerald-200 font-black px-3 py-1.5 rounded-lg hover:bg-emerald-100 active:scale-95 transition-all text-[12px]">
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i> 근무일지 자동 불러오기
                         </button>
                         <button onclick="clearInvoiceRows()"
-                            class="flex items-center gap-1 bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 active:scale-95 transition-all text-[10px] ml-auto">
-                            <i data-lucide="trash-2" class="w-3 h-3"></i> 초기화
+                            class="flex items-center gap-1 bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 active:scale-95 transition-all text-[12px] ml-auto">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 초기화
                         </button>
                     </div>
                 </div>
@@ -831,24 +722,24 @@
                 <div class="bg-white rounded-xl border border-slate-200 shadow-md flex-shrink-0 p-3">
                     <!-- 합계 요약 -->
                     <div class="flex items-center justify-between mb-2.5">
-                        <div class="flex items-center gap-3 text-[10px] text-slate-500 font-bold">
+                        <div class="flex items-center gap-3 text-[12px] text-slate-500 font-bold">
                             <span>출근 <span id="inv-total-days" class="text-slate-800 font-black">0일</span></span>
                             <span>실근무 <span id="inv-total-hours" class="text-slate-800 font-black">0H</span></span>
                         </div>
                         <div class="text-right">
-                            <p class="text-[8px] text-slate-400 font-bold">최종 청구금액</p>
+                            <p class="text-[10px] text-slate-400 font-bold">최종 청구금액</p>
                             <p id="inv-grand-total" class="text-lg font-black text-sevenGreen leading-none">₩0</p>
                         </div>
                     </div>
                     <!-- 액션 버튼 -->
                     <div class="flex gap-2">
                         <button onclick="printInvoice()"
-                            class="flex-1 flex items-center justify-center gap-1.5 bg-slate-800 text-white font-black py-2 rounded-xl hover:bg-slate-900 active:scale-95 transition-all text-[10px]">
-                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> 인쇄 / PDF
+                            class="flex-1 flex items-center justify-center gap-1.5 bg-slate-800 text-white font-black py-2 rounded-xl hover:bg-slate-900 active:scale-95 transition-all text-[12px]">
+                            <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF
                         </button>
                         <button onclick="copyInvoiceText()"
-                            class="flex-1 flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 font-bold py-2 rounded-xl hover:bg-slate-200 active:scale-95 transition-all text-[10px]">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> 텍스트 복사
+                            class="flex-1 flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 font-bold py-2 rounded-xl hover:bg-slate-200 active:scale-95 transition-all text-[12px]">
+                            <i data-lucide="copy" class="w-4 h-4"></i> 텍스트 복사
                         </button>
                     </div>
                 </div>
@@ -870,8 +761,8 @@
                 <!-- JS 동적 생성 -->
             </div>
 
-            <button onclick="addNewPresetSlot()" class="w-full border-2 border-dashed border-slate-200 hover:border-sevenGreen text-slate-400 hover:text-sevenGreen font-bold py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px]">
-                <i data-lucide="plus" class="w-3 h-3"></i> 프리셋 추가
+            <button onclick="addNewPresetSlot()" class="w-full border-2 border-dashed border-slate-200 hover:border-sevenGreen text-slate-400 hover:text-sevenGreen font-bold py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 text-[12px]">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> 프리셋 추가
             </button>
 
             <div class="flex justify-end gap-2 pt-1 border-t">
@@ -888,7 +779,7 @@
                 <div class="flex items-center gap-1.5 text-sevenGreen">
                     <i data-lucide="pencil" class="w-4 h-4"></i>
                     <h3 class="font-black text-slate-900">근무일지 수정</h3>
-                    <span id="shiftEditWorkerLabel" class="text-[10px] bg-sevenGreen/10 text-sevenGreen px-1.5 py-0.5 rounded font-bold"></span>
+                    <span id="shiftEditWorkerLabel" class="text-[12px] bg-sevenGreen/10 text-sevenGreen px-1.5 py-0.5 rounded font-bold"></span>
                 </div>
                 <button onclick="closeShiftEditModal()" class="text-slate-400 hover:text-slate-600 font-black text-base leading-none">✕</button>
             </div>
@@ -956,7 +847,7 @@
                     <i data-lucide="layout-list" class="w-4 h-4"></i>
                     <div>
                         <h3 class="font-black text-sm" id="dailyHubTitle">일일 근무 통합 허브</h3>
-                        <p class="text-[9px] text-emerald-200" id="dailyHubDate">날짜</p>
+                        <p class="text-[11px] text-emerald-200" id="dailyHubDate">날짜</p>
                     </div>
                 </div>
                 <button onclick="closeDailyHub()" class="text-white/70 hover:text-white font-bold text-lg leading-none">✕</button>
@@ -967,7 +858,7 @@
                 <!-- 빠른 등록 버튼 -->
                 <button onclick="closeDailyHub(); openQuickShiftModal(currentDailyHubDate);"
                     class="w-full bg-sevenGreen text-white font-black py-2 rounded-xl flex items-center justify-center gap-1.5 hover:bg-emerald-700 transition-all">
-                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
                     이 날 근무 추가 등록
                 </button>
             </div>
@@ -979,9 +870,16 @@
             
             <!-- 활성 스태프 목록 및 서류 현황판 -->
             <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 lg:col-span-7 flex flex-col md:h-full md:overflow-hidden order-1 lg:order-2">
-                <h3 class="font-bold text-slate-900 text-[11px] flex items-center gap-1 border-b pb-2 flex-shrink-0">
-                    <i data-lucide="users" class="w-3.5 h-3.5 text-sevenGreen"></i>
-                    <span>등록 활성 알바생 명부 & 채용 서류 상태</span>
+                <h3 class="font-bold text-slate-900 text-[13px] flex items-center gap-1 border-b pb-2 flex-shrink-0 justify-between">
+                    <span class="flex items-center gap-1">
+                        <i data-lucide="users" class="w-4 h-4 text-sevenGreen"></i>
+                        <span>등록 활성 알바생 명부 & 채용 서류 상태</span>
+                    </span>
+                    <button onclick="document.getElementById('workerExcelImportInput').click()" class="text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg flex items-center gap-1">
+                        <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
+                        엑셀 일괄 등록
+                    </button>
+                    <input type="file" id="workerExcelImportInput" onchange="importWorkersFromExcel(event)" class="hidden" accept=".xlsx,.xls">
                 </h3>
 
                 <div id="workersListGrid" class="space-y-2.5 flex-grow md:flex-1 md:min-h-0 overflow-y-auto pr-0.5 custom-scrollbar pt-1">
@@ -991,12 +889,12 @@
 
             <!-- 명부 신규 입력 -->
             <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 lg:col-span-5 md:h-full md:overflow-hidden flex flex-col order-2 lg:order-1">
-                <h3 class="font-bold text-slate-900 text-[11px] flex items-center gap-1 border-b pb-2 flex-shrink-0">
-                    <i data-lucide="user-plus" class="w-3.5 h-3.5 text-sevenGreen"></i>
+                <h3 class="font-bold text-slate-900 text-[13px] flex items-center gap-1 border-b pb-2 flex-shrink-0">
+                    <i data-lucide="user-plus" class="w-4 h-4 text-sevenGreen"></i>
                     <span>신규 아르바이트 스태프 추가</span>
                 </h3>
 
-                <div class="space-y-2 text-[10px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
+                <div class="space-y-2 text-[12px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
                     <div>
                         <label class="block text-slate-500 font-bold mb-0.5">스태프 이름 *</label>
                         <input type="text" id="newWorkerName" placeholder="예: 김민재" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
@@ -1014,7 +912,7 @@
                     </div>
 
                     <label class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1.5 cursor-pointer">
-                        <input type="checkbox" id="newWorkerTaxWithholding" class="w-3 h-3 accent-indigo-600">
+                        <input type="checkbox" id="newWorkerTaxWithholding" class="w-3.5 h-3.5 accent-indigo-600">
                         <span class="text-indigo-700 font-bold">3.3% 사업소득세 원천징수 적용 (프리랜서/단기 계약)</span>
                     </label>
 
@@ -1041,22 +939,22 @@
 
                     <!-- 기본 근무 시간 설정 -->
                     <div class="bg-sevenGreen/5 border border-sevenGreen/20 rounded-lg p-2 space-y-1.5">
-                        <label class="block text-sevenGreen font-black text-[9px] flex items-center gap-1">
-                            <i data-lucide="clock" class="w-3 h-3"></i>
+                        <label class="block text-sevenGreen font-black text-[11px] flex items-center gap-1">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                             기본 근무 시간 (교대 등록 시 자동 적용)
                         </label>
                         <div class="grid grid-cols-3 gap-1.5">
                             <div>
-                                <label class="block text-[8px] text-slate-400 font-bold mb-0.5">출근 시각</label>
-                                <input type="time" id="newWorkerDefaultStart" value="09:00" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">출근 시각</label>
+                                <input type="time" id="newWorkerDefaultStart" value="09:00" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                             </div>
                             <div>
-                                <label class="block text-[8px] text-slate-400 font-bold mb-0.5">퇴근 시각</label>
-                                <input type="time" id="newWorkerDefaultEnd" value="16:00" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">퇴근 시각</label>
+                                <input type="time" id="newWorkerDefaultEnd" value="16:00" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                             </div>
                             <div>
-                                <label class="block text-[8px] text-slate-400 font-bold mb-0.5">휴게</label>
-                                <select id="newWorkerDefaultBreak" class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">휴게</label>
+                                <select id="newWorkerDefaultBreak" class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                                     <option value="0">없음</option>
                                     <option value="15">15분</option>
                                     <option value="30" selected>30분</option>
@@ -1071,8 +969,8 @@
 
                     <!-- 채용 서류 체크리스트 선언 -->
                     <div class="bg-emerald-50/50 p-2 rounded-lg border border-emerald-100 space-y-1">
-                        <label class="block text-sevenGreen font-black text-[9px]">📋 채용 구비서류 즉시 체크리스트</label>
-                        <div class="grid grid-cols-3 gap-1 text-[9px] font-semibold text-slate-700">
+                        <label class="block text-sevenGreen font-black text-[11px]">📋 채용 구비서류 즉시 체크리스트</label>
+                        <div class="grid grid-cols-3 gap-1 text-[11px] font-semibold text-slate-700">
                             <label class="flex items-center space-x-1 cursor-pointer">
                                 <input type="checkbox" id="doc-idCard" class="rounded text-sevenGreen focus:ring-sevenGreen">
                                 <span>신분증</span>
@@ -1101,7 +999,7 @@
                     </div>
 
                     <button onclick="addWorker()" class="w-full bg-sevenGreen text-white font-bold py-2 rounded-lg hover:bg-sevenGreen/95 transition-all flex items-center justify-center space-x-1">
-                        <i data-lucide="plus" class="w-3 h-3"></i>
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         <span>알바생 등록</span>
                     </button>
                 </div>
@@ -1113,7 +1011,7 @@
     </main>
 
     <!-- 하단 푸터 -->
-    <footer class="bg-white border-t border-slate-200 py-2.5 text-center text-[8px] text-slate-400 flex-shrink-0">
+    <footer class="bg-white border-t border-slate-200 py-2.5 text-center text-[10px] text-slate-400 flex-shrink-0">
         <div class="max-w-7xl mx-auto px-4 space-y-0.5">
             <p class="font-extrabold text-slate-500">7-ELEVEN 파트타임 시스템</p>
             <p>본 장비는 LocalStorage 데이터 캐싱 기술을 통해 오프라인에서도 데이터를 안전하게 보관합니다.</p>
@@ -1121,8 +1019,8 @@
     </footer>
 
     <!-- 알림용 커스텀 토스트 메시지 -->
-    <div id="customToast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-3.5 py-2 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold">
-        <i data-lucide="check" class="w-3.5 h-3.5 text-yellow-300"></i>
+    <div id="customToast" role="status" aria-live="polite" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[13px] px-3.5 py-2 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold">
+        <i data-lucide="check" class="w-4 h-4 text-yellow-300"></i>
         <span id="customToastText"></span>
     </div>
 
@@ -1171,7 +1069,7 @@
                     </div>
                 </div>
                 <label class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1.5 cursor-pointer">
-                    <input type="checkbox" id="editWorkerTaxWithholding" class="w-3 h-3 accent-indigo-600">
+                    <input type="checkbox" id="editWorkerTaxWithholding" class="w-3.5 h-3.5 accent-indigo-600">
                     <span class="text-indigo-700 font-bold">3.3% 사업소득세 원천징수 적용 (프리랜서/단기 계약)</span>
                 </label>
                 <div>
@@ -1188,22 +1086,22 @@
                 </div>
                 <!-- 기본 근무 시간 -->
                 <div class="bg-sevenGreen/5 border border-sevenGreen/20 rounded-lg p-2 space-y-1.5">
-                    <label class="block text-sevenGreen font-black text-[9px] flex items-center gap-1">
-                        <i data-lucide="clock" class="w-3 h-3"></i>
+                    <label class="block text-sevenGreen font-black text-[11px] flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                         기본 근무 시간 (교대 등록 시 자동 적용)
                     </label>
                     <div class="grid grid-cols-3 gap-1.5">
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">출근</label>
-                            <input type="time" id="editWorkerDefaultStart" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">출근</label>
+                            <input type="time" id="editWorkerDefaultStart" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                         </div>
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">퇴근</label>
-                            <input type="time" id="editWorkerDefaultEnd" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">퇴근</label>
+                            <input type="time" id="editWorkerDefaultEnd" class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                         </div>
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">휴게</label>
-                            <select id="editWorkerDefaultBreak" class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">휴게</label>
+                            <select id="editWorkerDefaultBreak" class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                                 <option value="0">없음</option>
                                 <option value="15">15분</option>
                                 <option value="30">30분</option>
@@ -1246,7 +1144,7 @@
                 <div>
                     <label class="block text-slate-500 font-bold mb-0.5">Personal Access Token</label>
                     <input type="password" id="githubToken" placeholder="ghp_..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-slate-500">
-                    <p class="text-[9px] text-slate-400 font-semibold mt-0.5">토큰은 이 브라우저의 localStorage에만 저장되며 외부로 전송되지 않습니다. (repo 쓰기 권한 필요)</p>
+                    <p class="text-[11px] text-slate-400 font-semibold mt-0.5">토큰은 이 브라우저의 localStorage에만 저장되며 외부로 전송되지 않습니다. (repo 쓰기 권한 필요)</p>
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-2 border-t">
@@ -1276,7 +1174,7 @@
         <div class="bg-white rounded-2xl max-w-md w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
             <div class="flex items-center justify-between border-b pb-1.5">
                 <div class="flex items-center space-x-1.5 text-sevenGreen">
-                    <i data-lucide="calendar-plus" class="w-5 h-5 flex-shrink-0 text-sevenOrange"></i>
+                    <i data-lucide="calendar-plus" class="w-4.5 h-4.5 flex-shrink-0 text-sevenOrange"></i>
                     <h3 class="font-black text-slate-900 text-sm"><span id="quickShiftDateTitle" class="text-sevenGreen font-black">2026-06-14</span> 근무 빠른 등록</h3>
                 </div>
                 <button onclick="closeQuickShiftModal()" class="text-slate-400 hover:text-slate-600 font-extrabold text-sm p-1">✕</button>
@@ -1287,10 +1185,10 @@
                 <div class="space-y-1.5">
                     <!-- 모드 전환 토글 -->
                     <div class="flex items-center justify-between">
-                        <label class="text-slate-500 font-bold text-[10px]">근무 스태프 *</label>
+                        <label class="text-slate-500 font-bold text-[12px]">근무 스태프 *</label>
                         <button type="button" onclick="toggleQuickWorkerMode()" id="quick-worker-mode-btn"
-                            class="flex items-center gap-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all">
-                            <i data-lucide="pencil" class="w-2.5 h-2.5"></i>
+                            class="flex items-center gap-1 text-[11px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all">
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             <span id="quick-worker-mode-label">직접 입력(신규/임시)</span>
                         </button>
                     </div>
@@ -1304,7 +1202,7 @@
                     <div id="quick-worker-manual-wrap" class="hidden space-y-1.5">
                         <input type="text" id="quick-form-worker-name" placeholder="예: 홍길동 (임시/신규)" maxlength="12"
                             class="w-full bg-purple-50 border border-purple-200 rounded-lg px-2 py-1.5 font-bold text-slate-800 focus:ring-1 focus:ring-purple-400 focus:outline-none placeholder-purple-300">
-                        <p class="text-[9px] text-purple-500 font-semibold">⚡ 미등록 스태프도 즉시 투입 가능 · 정식 등록은 [알바생 명부]에서 진행하세요</p>
+                        <p class="text-[11px] text-purple-500 font-semibold">⚡ 미등록 스태프도 즉시 투입 가능 · 정식 등록은 [알바생 명부]에서 진행하세요</p>
                     </div>
                 </div>
                 <!-- 시급 입력 (공통) -->
@@ -1317,8 +1215,8 @@
                 <div>
                     <div class="flex items-center justify-between mb-1">
                         <label class="block text-slate-500 font-bold">간편 교대 프리셋 선택</label>
-                        <button type="button" onclick="openPresetSettingModal()" class="flex items-center gap-0.5 text-[8px] text-slate-400 hover:text-sevenGreen font-bold transition-all">
-                            <i data-lucide="settings-2" class="w-2.5 h-2.5"></i> 편집
+                        <button type="button" onclick="openPresetSettingModal()" class="flex items-center gap-0.5 text-[10px] text-slate-400 hover:text-sevenGreen font-bold transition-all">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i> 편집
                         </button>
                     </div>
                     <div id="quick-preset-buttons" class="grid grid-cols-3 gap-1.5">
@@ -1367,19 +1265,19 @@
                 <!-- 기능 2: 가불금(선지급금) 등록 -->
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 space-y-1.5">
                     <div class="flex items-center justify-between">
-                        <label class="text-amber-800 font-black text-[10px] flex items-center gap-1">
-                            <i data-lucide="banknote" class="w-3 h-3"></i>
+                        <label class="text-amber-800 font-black text-[12px] flex items-center gap-1">
+                            <i data-lucide="banknote" class="w-3.5 h-3.5"></i>
                             가불금(선지급금) 등록
                         </label>
                         <label class="flex items-center gap-1 cursor-pointer">
                             <input type="checkbox" id="quick-form-advance-toggle" onchange="toggleAdvanceInput()" class="rounded text-amber-500 focus:ring-amber-400">
-                            <span class="text-[9px] font-bold text-amber-700">이 근무에 가불 있음</span>
+                            <span class="text-[11px] font-bold text-amber-700">이 근무에 가불 있음</span>
                         </label>
                     </div>
                     <div id="quick-advance-input-wrap" class="hidden">
                         <input type="number" id="quick-form-advance" placeholder="예: 50000" min="0"
                             class="w-full bg-white border border-amber-300 rounded-lg px-2.5 py-1.5 font-bold text-amber-900 focus:ring-1 focus:ring-amber-400 focus:outline-none">
-                        <p class="text-[9px] text-amber-600 font-semibold mt-0.5">월말 정산 시 이 금액이 해당 근무자 급여에서 자동 누적 차감됩니다.</p>
+                        <p class="text-[11px] text-amber-600 font-semibold mt-0.5">월말 정산 시 이 금액이 해당 근무자 급여에서 자동 누적 차감됩니다.</p>
                     </div>
                 </div>
             </div>
@@ -1392,8 +1290,6 @@
     </div>
 
     <script>
-        const apiKey = ""; 
-
         // --- 1. 초기 더미 데이터 셋 ---
         const INITIAL_STORES = [
             { id: 'st_thesharp', name: '세븐일레븐 원주더샾점', optionNight: true, optionHoliday: true },
@@ -1481,6 +1377,7 @@
         let workersMap = JSON.parse(localStorage.getItem('seven_workers_live_v4')) || INITIAL_WORKERS;
         let shiftsMap = JSON.parse(localStorage.getItem('seven_shifts_live_v4')) || INITIAL_SHIFTS;
         let posHistoryMap = JSON.parse(localStorage.getItem('seven_pos_history_v4')) || INITIAL_POS_HISTORIES;
+        let paidStatusMap = JSON.parse(localStorage.getItem('seven_paid_status_v4')) || {};
         let storeNotice = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
         let selectedMonth = localStorage.getItem('seven_selected_month_live_v4') || '2026-06';
@@ -1488,6 +1385,8 @@
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
+        // 근무 일지 장부 탭 스태프 이름 검색어
+        let shiftsSearchQuery = "";
         // 달력 다중 날짜 선택(일괄 등록) 상태
         let bulkSelectMode = false;
         let selectedBulkDates = new Set();
@@ -1511,24 +1410,12 @@
         function updateDarkModeIcon(isDark) {
             const btn = document.getElementById('darkModeToggleBtn');
             if (!btn) return;
-            btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-3 h-3 pointer-events-none"></i>`;
+            btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-3.5 h-3.5 pointer-events-none"></i>`;
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         // 데이터 영속성 통합 저장 함수
-        function saveToLocalStorage() {
-            try {
-                localStorage.setItem('seven_stores_live_v4', JSON.stringify(stores));
-                localStorage.setItem('seven_activeStore_id_v4', currentStoreId);
-                localStorage.setItem('seven_workers_live_v4', JSON.stringify(workersMap));
-                localStorage.setItem('seven_shifts_live_v4', JSON.stringify(shiftsMap));
-                localStorage.setItem('seven_selected_month_live_v4', selectedMonth);
-            } catch(e) {
-                console.warn('localStorage 저장 실패:', e);
-            }
-        }
-
-                window.onload = function() {
+        window.onload = function() {
             document.getElementById('monthSelector').value = selectedMonth;
             
             if (!stores.some(st => st.id === currentStoreId)) {
@@ -1544,10 +1431,6 @@
             initDarkMode();
             // 초기 아이콘 렌더링 보장
             if (typeof lucide !== 'undefined') lucide.createIcons();
-
-            // 실시간 폐기 타이머 가동
-            updateDisposalTimers();
-            setInterval(updateDisposalTimers, 1000);
 
             // 브라우저 Notification 권한 사전 요청
             if (window.Notification && Notification.permission === 'default') {
@@ -1566,8 +1449,6 @@
             }
         }
 
-        // --- API 키 모달 관리 장치 ---
-        // --- API 키 저장 장치 ---
         function initStoreSelectorDOM() {
             const selector = document.getElementById('storeSelector');
             selector.innerHTML = '';
@@ -1659,6 +1540,59 @@
         }
 
         // --- 같은 날 분할 근무(중복) 시간대 겹침 검사 ---
+        // 특정 날짜가 포함된 주(일~토)의 해당 스태프 누적 근무시간 합산 (법정 근로시간 52시간 경고용)
+        function getWeeklyHoursForWorker(workerId, dateStr, excludeShiftId) {
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const dateObj = new Date(dateStr);
+            const day = dateObj.getDay();
+            const sunday = new Date(dateObj);
+            sunday.setDate(dateObj.getDate() - day);
+            const saturday = new Date(sunday);
+            saturday.setDate(sunday.getDate() + 6);
+
+            return currentShifts
+                .filter(s => s.workerId === workerId && s.id !== excludeShiftId)
+                .filter(s => {
+                    const d = new Date(s.date);
+                    return d >= sunday && d <= saturday;
+                })
+                .reduce((sum, s) => sum + (s.totalHours || 0), 0);
+        }
+
+        // 특정 날짜를 포함해 해당 스태프의 연속 근무일수 계산 (근로기준법상 휴일 보장 경고용)
+        function getConsecutiveWorkDays(workerId, dateStr) {
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const workDatesSet = new Set(currentShifts.filter(s => s.workerId === workerId).map(s => s.date));
+            workDatesSet.add(dateStr);
+
+            let streak = 1;
+            let cursor = new Date(dateStr);
+            let guard = 0;
+            while (guard < 400) {
+                cursor.setDate(cursor.getDate() - 1);
+                const cursorStr = cursor.toISOString().split('T')[0];
+                if (workDatesSet.has(cursorStr)) {
+                    streak++;
+                    guard++;
+                } else {
+                    break;
+                }
+            }
+            cursor = new Date(dateStr);
+            guard = 0;
+            while (guard < 400) {
+                cursor.setDate(cursor.getDate() + 1);
+                const cursorStr = cursor.toISOString().split('T')[0];
+                if (workDatesSet.has(cursorStr)) {
+                    streak++;
+                    guard++;
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
         function isShiftTimeOverlapping(existingShift, newStart, newEnd) {
             const toMinutes = (timeStr) => {
                 const [h, m] = timeStr.split(':').map(Number);
@@ -1747,6 +1681,23 @@
             return totalHolidayPay;
         }
 
+        // --- 📌 급여 지급완료 체크 (스토어/스태프/월별 독립 관리) ---
+        function getPaidStatusKey(workerId, month) {
+            return `${currentStoreId}__${workerId}__${month}`;
+        }
+
+        function isPaidStatus(workerId, month) {
+            return !!paidStatusMap[getPaidStatusKey(workerId, month)];
+        }
+
+        function togglePaidStatus(workerId, month, workerName) {
+            const key = getPaidStatusKey(workerId, month);
+            const nextPaid = !paidStatusMap[key];
+            paidStatusMap[key] = nextPaid;
+            showToast(nextPaid ? `[${workerName}] 님 급여 지급완료로 표시했습니다.` : `[${workerName}] 님 급여를 미지급 상태로 되돌렸습니다.`);
+            renderEverything();
+        }
+
         // 특정 알바생의 월말 합산 급여 정밀 도출
         function getWorkerMonthlyStats(workerId, month) {
             const activeStore = stores.find(s => s.id === currentStoreId) || { optionNight: true, optionHoliday: true };
@@ -1816,6 +1767,12 @@
 
         // --- 📅 달력 렌더링 엔진 (반응형 및 PC 가로세로 확장 기능 강화) ---
         // --- 📌 달력 다중 날짜 선택(일괄 등록) 제어부 ---
+        // 근무 일지 장부 탭 스태프 이름 검색어 갱신
+        function updateShiftsSearch(value) {
+            shiftsSearchQuery = value.trim();
+            renderEverything();
+        }
+
         function toggleBulkSelectMode() {
             bulkSelectMode = !bulkSelectMode;
             selectedBulkDates.clear();
@@ -1823,12 +1780,12 @@
             const btn = document.getElementById('bulkSelectToggleBtn');
             const helpText = document.getElementById('calendar-help-text');
             if (bulkSelectMode) {
-                btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-sevenGreen text-white border border-sevenGreen px-2.5 py-1.5 rounded-lg font-bold transition-all";
-                btn.innerHTML = `<i data-lucide="x" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">선택 모드 종료</span>`;
+                btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-sevenGreen text-white border border-sevenGreen px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">선택 모드 종료</span>`;
                 helpText.innerHTML = `※ 등록할 <span class="text-indigo-600 font-bold">날짜를 여러 개 선택</span>한 뒤 하단의 "일괄 등록" 버튼을 눌러 주세요.`;
             } else {
-                btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
-                btn.innerHTML = `<i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
+                btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = `<i data-lucide="check-square" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
                 helpText.innerHTML = `※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.`;
             }
             lucide.createIcons();
@@ -1938,11 +1895,16 @@
                 const todayStr = new Date().toISOString().split('T')[0];
                 const isToday = (dayStr === todayStr);
                 const todayDot = isToday ? `<span class="w-1.5 h-1.5 rounded-full bg-sevenOrange inline-block ml-0.5 mb-0.5"></span>` : '';
-                const bulkCheckDot = isSelectedBulk ? `<i data-lucide="check-circle-2" class="w-3 h-3 text-indigo-600"></i>` : (bulkSelectMode ? `<i data-lucide="circle" class="w-3 h-3 text-slate-300"></i>` : '');
-                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[10px] md:text-xs font-black">${day}${todayDot}</span>${bulkCheckDot}</div>`;
+                const bulkCheckDot = isSelectedBulk ? `<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i>` : (bulkSelectMode ? `<i data-lucide="circle" class="w-3.5 h-3.5 text-slate-300"></i>` : '');
+                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[12px] md:text-xs font-black">${day}${todayDot}</span>${bulkCheckDot}</div>`;
 
                 const dayShifts = monthlyShifts.filter(s => s.date === dayStr);
-                
+                const isUnassignedPastDay = dayShifts.length === 0 && dayStr <= todayStr;
+
+                if (!isSelectedBulk && isUnassignedPastDay) {
+                    dayCell.className = "bg-rose-50/40 p-1.5 rounded-lg border border-dashed border-rose-200 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenRed transition-all cursor-pointer shadow-xs hover:shadow-sm";
+                }
+
                 // PC에서는 칩 박스의 가로세로 제한을 더 유연하게 가져가기 위해 max-h 점진적 적용
                 let shiftsHTML = '<div class="space-y-1 mt-1 flex-grow overflow-y-auto max-h-[45px] md:max-h-[75px] lg:max-h-[95px] custom-scrollbar">';
                 if (dayShifts.length > 0) {
@@ -1951,20 +1913,22 @@
                             ? 'bg-orange-50 text-sevenOrange border border-orange-100' 
                             : 'bg-emerald-50 text-sevenGreen border border-emerald-100';
                         shiftsHTML += `
-                            <div class="${bgChipClass} text-[8px] md:text-[10px] font-black p-1 rounded-md flex flex-col leading-tight gap-0.5" title="${s.startTime} ~ ${s.endTime}${s.advance > 0 ? ' · 가불 ₩'+s.advance.toLocaleString() : ''}">
+                            <div class="${bgChipClass} text-[10px] md:text-[12px] font-black p-1 rounded-md flex flex-col leading-tight gap-0.5" title="${s.startTime} ~ ${s.endTime}${s.advance > 0 ? ' · 가불 ₩'+s.advance.toLocaleString() : ''}">
                                 <div class="flex justify-between items-center gap-1">
                                     <span class="truncate max-w-[34px] sm:max-w-[55px] md:max-w-[75px] lg:max-w-[100px]">${s.workerName}</span>
                                     <div class="flex items-center gap-0.5">
-                                        ${s.advance > 0 ? '<span class="text-[6px] bg-amber-400 text-white px-0.5 rounded font-black">가불</span>' : ''}
-                                        <span class="font-extrabold text-[7px] md:text-[9px] bg-white/60 px-0.5 rounded">${s.totalHours}H</span>
+                                        ${s.advance > 0 ? '<span class="text-[10px] bg-amber-400 text-white px-0.5 rounded font-black">가불</span>' : ''}
+                                        <span class="font-extrabold text-[10px] md:text-[11px] bg-white/60 px-0.5 rounded">${s.totalHours}H</span>
                                     </div>
                                 </div>
-                                <span class="text-[7px] md:text-[8px] scale-90 md:scale-100 origin-left opacity-85 font-semibold text-slate-500">${s.startTime}-${s.endTime}</span>
+                                <span class="text-[10px] md:text-[10px] scale-90 md:scale-100 origin-left opacity-85 font-semibold text-slate-500">${s.startTime}-${s.endTime}</span>
                             </div>
                         `;
                     });
                 } else {
-                    shiftsHTML += `<span class="text-[8px] text-slate-300 font-bold block text-center py-2 md:py-6">공석</span>`;
+                    shiftsHTML += isUnassignedPastDay
+                        ? `<span class="text-[10px] text-sevenRed font-black block text-center py-2 md:py-6 flex items-center justify-center gap-0.5"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 inline"></i> 미배정</span>`
+                        : `<span class="text-[10px] text-slate-500 font-bold block text-center py-2 md:py-6">공석</span>`;
                 }
                 shiftsHTML += '</div>';
 
@@ -2035,14 +1999,14 @@
                 selectWrap.classList.remove('hidden');
                 manualWrap.classList.add('hidden');
                 modeLabel.innerText = '직접 입력(신규/임시)';
-                modeBtn.className = 'flex items-center gap-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all';
+                modeBtn.className = 'flex items-center gap-1 text-[11px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all';
                 onQuickWorkerSelected(document.getElementById('quick-form-worker').value);
             } else {
                 // 수동 입력 모드로 전환
                 selectWrap.classList.add('hidden');
                 manualWrap.classList.remove('hidden');
                 modeLabel.innerText = '등록 스태프 선택';
-                modeBtn.className = 'flex items-center gap-1 text-[9px] bg-sevenGreen/10 hover:bg-sevenGreen/20 text-sevenGreen border border-sevenGreen/20 px-2 py-0.5 rounded-full font-bold transition-all';
+                modeBtn.className = 'flex items-center gap-1 text-[11px] bg-sevenGreen/10 hover:bg-sevenGreen/20 text-sevenGreen border border-sevenGreen/20 px-2 py-0.5 rounded-full font-bold transition-all';
                 document.getElementById('quick-form-hourlyRate').value = '10320';
             }
             lucide.createIcons();
@@ -2052,7 +2016,7 @@
             document.getElementById('quick-worker-select-wrap').classList.remove('hidden');
             document.getElementById('quick-worker-manual-wrap').classList.add('hidden');
             document.getElementById('quick-worker-mode-label').innerText = '직접 입력(신규/임시)';
-            document.getElementById('quick-worker-mode-btn').className = 'flex items-center gap-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all';
+            document.getElementById('quick-worker-mode-btn').className = 'flex items-center gap-1 text-[11px] bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-bold transition-all';
             if (document.getElementById('quick-form-worker-name')) document.getElementById('quick-form-worker-name').value = '';
         }
 
@@ -2096,8 +2060,8 @@
             } else {
                 listEl.innerHTML = dayShifts.map(s => {
                     const pay = getShiftPayroll(s, activeStore.optionNight);
-                    const advText = s.advance > 0 ? `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black text-[9px]">가불 ₩${s.advance.toLocaleString()}</span>` : '';
-                    const subText = s.isSubstitute ? `<span class="bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-black text-[9px]">대타</span>` : '';
+                    const advText = s.advance > 0 ? `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black text-[11px]">가불 ₩${s.advance.toLocaleString()}</span>` : '';
+                    const subText = s.isSubstitute ? `<span class="bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-black text-[11px]">대타</span>` : '';
                     return `
                     <div class="bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs">
                         <div class="flex justify-between items-start">
@@ -2108,21 +2072,21 @@
                                         <span class="font-black text-slate-900">${s.workerName}</span>
                                         ${subText} ${advText}
                                     </div>
-                                    <span class="text-[9px] text-slate-400 font-semibold">${s.startTime}~${s.endTime} · 휴게${s.breakMinutes}분 · ${s.totalHours}H</span>
+                                    <span class="text-[11px] text-slate-400 font-semibold">${s.startTime}~${s.endTime} · 휴게${s.breakMinutes}분 · ${s.totalHours}H</span>
                                 </div>
                             </div>
                             <div class="text-right flex-shrink-0">
-                                <p class="font-black text-sevenGreen text-[11px]">₩${pay.toLocaleString()}</p>
-                                ${s.nightHours > 0 ? `<p class="text-[8px] text-amber-600 font-bold">야간 ${s.nightHours}H 포함</p>` : ''}
+                                <p class="font-black text-sevenGreen text-[13px]">₩${pay.toLocaleString()}</p>
+                                ${s.nightHours > 0 ? `<p class="text-[10px] text-amber-600 font-bold">야간 ${s.nightHours}H 포함</p>` : ''}
                             </div>
                         </div>
-                        ${s.memo ? `<p class="mt-1.5 text-[9px] text-slate-500 font-semibold bg-slate-50 px-2 py-1 rounded-lg">${s.memo}</p>` : ''}
+                        ${s.memo ? `<p class="mt-1.5 text-[11px] text-slate-500 font-semibold bg-slate-50 px-2 py-1 rounded-lg">${s.memo}</p>` : ''}
                         <div class="flex justify-end gap-1 mt-1.5">
-                            <button onclick="openDailyHubEditShift('${s.id}')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
-                                <i data-lucide="pencil" class="w-2.5 h-2.5"></i> 수정
+                            <button onclick="openDailyHubEditShift('${s.id}')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i> 수정
                             </button>
-                            <button onclick="deleteShiftFromHub('${s.id}', '${dateStr}')" class="text-[9px] bg-rose-50 hover:bg-rose-100 text-sevenRed font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
-                                <i data-lucide="trash-2" class="w-2.5 h-2.5"></i> 삭제
+                            <button onclick="deleteShiftFromHub('${s.id}', '${dateStr}')" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-sevenRed font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 삭제
                             </button>
                         </div>
                     </div>`;
@@ -2273,13 +2237,13 @@
             if (view === 'auto') {
                 autoView.classList.remove('hidden');
                 invView.classList.add('hidden');
-                btnAuto.className = 'text-[9px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all';
-                btnInv.className  = 'text-[9px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all';
+                btnAuto.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all';
+                btnInv.className  = 'text-[11px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all';
             } else {
                 autoView.classList.add('hidden');
                 invView.classList.remove('hidden');
-                btnAuto.className = 'text-[9px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all';
-                btnInv.className  = 'text-[9px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all';
+                btnAuto.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all';
+                btnInv.className  = 'text-[11px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all';
                 initInvoiceWorkerSelect();
                 renderInvoice();
                 lucide.createIcons();
@@ -2401,7 +2365,7 @@
                 list.innerHTML = `
                     <div class="flex flex-col items-center justify-center py-12 text-slate-300 gap-2">
                         <i data-lucide="file-plus" class="w-10 h-10"></i>
-                        <p class="font-bold text-sm text-center">"행 추가" 또는 "근무일지 자동 불러오기"로 시작하세요</p>
+                        <p class="font-bold text-sm text-center text-slate-500">"행 추가" 또는 "근무일지 자동 불러오기"로 시작하세요</p>
                     </div>`;
                 updateInvoiceTotals();
                 lucide.createIcons();
@@ -2412,40 +2376,40 @@
                 return `
                 <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-xs" id="inv-row-${r.id}">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="w-5 h-5 rounded-full bg-sevenGreen/10 text-sevenGreen text-[9px] font-black flex items-center justify-center flex-shrink-0">${i+1}</span>
-                        <button onclick="removeInvoiceRow('${r.id}')" class="text-slate-300 hover:text-sevenRed transition-colors p-0.5">
+                        <span class="w-4.5 h-4.5 rounded-full bg-sevenGreen/10 text-sevenGreen text-[11px] font-black flex items-center justify-center flex-shrink-0">${i+1}</span>
+                        <button onclick="removeInvoiceRow('${r.id}')" aria-label="항목 삭제" class="text-slate-300 hover:text-sevenRed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center -m-2">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
                     <input type="text" value="${r.label}" placeholder="날짜 또는 구분 (예: 2026-06-01)"
                         oninput="liveUpdateRow('${r.id}','label',this.value)"
-                        class="w-full bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 font-bold text-[11px] focus:outline-none focus:ring-1 focus:ring-sevenGreen mb-2">
+                        class="w-full bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 font-bold text-[13px] focus:outline-none focus:ring-1 focus:ring-sevenGreen mb-2">
                     <div class="grid grid-cols-3 gap-1.5 mb-2">
                         <div class="bg-slate-50 rounded-lg p-1.5 text-center">
-                            <p class="text-[8px] text-slate-400 font-bold mb-0.5">출근 일수</p>
+                            <p class="text-[10px] text-slate-400 font-bold mb-0.5">출근 일수</p>
                             <input type="number" value="${r.days}" min="0" step="0.5"
                                 oninput="liveUpdateRow('${r.id}','days',this.value)"
                                 class="w-full text-center bg-transparent font-black text-sm focus:outline-none text-slate-800">
-                            <p class="text-[8px] text-slate-400 font-semibold">일</p>
+                            <p class="text-[10px] text-slate-400 font-semibold">일</p>
                         </div>
                         <div class="bg-slate-50 rounded-lg p-1.5 text-center">
-                            <p class="text-[8px] text-slate-400 font-bold mb-0.5">실근무 시간</p>
+                            <p class="text-[10px] text-slate-400 font-bold mb-0.5">실근무 시간</p>
                             <input type="number" value="${r.hours}" min="0" step="0.5"
                                 oninput="liveUpdateRow('${r.id}','hours',this.value)"
                                 class="w-full text-center bg-transparent font-black text-sm focus:outline-none text-slate-800">
-                            <p class="text-[8px] text-slate-400 font-semibold">시간</p>
+                            <p class="text-[10px] text-slate-400 font-semibold">시간</p>
                         </div>
                         <div class="bg-slate-50 rounded-lg p-1.5 text-center">
-                            <p class="text-[8px] text-slate-400 font-bold mb-0.5">시급</p>
+                            <p class="text-[10px] text-slate-400 font-bold mb-0.5">시급</p>
                             <input type="number" value="${r.rate}" min="0" step="100"
                                 oninput="liveUpdateRow('${r.id}','rate',this.value)"
                                 class="w-full text-center bg-transparent font-black text-sm focus:outline-none text-slate-800">
-                            <p class="text-[8px] text-slate-400 font-semibold">원</p>
+                            <p class="text-[10px] text-slate-400 font-semibold">원</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between bg-sevenGreen/5 rounded-lg px-3 py-1.5">
-                        <span class="text-[9px] text-slate-400 font-bold">소계</span>
-                        <span id="inv-sub-${r.id}" class="font-black text-sevenGreen text-[13px]">₩${pay.toLocaleString()}</span>
+                        <span class="text-[11px] text-slate-400 font-bold">소계</span>
+                        <span id="inv-sub-${r.id}" class="font-black text-sevenGreen text-[15px]">₩${pay.toLocaleString()}</span>
                     </div>
                 </div>`;
             }).join('');
@@ -2765,8 +2729,8 @@
             const makeBtn = (p, i, fn) => {
                 const c = colors[i % colors.length];
                 return `<button type="button" onclick="${fn}('${p.start}','${p.end}',${p.break})"
-                    class="${c} border rounded-lg py-1 font-black text-[9px] text-center transition-all active:scale-95">
-                    ${p.name}<br><span class="font-semibold text-[8px] opacity-80">${p.start}~${p.end}</span>
+                    class="${c} border rounded-lg py-1 font-black text-[11px] text-center transition-all active:scale-95">
+                    ${p.name}<br><span class="font-semibold text-[10px] opacity-80">${p.start}~${p.end}</span>
                 </button>`;
             };
             const formEl  = document.getElementById('form-preset-buttons');
@@ -2814,26 +2778,26 @@
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 space-y-1.5">
                     <div class="flex items-center gap-1">
                         <input type="text" value="${p.name}" maxlength="8" placeholder="이름"
-                            id="pe-name-${i}" class="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1 font-black text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                        <button type="button" onclick="removePresetSlot(${i})" class="text-slate-300 hover:text-sevenRed transition-colors p-0.5">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            id="pe-name-${i}" class="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1 font-black text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        <button type="button" onclick="removePresetSlot(${i})" aria-label="프리셋 삭제" class="text-slate-300 hover:text-sevenRed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center -m-2">
+                            <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
                     <div class="grid grid-cols-3 gap-1">
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">출근</label>
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">출근</label>
                             <input type="time" value="${p.start}" id="pe-start-${i}"
-                                class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                         </div>
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">퇴근</label>
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">퇴근</label>
                             <input type="time" value="${p.end}" id="pe-end-${i}"
-                                class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                         </div>
                         <div>
-                            <label class="block text-[8px] text-slate-400 font-bold mb-0.5">휴게</label>
+                            <label class="block text-[10px] text-slate-400 font-bold mb-0.5">휴게</label>
                             <select id="pe-break-${i}"
-                                class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[10px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1 font-bold text-[12px] focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                                 ${[0,15,30,45,60,90,120].map(v =>
                                     `<option value="${v}" ${v === p.break ? 'selected' : ''}>${v === 0 ? '없음' : v+'분'}</option>`
                                 ).join('')}
@@ -2968,6 +2932,49 @@
                 breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 4시간 이상으로, 법정 의무 무급 휴게시간은 최소 30분이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
             }
 
+            // 주 52시간(법정 연장근로 한도) 초과 여부 검사 - 임시 스태프도 포함 검사
+            const weekGroupCounts = {};
+            targetDates.forEach(dateStr => {
+                const d = new Date(dateStr);
+                const day = d.getDay();
+                const sunday = new Date(d);
+                sunday.setDate(d.getDate() - day);
+                const weekKey = sunday.toISOString().split('T')[0];
+                weekGroupCounts[weekKey] = (weekGroupCounts[weekKey] || 0) + 1;
+            });
+            let weeklyOverLimitMsg = "";
+            Object.keys(weekGroupCounts).forEach(weekKey => {
+                const sampleDate = targetDates.find(d => {
+                    const dd = new Date(d);
+                    const day = dd.getDay();
+                    const sunday = new Date(dd);
+                    sunday.setDate(dd.getDate() - day);
+                    return sunday.toISOString().split('T')[0] === weekKey;
+                });
+                const existingWeeklyHours = getWeeklyHoursForWorker(workerId, sampleDate);
+                const projectedWeeklyHours = existingWeeklyHours + (totalHours * weekGroupCounts[weekKey]);
+                if (projectedWeeklyHours > 52 && !weeklyOverLimitMsg) {
+                    weeklyOverLimitMsg = `[근로기준법 경고] ${weekKey} 주간(일~토) 기준 "${worker ? worker.name : workerName}" 님의 누적 근무시간이 약 ${projectedWeeklyHours.toFixed(1)}시간으로, 법정 주 52시간 한도를 초과합니다. 그대로 등록하시겠습니까?`;
+                }
+            });
+
+            // 연속 근무일수 경고 (선택된 날짜들 중 가장 긴 연속 근무 구간 기준, 6일 이상부터 경고)
+            let maxConsecutive = 0;
+            let maxConsecutiveDate = "";
+            targetDates.forEach(dateStr => {
+                const c = getConsecutiveWorkDays(workerId, dateStr);
+                if (c > maxConsecutive) {
+                    maxConsecutive = c;
+                    maxConsecutiveDate = dateStr;
+                }
+            });
+            if (maxConsecutive >= 6) {
+                const consecutiveMsg = `[근로기준법 경고] "${worker ? worker.name : workerName}" 님은 ${maxConsecutiveDate} 기준 ${maxConsecutive}일 연속 근무하게 됩니다. 주 1회 이상의 휴일 보장 원칙에 유의해 주세요. 그대로 등록하시겠습니까?`;
+                weeklyOverLimitMsg = weeklyOverLimitMsg
+                    ? `${weeklyOverLimitMsg}\n\n${consecutiveMsg}`
+                    : consecutiveMsg;
+            }
+
             const saveAction = () => {
                 const newShifts = targetDates.map((dateStr, idx) => ({
                     id: 's_' + Date.now() + '_' + idx,
@@ -2999,8 +3006,8 @@
                     selectedBulkDates.clear();
                     const btn = document.getElementById('bulkSelectToggleBtn');
                     if (btn) {
-                        btn.className = "flex-shrink-0 flex items-center gap-1 text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
-                        btn.innerHTML = `<i data-lucide="check-square" class="w-3 h-3 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
+                        btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                        btn.innerHTML = `<i data-lucide="check-square" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
                     }
                     const helpText = document.getElementById('calendar-help-text');
                     if (helpText) helpText.innerHTML = `※ 날짜 셀 터치 시 해당 날짜의 <span class="text-sevenGreen font-bold">"근무 빠른 등록"</span> 팝업이 바로 나타납니다.`;
@@ -3011,10 +3018,18 @@
                 renderEverything();
             };
 
-            if (breakTimeWarning) {
-                triggerBreakTimeAlert(breakTimeWarning, saveAction, 'quick');
+            const proceedAfterWeeklyCheck = () => {
+                if (breakTimeWarning) {
+                    triggerBreakTimeAlert(breakTimeWarning, saveAction, 'quick');
+                } else {
+                    saveAction();
+                }
+            };
+
+            if (weeklyOverLimitMsg) {
+                triggerConfirm("⚠️ 주 52시간 초과 경고", weeklyOverLimitMsg, proceedAfterWeeklyCheck, "그대로 진행", "bg-amber-500 text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-amber-600");
             } else {
-                saveAction();
+                proceedAfterWeeklyCheck();
             }
         }
         function renderEverything() {
@@ -3029,10 +3044,10 @@
                 const spanN = btnNight.querySelector('span');
                 if (activeStore.optionNight) {
                     btnNight.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanN) spanN.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
+                    if (spanN) spanN.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
                 } else {
                     btnNight.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanN) spanN.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+                    if (spanN) spanN.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
                 }
             }
 
@@ -3040,10 +3055,10 @@
                 const spanH = btnHoliday.querySelector('span');
                 if (activeStore.optionHoliday) {
                     btnHoliday.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanH) spanH.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
+                    if (spanH) spanH.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
                 } else {
                     btnHoliday.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanH) spanH.className = "bg-white w-3.5 h-3.5 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+                    if (spanH) spanH.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
                 }
             }
 
@@ -3161,23 +3176,6 @@
                 onWorkerSelected(formWorkerSelect.value);
             }
 
-            // 시재 정산 담당자 선택 드롭다운 동기화
-            const posWorkerSelect = document.getElementById('pos-worker-select');
-            if (posWorkerSelect) {
-                const prevSelectedWorker = posWorkerSelect.value;
-                posWorkerSelect.innerHTML = '';
-                if (workersList.length === 0) {
-                    posWorkerSelect.innerHTML = `<option value="">담당자 없음</option>`;
-                } else {
-                    workersList.forEach(w => {
-                        posWorkerSelect.innerHTML += `<option value="${w.name}">${w.name}</option>`;
-                    });
-                    if (prevSelectedWorker && workersList.some(w => w.name === prevSelectedWorker)) {
-                        posWorkerSelect.value = prevSelectedWorker;
-                    }
-                }
-            }
-
             const recentTableBody = document.getElementById('dashboard-recentShiftsTable');
             recentTableBody.innerHTML = '';
             const previewShifts = filteredShifts.slice(0, 10); // 아이패드 넉넉한 노출 보장
@@ -3188,7 +3186,7 @@
                     recentTableBody.innerHTML += `
                         <tr class="hover:bg-slate-50/70 border-b border-slate-50">
                             <td class="py-1.5 font-bold text-slate-900 flex items-center gap-0.5">
-                                ${s.isSubstitute ? '<span class="text-[8px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
+                                ${s.isSubstitute ? '<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
                                 <span>${s.workerName}</span>
                             </td>
                             <td class="py-1.5 text-slate-500">${s.date.substring(5)}</td>
@@ -3207,16 +3205,24 @@
             if (allRenderWorkers.length === 0) {
                 shiftsGroupedContainer.innerHTML = `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">등록되어 있는 알바생이 없습니다. [알바생 명부] 탭에서 알바생을 먼저 추가해 주세요.</div>`;
             } else {
-                allRenderWorkers.forEach(w => {
+                const searchFilteredWorkers = shiftsSearchQuery
+                    ? allRenderWorkers.filter(w => w.name.toLowerCase().includes(shiftsSearchQuery.toLowerCase()))
+                    : allRenderWorkers;
+
+                if (searchFilteredWorkers.length === 0) {
+                    shiftsGroupedContainer.innerHTML = `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">"${shiftsSearchQuery}" 검색 결과와 일치하는 스태프가 없습니다.</div>`;
+                }
+
+                searchFilteredWorkers.forEach(w => {
                     const workerShifts = filteredShifts.filter(s => s.workerId === w.id);
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
-                    const tempBadge = w._isTemp ? `<span class="text-[8px] bg-purple-100 text-purple-600 px-1 py-0.5 rounded font-black">임시</span>` : '';
+                    const tempBadge = w._isTemp ? `<span class="text-[10px] bg-purple-100 text-purple-600 px-1 py-0.5 rounded font-black">임시</span>` : '';
 
                     // 이 스태프의 이번 달 중복 근무 건수
                     const workerOverlaps = detectOverlappingShifts(currentStoreId)
                         .filter(o => o.workerId === w.id && o.date.startsWith(selectedMonth));
                     const overlapBadge = workerOverlaps.length > 0
-                        ? `<span class="text-[8px] bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded font-black flex items-center gap-0.5"><i data-lucide="triangle-alert" class="w-2.5 h-2.5"></i> 중복 ${workerOverlaps.length}건</span>`
+                        ? `<span class="text-[10px] bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded font-black flex items-center gap-0.5"><i data-lucide="triangle-alert" class="w-3.5 h-3.5"></i> 중복 ${workerOverlaps.length}건</span>`
                         : '';
 
                     // ★ 매 스태프마다 초기화 (선언 누락 버그 수정)
@@ -3231,21 +3237,21 @@
                     } else {
                         workerShifts.forEach(s => {
                             const advBadge = s.advance > 0
-                                ? `<span class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.2 rounded font-black ml-0.5">가불 ₩${s.advance.toLocaleString()}</span>`
+                                ? `<span class="text-[10px] bg-amber-100 text-amber-700 px-1 py-0.2 rounded font-black ml-0.5">가불 ₩${s.advance.toLocaleString()}</span>`
                                 : '';
                             // 이 근무가 중복 목록에 있으면 행 강조
                             const isOverlapped = workerOverlaps.some(o => o.a.id === s.id || o.b.id === s.id);
                             const rowClass = isOverlapped
-                                ? 'bg-amber-50 border-l-2 border-amber-400 text-[11px] border-b border-amber-100 transition-colors group'
-                                : 'hover:bg-sevenGreen/5 text-[11px] border-b border-slate-100 transition-colors group';
+                                ? 'bg-amber-50 border-l-2 border-amber-400 text-[13px] border-b border-amber-100 transition-colors group'
+                                : 'hover:bg-sevenGreen/5 text-[13px] border-b border-slate-100 transition-colors group';
                             const overlapIcon = isOverlapped
-                                ? `<span class="text-[8px] bg-amber-400 text-white px-1 py-0.2 rounded font-black ml-0.5 flex-shrink-0" title="시간 중복">⚠</span>`
+                                ? `<span class="text-[10px] bg-amber-400 text-white px-1 py-0.2 rounded font-black ml-0.5 flex-shrink-0" title="시간 중복">⚠</span>`
                                 : '';
                             workerShiftsRows += `
                                 <tr class="${rowClass}">
                                     <td class="px-3 py-2 font-bold text-slate-950">
                                         <div class="flex items-center gap-0.5 flex-wrap">
-                                            ${s.isSubstitute ? '<span class="text-[8px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
+                                            ${s.isSubstitute ? '<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
                                             <span>${s.date}</span>
                                             ${advBadge}
                                             ${overlapIcon}
@@ -3263,12 +3269,12 @@
                                     </td>
                                     <td class="px-3 py-2 text-center whitespace-nowrap" onclick="event.stopPropagation()">
                                         <button onclick="openShiftEditModal('${s.id}')"
-                                            class="inline-flex items-center gap-0.5 bg-sevenGreen/10 hover:bg-sevenGreen text-sevenGreen hover:text-white transition-all px-2 py-1 rounded-md font-black text-[9px] mr-0.5">
-                                            <i data-lucide="pencil" class="w-3 h-3"></i> 수정
+                                            class="inline-flex items-center gap-0.5 bg-sevenGreen/10 hover:bg-sevenGreen text-sevenGreen hover:text-white transition-all px-2 py-1 rounded-md font-black text-[11px] mr-0.5">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i> 수정
                                         </button>
                                         <button onclick="deleteShift('${s.id}')"
-                                            class="inline-flex items-center gap-0.5 bg-rose-50 hover:bg-sevenRed text-sevenRed hover:text-white transition-all px-2 py-1 rounded-md font-black text-[9px]">
-                                            <i data-lucide="trash-2" class="w-3 h-3"></i> 삭제
+                                            class="inline-flex items-center gap-0.5 bg-rose-50 hover:bg-sevenRed text-sevenRed hover:text-white transition-all px-2 py-1 rounded-md font-black text-[11px]">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 삭제
                                         </button>
                                     </td>
                                 </tr>
@@ -3288,21 +3294,21 @@
                                             <h4 class="font-black text-xs text-slate-900">${w.name}</h4>
                                             ${tempBadge}
                                             ${overlapBadge}
-                                            <span class="text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.2 rounded font-bold">₩${w.defaultHourlyRate.toLocaleString()}</span>
+                                            <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.2 rounded font-bold">₩${w.defaultHourlyRate.toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <div class="flex items-center gap-1 text-[10px]">
+                                    <div class="flex items-center gap-1 text-[12px]">
                                         <span class="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded-md">근무 ${workerShifts.length}건</span>
                                         <span class="bg-sevenGreen/5 border border-sevenGreen/10 text-sevenGreen font-black px-1.5 py-0.5 rounded-md">총 ${stats.totalHours}H</span>
                                     </div>
-                                    <i data-lucide="chevron-down" id="shift-content-icon-${w.id}" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200"></i>
+                                    <i data-lucide="chevron-down" id="shift-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
                                 </div>
                             </div>
 
                             <div id="shift-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-2.5 overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left text-[11px] border-collapse min-w-[780px]">
+                                <table class="w-full text-left text-[13px] border-collapse min-w-[780px]">
                                     <thead>
                                         <tr class="text-slate-400 border-b border-slate-200">
                                             <th class="px-3 py-1 font-bold">근무 날짜</th>
@@ -3338,43 +3344,45 @@
                 allRenderWorkers.forEach(w => {
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const isWeeklyHolidayTarget = stats.holidayAllowance > 0;
-                    const tempBadgeR = w._isTemp ? `<span class="bg-purple-100 text-purple-600 text-[8px] font-bold px-1.5 py-0.2 rounded-full">임시스태프</span>` : `<span class="bg-sevenGreen/10 text-sevenGreen text-[8px] font-bold px-1.5 py-0.2 rounded-full">세븐스태프</span>`;
+                    const tempBadgeR = w._isTemp ? `<span class="bg-purple-100 text-purple-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full">임시스태프</span>` : `<span class="bg-sevenGreen/10 text-sevenGreen text-[10px] font-bold px-1.5 py-0.2 rounded-full">세븐스태프</span>`;
+                    const paid = isPaidStatus(w.id, selectedMonth);
+                    const paidBadgeR = paid ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">지급완료</span>` : `<span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">미지급</span>`;
 
                     reportContainer.innerHTML += `
                         <div class="bg-white p-3.5 rounded-xl shadow-xs border ${w._isTemp ? 'border-purple-200' : 'border-slate-200'} flex flex-col justify-between space-y-2 cursor-pointer hover:border-sevenGreen transition-all" onclick="toggleAccordion('report-content', '${w.id}')">
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <div>
-                                        ${tempBadgeR}
+                                        ${tempBadgeR}${paidBadgeR}
                                         <div class="flex items-center gap-1 mt-0.5">
                                             <h4 class="text-xs font-black text-slate-900">${w.name}</h4>
-                                            <i data-lucide="chevron-down" id="report-content-icon-${w.id}" class="w-3.5 h-3.5 text-slate-400 transition-transform"></i>
+                                            <i data-lucide="chevron-down" id="report-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform"></i>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-[8px] text-slate-400 font-bold">지정 계약시급</p>
-                                        <p class="text-[11px] font-bold text-slate-600">₩${w.defaultHourlyRate.toLocaleString()}</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">지정 계약시급</p>
+                                        <p class="text-[13px] font-bold text-slate-600">₩${w.defaultHourlyRate.toLocaleString()}</p>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-3 gap-0.5 bg-slate-50 p-1.5 rounded-lg text-center mb-2 text-[10px] font-semibold">
+                                <div class="grid grid-cols-3 gap-0.5 bg-slate-50 p-1.5 rounded-lg text-center mb-2 text-[12px] font-semibold">
                                     <div>
-                                        <p class="text-[8px] text-slate-400 font-bold">당월 출근</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">당월 출근</p>
                                         <p class="font-black text-slate-800 mt-0.5">${stats.totalDays} 일</p>
                                     </div>
                                     <div>
-                                        <p class="text-[8px] text-slate-400 font-bold">실근무 시수</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">실근무 시수</p>
                                         <p class="font-black text-slate-800 mt-0.5">${stats.totalHours}H</p>
                                     </div>
                                     <div>
-                                        <p class="text-[8px] text-slate-400 font-bold">주휴 지급</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">주휴 지급</p>
                                         <p class="mt-0.5 font-bold ${isWeeklyHolidayTarget ? 'text-sevenGreen font-black' : 'text-slate-400'}">
                                             ${isWeeklyHolidayTarget ? '지급됨' : '미대상'}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div id="report-content-${w.id}" class="hidden space-y-1 text-[10px] text-slate-600 font-semibold pt-1.5 border-t border-dashed border-slate-100 transition-all">
+                                <div id="report-content-${w.id}" class="hidden space-y-1 text-[12px] text-slate-600 font-semibold pt-1.5 border-t border-dashed border-slate-100 transition-all">
                                     <div class="flex justify-between">
                                         <span>실근로 기본 임금:</span>
                                         <span class="font-bold text-slate-800">₩${stats.basePay.toLocaleString()}</span>
@@ -3405,24 +3413,39 @@
                                             <span>-₩${stats.withholdingTax.toLocaleString()}</span>
                                         </div>
                                     ` : ''}
-                                    <div class="bg-emerald-50 p-1.5 rounded-[5px] text-[9px] text-sevenGreen mt-1 text-center font-bold">
+                                    <div class="bg-emerald-50 p-1.5 rounded-[5px] text-[11px] text-sevenGreen mt-1 text-center font-bold">
                                         ※ 터치하면 세부 정산 상세항목이 접힙니다.
                                     </div>
                                 </div>
                             </div>
 
                             <div class="pt-1.5 border-t border-slate-100 flex justify-between items-center">
-                                <span class="font-black text-slate-900 text-[11px]">최종 월 정산액:</span>
-                                <div class="flex items-center gap-1.5">
+                                <span class="font-black text-slate-900 text-[13px]">최종 월 정산액:</span>
+                                <div class="flex items-center gap-1">
                                     <span class="text-sm font-black text-sevenGreen">₩${stats.finalPay.toLocaleString()}원</span>
-                                    <button onclick="event.stopPropagation(); printPayslip('${w.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-1 rounded-md" title="급여명세서 인쇄/PDF">
-                                        <i data-lucide="printer" class="w-3 h-3 pointer-events-none"></i>
+                                    <button onclick="event.stopPropagation(); togglePaidStatus('${w.id}', '${selectedMonth}', '${w.name}')" aria-label="지급 상태 토글" class="${paid ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md" title="지급 상태 토글">
+                                        <i data-lucide="${paid ? 'badge-check' : 'circle-dollar-sign'}" class="w-4 h-4 pointer-events-none"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); printPayslip('${w.id}')" aria-label="급여명세서 인쇄" class="bg-slate-100 hover:bg-slate-200 text-slate-600 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md" title="급여명세서 인쇄/PDF">
+                                        <i data-lucide="printer" class="w-4 h-4 pointer-events-none"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     `;
                 });
+            }
+
+            // 지급완료 미완료 인원 요약 배지 갱신
+            const unpaidSummaryEl = document.getElementById('reports-unpaidSummary');
+            if (unpaidSummaryEl) {
+                const unpaidCount = allRenderWorkers.filter(w => !isPaidStatus(w.id, selectedMonth)).length;
+                if (unpaidCount > 0) {
+                    unpaidSummaryEl.innerText = `미지급 ${unpaidCount}명`;
+                    unpaidSummaryEl.classList.remove('hidden');
+                } else {
+                    unpaidSummaryEl.classList.add('hidden');
+                }
             }
 
             const workersGrid = document.getElementById('workersListGrid');
@@ -3432,6 +3455,19 @@
             } else {
                 workersList.forEach(w => {
                     const shiftsCount = filteredShifts.filter(s => s.workerId === w.id).length;
+                    const wStats = getWorkerMonthlyStats(w.id, selectedMonth);
+                    const isInsuranceEligible = wStats.holidayAllowance > 0; // 주 15시간 이상 근무 주가 있으면 4대보험 가입 대상
+
+                    // 보건증 만료 임박/만료 배지 계산 (30일 이내 임박, 0일 이하는 만료)
+                    let healthBadgeR = '';
+                    if (w.healthDate) {
+                        const diffDays = Math.ceil((new Date(w.healthDate) - new Date()) / (1000 * 60 * 60 * 24));
+                        if (diffDays < 0) {
+                            healthBadgeR = `<span class="bg-rose-100 text-sevenRed px-1.5 py-0.5 rounded font-black">보건증 만료</span>`;
+                        } else if (diffDays <= 30) {
+                            healthBadgeR = `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black">보건증 D-${diffDays}</span>`;
+                        }
+                    }
                     
                     const docLabels = {
                         idCard: '신분증',
@@ -3450,7 +3486,7 @@
                         const isUploaded = docState[key];
                         if (isUploaded) submittedCount++;
                         docBadgesHTML += `
-                            <button onclick="toggleWorkerDocument('${w.id}', '${key}')" class="px-2 py-1 rounded-md text-[9px] font-bold flex items-center gap-1 transition-all border ${isUploaded ? 'bg-emerald-50 text-sevenGreen border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-sevenRed border-rose-150 hover:bg-rose-100'}" title="클릭해서 제출 여부 변경">
+                            <button onclick="toggleWorkerDocument('${w.id}', '${key}')" class="px-2 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 transition-all border ${isUploaded ? 'bg-emerald-50 text-sevenGreen border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-sevenRed border-rose-150 hover:bg-rose-100'}" title="클릭해서 제출 여부 변경">
                                 <span class="w-1.5 h-1.5 rounded-full ${isUploaded ? 'bg-sevenGreen' : 'bg-sevenRed'}"></span>
                                 <span>${docLabels[key]}</span>
                             </button>
@@ -3467,67 +3503,69 @@
                                     <div>
                                         <div class="flex items-center gap-1.5">
                                             <h4 class="font-black text-xs text-slate-900">${w.name}</h4>
-                                            <span class="text-[9px] bg-sevenGreen/5 text-sevenGreen px-2 py-0.2 rounded font-bold font-sans">₩${w.defaultHourlyRate.toLocaleString()}</span>
+                                            <span class="text-[11px] bg-sevenGreen/5 text-sevenGreen px-2 py-0.2 rounded font-bold font-sans">₩${w.defaultHourlyRate.toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <div class="flex items-center gap-1 text-[10px] font-bold">
+                                    <div class="flex items-center gap-1 text-[12px] font-bold">
                                         ${w.deduction > 0 ? `<span class="bg-orange-50 text-sevenOrange px-1.5 py-0.5 rounded">공제 ₩${w.deduction.toLocaleString()}</span>` : ''}
                                         ${w.taxWithholding ? `<span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">3.3% 원천징수</span>` : ''}
+                                        ${isInsuranceEligible ? `<span class="bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded">4대보험 대상</span>` : ''}
+                                        ${healthBadgeR}
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">서류 ${submittedCount}/6</span>
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">출근 ${shiftsCount}건</span>
                                     </div>
-                                    <i data-lucide="chevron-down" id="worker-content-icon-${w.id}" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200"></i>
+                                    <i data-lucide="chevron-down" id="worker-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
                                 </div>
                             </div>
 
                             <div id="worker-content-${w.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-3 space-y-2.5">
                                 <div class="flex justify-between items-start gap-2">
-                                    <div class="space-y-1 text-[11px] flex-grow font-semibold">
+                                    <div class="space-y-1 text-[13px] flex-grow font-semibold">
                                         <p class="font-bold text-slate-600 flex items-center gap-1">
-                                            <i data-lucide="phone" class="w-3 h-3 text-slate-400 flex-shrink-0"></i> 
+                                            <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
                                             <span>${w.phone || '연락처 미기입'}</span>
                                         </p>
                                         <p class="text-slate-500 flex items-center gap-1">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-slate-400 flex-shrink-0"></i> 
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
                                             <span>보건증 만료 예정일: ${w.healthDate || '미기입'}</span>
                                         </p>
                                         <p class="text-slate-500 flex items-center gap-1">
-                                            <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 flex-shrink-0"></i> 
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
                                             <span class="break-all">${w.address || '주소 미기입'}</span>
                                         </p>
                                         ${w.deduction > 0 ? `
                                             <p class="text-sevenOrange flex items-center gap-1 font-bold">
-                                                <i data-lucide="coins" class="w-3 h-3 text-sevenOrange flex-shrink-0"></i> 
+                                                <i data-lucide="coins" class="w-3.5 h-3.5 text-sevenOrange flex-shrink-0"></i> 
                                                 <span>매달 월급 고정 공제액: ₩${w.deduction.toLocaleString()}원</span>
                                             </p>
                                         ` : ''}
                                         ${w.defaultStart ? `
                                             <p class="text-sevenGreen flex items-center gap-1 font-bold">
-                                                <i data-lucide="clock" class="w-3 h-3 text-sevenGreen flex-shrink-0"></i>
+                                                <i data-lucide="clock" class="w-3.5 h-3.5 text-sevenGreen flex-shrink-0"></i>
                                                 <span>기본 근무: ${w.defaultStart} ~ ${w.defaultEnd} (휴게 ${w.defaultBreak || 0}분)</span>
                                             </p>
                                         ` : ''}
                                         ${w.notes ? `
                                             <div class="text-amber-700 bg-amber-50 p-2 rounded-lg font-medium border border-amber-100 mt-0.5 flex items-start gap-1 max-w-lg">
-                                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0 text-amber-600 mt-0.5"></i> 
-                                                <span class="break-all text-[10px]">${w.notes}</span>
+                                                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5"></i> 
+                                                <span class="break-all text-[12px]">${w.notes}</span>
                                             </div>
                                         ` : ''}
                                     </div>
-                                    <div class="flex space-x-0.5 flex-shrink-0">
-                                        <button onclick="openEditWorkerModal('${w.id}')" class="text-slate-400 hover:text-sevenGreen transition-colors p-1.5 bg-white rounded-lg border border-slate-150" title="수정">
-                                            <i data-lucide="edit-3" class="w-3 h-3"></i>
+                                    <div class="flex space-x-1 flex-shrink-0">
+                                        <button onclick="openEditWorkerModal('${w.id}')" aria-label="스태프 정보 수정" class="text-slate-400 hover:text-sevenGreen transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center bg-white rounded-lg border border-slate-150" title="수정">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
                                         </button>
-                                        <button onclick="deleteWorker('${w.id}', '${w.name}')" class="text-slate-400 hover:text-sevenRed transition-colors p-1.5 bg-white rounded-lg border border-slate-150" title="삭제">
-                                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                        <button onclick="deleteWorker('${w.id}', '${w.name}')" aria-label="스태프 삭제" class="text-slate-400 hover:text-sevenRed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center bg-white rounded-lg border border-slate-150" title="삭제">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="border-t pt-2 border-slate-200">
-                                    <h5 class="text-[8px] font-black text-slate-400 uppercase tracking-wide mb-1.5">필수 채용 서류 체크리스트</h5>
+                                    <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-wide mb-1.5">필수 채용 서류 체크리스트</h5>
                                     <div class="flex flex-wrap gap-1">
                                         ${docBadgesHTML}
                                     </div>
@@ -3542,10 +3580,10 @@
             storeSettingsList.innerHTML = '';
             stores.forEach(st => {
                 storeSettingsList.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-[11px] font-semibold">
+                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-[13px] font-semibold">
                         <span class="font-bold ${st.id === currentStoreId ? 'text-sevenGreen' : 'text-slate-700'}">${st.name} ${st.id === currentStoreId ? '(활성)' : ''}</span>
-                        <button onclick="deleteStore('${st.id}', '${st.name}')" class="text-slate-400 hover:text-sevenRed transition-all p-1">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <button onclick="deleteStore('${st.id}', '${st.name}')" aria-label="지점 삭제" class="text-slate-400 hover:text-sevenRed transition-all min-w-[44px] min-h-[44px] flex items-center justify-center -my-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
                 `;
@@ -3553,112 +3591,79 @@
 
 
             renderCalendar();
-            renderPosHistoryList();
             lucide.createIcons();
             saveStateToStorage();
         }
 
-        // --- 시재 정산 전표 내역 렌더러 ---
-        function renderPosHistoryList() {
-            const listContainer = document.getElementById('posHistoryList');
-            listContainer.innerHTML = '';
-            const list = posHistoryMap[currentStoreId] || [];
-
-            if (list.length === 0) {
-                listContainer.innerHTML = `<span class="text-slate-400 text-[9px] block text-center py-6">저장된 교대 시재 전표가 없습니다.</span>`;
-                return;
-            }
-
-            [...list].reverse().forEach(item => {
-                let diffText = '';
-                let diffClass = '';
-                if (item.discrepancy === 0) {
-                    diffText = '₩0 (정상)';
-                    diffClass = 'text-sevenGreen';
-                } else if (item.discrepancy > 0) {
-                    diffText = `+₩${item.discrepancy.toLocaleString()} (과잉)`;
-                    diffClass = 'text-blue-600';
-                } else {
-                    diffText = `-₩${Math.abs(item.discrepancy).toLocaleString()} (부족)`;
-                    diffClass = 'text-sevenRed';
-                }
-
-                listContainer.innerHTML += `
-                    <div class="bg-white p-1.5 rounded-lg border border-slate-200 space-y-1 text-[9px]">
-                        <div class="flex justify-between items-center text-slate-400 text-[8px] font-bold">
-                            <span>🕒 ${item.timestamp}</span>
-                            <span>담당: ${item.worker || '미정'}</span>
-                        </div>
-                        <div class="flex justify-between items-center font-black text-slate-800">
-                            <span>과부족: <span class="${diffClass}">${diffText}</span></span>
-                            <span class="text-slate-500 text-[8px]">현금: ₩${item.total.toLocaleString()}원</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function savePosHistoryRecord() {
-            const activeStore = stores.find(s => s.id === currentStoreId);
-            if (!activeStore) return;
-
-            const baseCash = Math.max(0, Number(document.getElementById('pos-base-cash').value || 150000));
-            const table = {
-                '50000': 50000,
-                '10000': 10000,
-                '5000': 5000,   
-                '1000': 1000,
-                '500': 500,
-                '100': 100,
-                '50': 50,
-                '10': 10
-            };
-
-            let cashTotal = 0;
-            Object.keys(table).forEach(k => {
-                const inputVal = Math.max(0, Number(document.getElementById(`pos-count-${k}`).value || 0));
-                cashTotal += inputVal * table[k];
-            });
-
-            const discrepancy = cashTotal - baseCash;
-            const now = new Date();
-            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}시 ${String(now.getMinutes()).padStart(2,'0')}분 ${String(now.getSeconds()).padStart(2,'0')}초`;
-
-            const posWorkerSelect = document.getElementById('pos-worker-select');
-            const activeWorker = (posWorkerSelect && posWorkerSelect.value) ? posWorkerSelect.value : '';
-
-            if (!activeWorker) {
-                showToast("⚠️ 정산 담당자를 먼저 선택해 주세요.");
-                return;
-            }
-
-            const newRecord = {
-                id: 'pos_' + Date.now(),
-                timestamp,
-                discrepancy,
-                total: cashTotal,
-                base: baseCash,
-                worker: activeWorker
-            };
-
-            if (!posHistoryMap[currentStoreId]) {
-                posHistoryMap[currentStoreId] = [];
-            }
-            posHistoryMap[currentStoreId].push(newRecord);
-
-            showToast(`₩${discrepancy.toLocaleString()} 과부족 정산 전표가 누적 대장에 등록되었습니다.`);
-            renderEverything();
-        }
-
-        function clearPosHistory() {
-            triggerConfirm("⚠️ 시재 전표 삭제", "이 매장의 누적된 모든 교대 시재 정산 내역을 삭제하시겠습니까?", () => {
-                posHistoryMap[currentStoreId] = [];
-                showToast("시재 전표가 리셋되었습니다.");
-                renderEverything();
-            });
-        }
-
         // --- 7. 알바생 시급 연동 및 세부 서류 바인딩 ---
+        // 엑셀 파일로 스태프 명단 일괄 등록 (이름/시급/연락처/공제액/원천징수 컬럼 지원)
+        function importWorkersFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (typeof XLSX === 'undefined') {
+                showToast("Excel 라이브러리 로드에 실패했습니다. 네트워크 연결을 확인해 주세요.");
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const workbook = XLSX.read(e.target.result, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+
+                    if (rows.length === 0) {
+                        showToast("엑셀 파일에 데이터가 없습니다.");
+                        return;
+                    }
+
+                    if (!workersMap[currentStoreId]) workersMap[currentStoreId] = [];
+                    let addedCount = 0;
+                    let skippedCount = 0;
+
+                    rows.forEach(row => {
+                        const name = String(row['이름'] || row['성명'] || row['name'] || '').trim();
+                        if (!name) {
+                            skippedCount++;
+                            return;
+                        }
+                        const rate = Math.max(0, Number(row['시급'] || row['hourlyRate'] || MINIMUM_WAGE_2026));
+                        const deduction = Math.max(0, Number(row['공제액'] || row['deduction'] || 0));
+                        const phone = String(row['연락처'] || row['phone'] || '').trim();
+                        const taxFlag = String(row['원천징수'] || row['taxWithholding'] || '').trim();
+                        const taxWithholding = taxFlag === 'O' || taxFlag === 'o' || taxFlag.toUpperCase() === 'Y' || taxFlag === '적용';
+
+                        workersMap[currentStoreId].push({
+                            id: 'w_' + Date.now() + '_' + addedCount + '_' + Math.floor(Math.random() * 1000),
+                            name,
+                            defaultHourlyRate: rate,
+                            deduction,
+                            taxWithholding,
+                            healthDate: '',
+                            phone,
+                            address: '',
+                            notes: '📥 엑셀 일괄 등록',
+                            documents: {},
+                            defaultStart: '09:00',
+                            defaultEnd: '18:00',
+                            defaultBreak: 30
+                        });
+                        addedCount++;
+                    });
+
+                    showToast(`엑셀에서 스태프 ${addedCount}명을 등록했습니다.${skippedCount > 0 ? ` (이름 누락 ${skippedCount}건 제외)` : ''}`);
+                    renderEverything();
+                } catch (err) {
+                    showToast("⚠️ 엑셀 파일을 읽는 중 오류가 발생했습니다. 양식을 확인해 주세요.");
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         function onWorkerSelected(workerId) {
             const workersList = workersMap[currentStoreId] || [];
             const worker = workersList.find(w => w.id === workerId);
@@ -3750,7 +3755,9 @@
                     triggerConfirm(
                         "⚠️ 최저임금 미달 경고",
                         `입력하신 시급 ${nextRate.toLocaleString()}원은 2026년 법정 최저시급(${MINIMUM_WAGE_2026.toLocaleString()}원)보다 낮습니다. 이대로 저장하시겠습니까?`,
-                        applyEdit
+                        applyEdit,
+                        "그대로 저장",
+                        "bg-amber-500 text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-amber-600"
                     );
                     return;
                 }
@@ -3778,6 +3785,7 @@
             localStorage.setItem('seven_workers_live_v4', JSON.stringify(workersMap));
             localStorage.setItem('seven_shifts_live_v4', JSON.stringify(shiftsMap));
             localStorage.setItem('seven_pos_history_v4', JSON.stringify(posHistoryMap));
+            localStorage.setItem('seven_paid_status_v4', JSON.stringify(paidStatusMap));
             localStorage.setItem('seven_selected_month_live_v4', selectedMonth);
         }
 
@@ -3786,17 +3794,21 @@
             const toastText = document.getElementById('customToastText');
             toastText.innerText = text;
             
-            toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
+            toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 bg-sevenGreen text-white text-[13px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
             
             setTimeout(() => {
-                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[11px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
+                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[13px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
             }, 2500);
         }
 
-        function triggerConfirm(title, message, callback) {
+        function triggerConfirm(title, message, callback, confirmLabel, confirmColorClass) {
             document.getElementById('confirmTitle').innerText = title;
             document.getElementById('confirmMessage').innerText = message;
-            
+
+            const submitBtn = document.getElementById('confirmSubmitBtn');
+            submitBtn.innerText = confirmLabel || '영구 삭제';
+            submitBtn.className = confirmColorClass || 'bg-sevenRed text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-red-700';
+
             const modal = document.getElementById('confirmModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -3942,7 +3954,9 @@
                 triggerConfirm(
                     "⚠️ 최저임금 미달 경고",
                     `입력하신 시급 ${rate.toLocaleString()}원은 2026년 법정 최저시급(${MINIMUM_WAGE_2026.toLocaleString()}원)보다 낮습니다. 이대로 등록하시겠습니까?`,
-                    () => finalizeAddWorker(name, rate, deduction, taxWithholding, phone, healthDate, address, notes, defaultStart, defaultEnd, defaultBreak)
+                    () => finalizeAddWorker(name, rate, deduction, taxWithholding, phone, healthDate, address, notes, defaultStart, defaultEnd, defaultBreak),
+                    "그대로 등록",
+                    "bg-amber-500 text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-amber-600"
                 );
                 return;
             }
@@ -4067,6 +4081,22 @@
                 breakTimeWarning = `[근로기준법 경고] 현재 교대시수(${rawDurationHours.toFixed(1)}시간)는 4시간 이상으로, 법정 의무 무급 휴게시간은 최소 30분이 보장되어야 합니다. 현재 입력한 휴게시간(${breakMinutes}분)은 의무 규정에 미달하여 노무 상 과태료 분쟁 소지가 있습니다.`;
             }
 
+            // 주 52시간(법정 연장근로 한도) 초과 여부 검사
+            const existingWeeklyHours = getWeeklyHoursForWorker(workerId, date);
+            const projectedWeeklyHours = existingWeeklyHours + totalHours;
+            let weeklyOverLimitMsg = projectedWeeklyHours > 52
+                ? `[근로기준법 경고] 이번 주(일~토) 기준 "${worker.name}" 님의 누적 근무시간이 약 ${projectedWeeklyHours.toFixed(1)}시간으로, 법정 주 52시간 한도를 초과합니다. 그대로 등록하시겠습니까?`
+                : "";
+
+            // 연속 근무일수 경고 (주 1회 휴일 보장 원칙, 6일 연속부터 경고)
+            const consecutiveDays = getConsecutiveWorkDays(workerId, date);
+            if (consecutiveDays >= 6) {
+                const consecutiveMsg = `[근로기준법 경고] "${worker.name}" 님은 이 근무를 포함해 ${consecutiveDays}일 연속 근무하게 됩니다. 주 1회 이상의 휴일 보장 원칙에 유의해 주세요. 그대로 등록하시겠습니까?`;
+                weeklyOverLimitMsg = weeklyOverLimitMsg
+                    ? `${weeklyOverLimitMsg}\n\n${consecutiveMsg}`
+                    : consecutiveMsg;
+            }
+
             const saveAction = () => {
                 const newS = {
                     id: 's_' + Date.now(),
@@ -4095,10 +4125,18 @@
                 renderEverything();
             };
 
-            if (breakTimeWarning) {
-                triggerBreakTimeAlert(breakTimeWarning, saveAction);
+            const proceedAfterWeeklyCheck = () => {
+                if (breakTimeWarning) {
+                    triggerBreakTimeAlert(breakTimeWarning, saveAction);
+                } else {
+                    saveAction();
+                }
+            };
+
+            if (weeklyOverLimitMsg) {
+                triggerConfirm("⚠️ 주 52시간 초과 경고", weeklyOverLimitMsg, proceedAfterWeeklyCheck, "그대로 진행", "bg-amber-500 text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-amber-600");
             } else {
-                saveAction();
+                proceedAfterWeeklyCheck();
             }
         }
 
@@ -4132,7 +4170,7 @@
 
         // --- 탭 전환 로직 (가로 깨짐 오류 수정 완료) ---
         function switchTab(tabId) {
-            document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all text-slate-600 hover:bg-slate-50";
+            document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50";
             document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
 
             if (tabId === 'workers') {
@@ -4143,7 +4181,7 @@
                 document.getElementById(`tabContent-${tabId}`).className = "space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
             }
 
-            document.getElementById(`tab-${tabId}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all bg-sevenGreen text-white shadow-xs";
+            document.getElementById(`tab-${tabId}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all bg-sevenGreen text-white shadow-xs";
 
             // 보고서 탭 진입 시 청구서 스태프 셀렉트 초기화
             if (tabId === 'reports') {
@@ -4165,67 +4203,6 @@
 
         // --- 실시간 점포 Context 추출기 (AI 분석 전달용) ---
         // --- 12. GEMINI API 연동 모듈 (PC/모바일 호환성 최적화형 탑재) ---
-        function getMockAiResponse(systemPrompt, userPrompt) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const activeStore = stores.find(s => s.id === currentStoreId) || { name: '이름없음' };
-                    const workersList = workersMap[currentStoreId] || [];
-                    
-                    if (systemPrompt.includes("인수인계")) {
-                        resolve(`[AI 모의 점장 컨설팅] 실시간 교대 인수인계 가이드
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. 포스(POS) 시재 정산 및 돈통 확인 (오차 범위 내 정산 일치 검수 완료)
-2. 시식대 및 매대 전면 위생 청소상태 완수
-3. 냉장 쇼케이스 FF(삼각김밥, 도시락, 샌드위치 등) 선입선출 정렬 및 빈 공간 보충
-4. 워크인 음료 냉장고 후방 보충 진열 실시
-5. 폐기 예정 등록 상품 스캐너 확인 및 즉시 수거함 안전 격리 처리`);
-                    } else if (systemPrompt.includes("노무 정산")) {
-                        let docReport = '';
-                        let deductionReport = '';
-                        workersList.forEach(w => {
-                            const docs = w.documents || {};
-                            const missing = Object.keys(docs).filter(k => !docs[k]);
-                            if (missing.length > 0) {
-                                docReport += `\n- ⚠️ ${w.name}: 미제출 서류가 감지되었습니다. (벌금형 예방 및 안전 지대 확보를 위해 보건증과 계약서를 속히 구비하십시오.)`;
-                            }
-                            if (w.deduction > 0) {
-                                deductionReport += `\n- 💸 ${w.name}: 고정 외상/가불 공제액 ₩${w.deduction.toLocaleString()}원이 등록되어 당월 지급액에서 안전 차감 관리 중입니다.`;
-                            }
-                        });
-                        resolve(`[AI 점포 정밀 노무 Audit 시뮬레이션 보고서]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-■ 가맹점: 세븐일레븐 ${activeStore.name} 
-■ 정산월: ${selectedMonth} 기준
-
-1. 2026 최저임금(10,320원) 준수 적법성 검증:
-- 등록된 모든 근무자의 기본 약정 시급 요건이 최저임금을 완벽히 준수하고 있습니다.
-
-2. 법정 주휴수당 지급 진단:
-- 주차별 달력(Calendar Week) 정밀 정산법에 따라 주 15시간 이상 실근로한 주만 선별 연산되어 합리적인 월 주휴수당 총액이 대장에 합산되었습니다.
-
-3. 고정 공제 내역 진단:${deductionReport || '\n- 이번 달에 별도로 등록된 인건비 외상 차감 스태프는 없습니다.'}
-
-4. 채용 구비서류 상태 진단:${docReport || '\n- 현재 모든 아르바이트생의 구비 서류 제출이 완료되어 안전한 상태입니다.'}
-
-※ 안내: 상단 'AI API 키 설정' 버튼을 통해 개인 API Key를 등록하면 실시간 초거대 실무 진단 및 맞춤 노무법 자문 챗봇 무제한 이용이 활성화됩니다.`);
-                    } else {
-                        resolve(`반갑습니다! '7-ELEVEN 파트타임 시스템' AI 지원 센터입니다. 
-상단의 'AI API 키 설정'을 누르셔서 점주님의 무료 API 키를 저장해주시면, 점포 데이터에 기초한 전방위 고도의 법률 검증 서비스를 무상으로 사용할 수 있습니다.
-
-[임시 모의 제언]
-- 법정 보관서류(근로계약서 및 보건증)의 철저한 구비를 당부드립니다.
-- 휴게시간 감산에 따라 급여 기본 산정 수치가 안정적으로 누적 관리되고 있습니다.`);
-                    }
-                }, 800);
-            });
-        }
-
-        function copyHandoverChecklist() {
-            const textElement = document.getElementById('handoverTextValue');
-            if (!textElement) return;
-            copyToClipboard(textElement.innerText, "클립보드에 복사 완료! 알바 카톡방에 바로 붙여넣어 주세요.");
-        }
-
         function copyForGoogleSheets() {
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
             const shiftsList = shiftsMap[currentStoreId] || [];
@@ -4343,6 +4320,7 @@
                 workers: localStorage.getItem('seven_workers_live_v4'),
                 shifts: localStorage.getItem('seven_shifts_live_v4'),
                 posHistories: localStorage.getItem('seven_pos_history_v4'),
+                paidStatus: localStorage.getItem('seven_paid_status_v4'),
                 selectedMonth: localStorage.getItem('seven_selected_month_live_v4'),
             };
 
@@ -4417,12 +4395,19 @@
                 workers: localStorage.getItem('seven_workers_live_v4'),
                 shifts: localStorage.getItem('seven_shifts_live_v4'),
                 posHistories: localStorage.getItem('seven_pos_history_v4'),
+                paidStatus: localStorage.getItem('seven_paid_status_v4'),
                 selectedMonth: localStorage.getItem('seven_selected_month_live_v4'),
             };
             const jsonString = JSON.stringify(backupPayload, null, 2);
             const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
             const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
+            const btn = document.getElementById('githubBackupBtn');
+            const btnLabel = document.getElementById('githubBackupBtnLabel');
+            if (btn) {
+                btn.disabled = true;
+                btnLabel.innerText = '백업 전송 중...';
+            }
             showToast("GitHub로 백업 전송 중...");
 
             try {
@@ -4459,6 +4444,11 @@
                 }
             } catch (err) {
                 showToast("GitHub 백업 중 네트워크 오류가 발생했습니다.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btnLabel.innerText = 'GitHub에 백업';
+                }
             }
         }
 
@@ -4481,6 +4471,7 @@
                         localStorage.setItem('seven_shifts_live_v4', parsed.shifts);
                         
                         if (parsed.posHistories) localStorage.setItem('seven_pos_history_v4', parsed.posHistories);
+                        if (parsed.paidStatus) localStorage.setItem('seven_paid_status_v4', parsed.paidStatus);
                         if (parsed.selectedMonth) localStorage.setItem('seven_selected_month_live_v4', parsed.selectedMonth);
 
                         stores = JSON.parse(parsed.stores);
@@ -4488,6 +4479,7 @@
                         workersMap = JSON.parse(parsed.workers);
                         shiftsMap = JSON.parse(parsed.shifts);
                         posHistoryMap = parsed.posHistories ? JSON.parse(parsed.posHistories) : INITIAL_POS_HISTORIES;
+                        paidStatusMap = parsed.paidStatus ? JSON.parse(parsed.paidStatus) : {};
                         selectedMonth = parsed.selectedMonth || selectedMonth;
 
                         stores.forEach(st => {
@@ -4509,94 +4501,33 @@
             reader.readAsText(file);
         }
 
-        function switchCheckerTab(tab) {
-            const tabs = ['disposal', 'pos', 'posHistory'];
-            tabs.forEach(t => {
-                const element = document.getElementById(`checkerTab-${t}`);
-                const btn = document.getElementById(`btn-checker-${t}`);
-                if (t === tab) {
-                    element.classList.remove('hidden');
-                    btn.className = "bg-sevenGreen text-white text-[8px] font-bold px-1.5 py-0.5 rounded";
-                } else {
-                    element.classList.add('hidden');
-                    btn.className = "bg-slate-100 text-slate-600 text-[8px] font-bold px-1.5 py-0.5 rounded";
-                }
-            });
-            lucide.createIcons();
-        }
-
-        // 대한민국 세븐일레븐 표준 폐기 골든타임 타임라인 연산 & 오디오 알람
-        function updateDisposalTimers() {
-            const now = new Date();
-            const targets = [
-                { time: '11:00', elId: 'disposal-timer-0', name: '오전 1차 FF 폐기' },
-                { time: '20:00', elId: 'disposal-timer-1', name: '오후 유제품 폐기' },
-                { time: '23:00', elId: 'disposal-timer-2', name: '야간 2차 FF 폐기' }
-            ];
-
-            targets.forEach(t => {
-                const [targetH, targetM] = t.time.split(':').map(Number);
-                let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetH, targetM, 0);
-                
-                if (now > targetDate) {
-                    targetDate.setDate(targetDate.getDate() + 1);
-                }
-
-                const diffMs = targetDate - now;
-                const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-                const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-                const displayBox = document.getElementById(t.elId);
-                if (displayBox) {
-                    displayBox.innerText = `${diffHrs}시간 ${diffMins}분 ${diffSecs}초 남음`;
-                    
-                    // 정확히 10분 전에 음향 및 브라우저 알림 발송
-                    if (diffHrs === 0 && diffMins === 10 && diffSecs === 0) {
-                        playWebAudioAlarmBeep();
-                        triggerBrowserPushNotification(t.name);
-                    }
-
-                    if (diffHrs === 0 && diffMins <= 30) {
-                        displayBox.className = "text-[9px] font-black text-sevenRed animate-pulse";
-                    } else {
-                        displayBox.className = "text-[9px] font-black text-slate-600";
-                    }
-                }
-            });
-        }
-
-        // 웹 오디오 신시사이저 비프음 생성기
-        function playWebAudioAlarmBeep() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-
-                oscillator.start();
-                setTimeout(() => { oscillator.stop(); }, 200);
-            } catch (err) {
-                // 웹오디오 컨텍스트 차단됨
-            }
-        }
-
-        function triggerBrowserPushNotification(taskName) {
-            if (window.Notification && Notification.permission === 'granted') {
-                new Notification(`7-ELEVEN 폐기 안내`, {
-                    body: `골든타임 10분 전입니다! 지금 바로 [${taskName}] 진열대를 확인하세요.`,
-                    icon: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=128&q=80'
-                });
-            }
-        }
 
         // 클립보드 복사 유틸 (iOS/Android 호환)
+        // 내일 날짜 근무자 요약을 텍스트로 만들어 클립보드에 복사 (교대 인수인계용)
+        function copyTomorrowShiftsSummary() {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const tomorrowShifts = currentShifts
+                .filter(s => s.date === tomorrowStr)
+                .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+            if (tomorrowShifts.length === 0) {
+                showToast(`내일(${tomorrowStr})은 등록된 근무자가 없습니다. 먼저 스케줄을 등록해 주세요.`);
+                return;
+            }
+
+            let summaryText = `📋 ${activeStore.name} 내일(${tomorrowStr}) 근무자 요약\n\n`;
+            tomorrowShifts.forEach(s => {
+                summaryText += `· ${s.startTime}~${s.endTime} ${s.workerName}${s.isSubstitute ? ' (대타)' : ''}${s.memo ? ' - ' + s.memo : ''}\n`;
+            });
+
+            copyToClipboard(summaryText, `내일 근무자 요약이 복사되었습니다! (${tomorrowShifts.length}명)`);
+        }
+
         function copyToClipboard(text, successMsg) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text)
@@ -4623,56 +4554,6 @@
                 showToast('클립보드 복사에 실패했습니다.');
             }
             document.body.removeChild(ta);
-        }
-
-        // 시재 정산기 연산 매핑 정상화 (음수 방지 적용)
-        function calculatePosCash() {
-            const table = {
-                '50000': 50000,
-                '10000': 10000,
-                '5000': 5000,   
-                '1000': 1000,
-                '500': 500,
-                '100': 100,
-                '50': 50,
-                '10': 10
-            };
-
-            let cashTotal = 0;
-            Object.keys(table).forEach(k => {
-                const inputEl = document.getElementById(`pos-count-${k}`);
-                if (inputEl) {
-                    let inputVal = Number(inputEl.value || 0);
-                    if (inputVal < 0) {
-                        inputVal = 0;
-                        inputEl.value = 0;
-                    }
-                    cashTotal += inputVal * table[k];
-                }
-            });
-
-            const totalDisplay = document.getElementById('pos-total-cash');
-            if (totalDisplay) {
-                totalDisplay.innerText = `현금총합: ₩${cashTotal.toLocaleString()}원`;
-            }
-
-            const baseCashInput = document.getElementById('pos-base-cash');
-            const baseCash = baseCashInput ? Math.max(0, Number(baseCashInput.value || 150000)) : 150000;
-            const discrepancy = cashTotal - baseCash;
-            const diffDisplay = document.getElementById('pos-diff-cash');
-
-            if (diffDisplay) {
-                if (discrepancy === 0) {
-                    diffDisplay.innerText = `과부족: ₩0원 (정상)`;
-                    diffDisplay.className = "text-sevenGreen font-black";
-                } else if (discrepancy > 0) {
-                    diffDisplay.innerText = `과부족: +₩${discrepancy.toLocaleString()}원 (과잉)`;
-                    diffDisplay.className = "text-blue-600 font-black";
-                } else {
-                    diffDisplay.innerText = `과부족: -₩${Math.abs(discrepancy).toLocaleString()}원 (부족)`;
-                    diffDisplay.className = "text-sevenRed font-black";
-                }
-            }
         }
     </script>
 </body>
