@@ -178,7 +178,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V3.6</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V4.4</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -216,11 +216,11 @@
 
         <!-- 메인 메뉴 탭 구조 -->
         <div class="bg-sevenGreen/5 border-t border-slate-100">
-            <div class="max-w-7xl mx-auto px-2 py-1 flex overflow-x-auto custom-scrollbar justify-start md:justify-center">
-                <nav class="flex space-x-1 bg-white p-0.5 rounded-lg shadow-xs border border-slate-200">
+            <div class="max-w-7xl mx-auto px-2 py-1 flex flex-wrap justify-center">
+                <nav class="flex flex-wrap justify-center gap-y-1 space-x-1 bg-white p-0.5 rounded-lg shadow-xs border border-slate-200">
                     <button id="tab-dashboard" onclick="switchTab('dashboard')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all bg-sevenGreen text-white shadow-xs">
                         <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-                        <span>종합 현황판</span>
+                        <span>대시보드</span>
                     </button>
                     <button id="tab-calendar" onclick="switchTab('calendar')" class="flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50">
                         <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
@@ -245,55 +245,43 @@
 
     <main class="max-w-7xl mx-auto p-2.5 md:p-3 space-y-2.5 flex-grow md:flex-1 md:min-h-0 md:max-h-[calc(100vh-130px)] md:overflow-y-auto flex flex-col w-full">
 
-        <!-- 보건증 만료 경고 알림판 (D-Day 배너) -->
-        <div id="healthCardWarningBanner" class="hidden bg-rose-50 border border-rose-200 rounded-xl p-2.5 flex items-start space-x-2 text-[13px] flex-shrink-0 animate-in fade-in duration-200">
-            <div class="p-1 bg-rose-500 text-white rounded-lg">
-                <i data-lucide="alert-octagon" class="w-4 h-4 pulse-light"></i>
-            </div>
-            <div class="flex-grow space-y-0.5">
-                <h4 class="font-black text-rose-950">위생법 무단 미갱신 과태료 경보</h4>
-                <p id="healthCardWarningList" class="text-rose-700 font-semibold"></p>
-            </div>
-        </div>
-
-        <!-- 근무 시간 중복 경고 배너 -->
-        <div id="overlapWarningBanner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex items-start space-x-2 text-[13px] flex-shrink-0 animate-in fade-in duration-200">
-            <div class="p-1 bg-amber-400 text-white rounded-lg flex-shrink-0">
-                <i data-lucide="triangle-alert" class="w-4 h-4"></i>
-            </div>
-            <div class="flex-grow space-y-0.5">
-                <h4 class="font-black text-amber-900">⚠️ 근무 시간 중복 감지</h4>
-                <p id="overlapWarningList" class="text-amber-800 font-semibold leading-relaxed"></p>
-            </div>
-        </div>
-
         <!-- 현재 매장 활성 타이틀 배너 및 수당 수동 스위치 -->
         <div class="bg-white rounded-xl shadow-xs border border-slate-200/60 p-3 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 flex-shrink-0">
-            <div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-sevenGreen pulse-light"></span>
-                    <h2 id="currentStoreNameTitle" class="text-sm font-black text-slate-900">지점명 불러오는 중...</h2>
+            <div class="flex items-start gap-2">
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-sevenGreen pulse-light"></span>
+                        <h2 id="currentStoreNameTitle" class="text-sm font-black text-slate-900">지점명 불러오는 중...</h2>
+                    </div>
+                    <p id="currentMonthMetaText" class="text-[11px] text-slate-400 mt-0.5 font-semibold">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
                 </div>
-                <p id="currentMonthMetaText" class="text-[11px] text-slate-400 mt-0.5 font-semibold">지정 월의 스케줄, 주휴 요건, 가산수당이 자동 계산 중입니다.</p>
+                <!-- 알림 센터 진입 버튼: 보건증 만료/근무 중복/잦은 대타 경고를 모아서 표시 -->
+                <button onclick="openAlertsCenter()" class="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-all" aria-label="알림 센터 열기" title="알림 센터">
+                    <span class="relative inline-flex">
+                        <i data-lucide="bell" class="w-4 h-4 text-slate-500 pointer-events-none"></i>
+                        <span id="alertsCenterBadge" class="hidden absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-sevenRed text-white text-[9px] font-black rounded-full flex items-center justify-center pointer-events-none">0</span>
+                    </span>
+                </button>
             </div>
 
             <!-- 법정 수당 스위치 설정부 -->
             <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-full lg:w-auto">
                 <div class="flex items-center space-x-1.5">
                     <span class="text-[11px] font-bold text-slate-500">야간 가산(1.5배):</span>
-                    <button id="toggleNightAllowance" onclick="toggleOption('night')" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
+                    <button id="toggleNightAllowance" onclick="toggleOption('night')" aria-label="야간 가산 수당 적용 여부 전환" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
                         <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
                     </button>
                 </div>
                 <div class="flex items-center space-x-1.5 border-l pl-2 border-slate-200">
                     <span class="text-[11px] font-bold text-slate-500">법정 주휴수당:</span>
-                    <button id="toggleHolidayAllowance" onclick="toggleOption('holiday')" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
+                    <button id="toggleHolidayAllowance" onclick="toggleOption('holiday')" aria-label="법정 주휴수당 적용 여부 전환" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
                         <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 w-full lg:w-auto text-[12px]">
+            <div class="flex items-center gap-1.5 w-full lg:w-auto text-[12px] lg:border-l lg:pl-2.5 border-slate-200">
+                <span class="hidden lg:inline text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-0.5">내보내기</span>
                 <button onclick="copyForGoogleSheets()" class="flex-1 lg:flex-initial bg-slate-100 hover:bg-slate-200 border text-slate-700 font-bold px-2.5 py-1.5 rounded-lg flex items-center justify-center space-x-1 transition-all">
                     <i data-lucide="copy" class="w-3.5 h-3.5 text-sevenOrange"></i>
                     <span>구글 시트 복사</span>
@@ -507,10 +495,17 @@
                             </div>
                             <div class="flex items-center pt-3">
                                 <label class="flex items-center space-x-1 cursor-pointer font-bold text-slate-600">
-                                    <input type="checkbox" id="form-isSubstitute" class="rounded text-sevenGreen focus:ring-sevenGreen">
+                                    <input type="checkbox" id="form-isSubstitute" onchange="toggleOriginalWorkerField('form')" class="rounded text-sevenGreen focus:ring-sevenGreen">
                                     <span>대타(대근) 등록</span>
                                 </label>
                             </div>
+                        </div>
+
+                        <div id="form-originalWorkerWrap" class="hidden">
+                            <label class="block text-orange-500 font-bold mb-0.5">원래 근무 예정이었던 스태프</label>
+                            <select id="form-originalWorkerId" class="w-full bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                                <option value="">선택 안 함</option>
+                            </select>
                         </div>
 
                         <div>
@@ -631,10 +626,16 @@
                         <span id="shifts-monthlyTitle">정산월별 상세 근무 일지 장부</span>
                     </h3>
                 </div>
-                <div class="relative">
-                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                    <input type="text" id="shiftsSearchInput" oninput="updateShiftsSearch(this.value)" placeholder="스태프 이름 검색"
-                        class="pl-6 pr-2 py-1 text-[12px] bg-slate-50 border border-slate-200 rounded-lg font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen w-28 sm:w-40">
+                <div class="flex items-center gap-1.5">
+                    <button id="shiftsSubstituteFilterBtn" onclick="toggleShiftsSubstituteOnlyFilter()" class="flex-shrink-0 flex items-center gap-1 text-[11px] bg-orange-50 hover:bg-orange-100 text-sevenOrange border border-orange-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                        <i data-lucide="megaphone" class="w-3.5 h-3.5 pointer-events-none"></i>
+                        <span class="pointer-events-none">대타만 보기</span>
+                    </button>
+                    <div class="relative">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" id="shiftsSearchInput" oninput="updateShiftsSearch(this.value)" placeholder="스태프 이름 검색"
+                            class="pl-6 pr-2 py-1 text-[12px] bg-slate-50 border border-slate-200 rounded-lg font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen w-28 sm:w-40">
+                    </div>
                 </div>
             </div>
 
@@ -1039,6 +1040,20 @@
         </div>
     </div>
 
+    <!-- 알림 센터 모달 (보건증 만료/근무 중복/잦은 대타 통합) -->
+    <div id="alertsCenterModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] text-xs animate-in zoom-in-95 duration-150">
+            <div class="flex justify-between items-center border-b p-4 pb-3 flex-shrink-0">
+                <h3 class="font-black text-slate-900 flex items-center gap-1.5">
+                    <i data-lucide="bell" class="w-4.5 h-4.5 text-sevenOrange"></i>
+                    알림 센터
+                </h3>
+                <button onclick="closeAlertsCenter()" class="text-slate-400 hover:text-slate-600 font-bold" aria-label="닫기">닫기 ✕</button>
+            </div>
+            <div id="alertsCenterBody" class="p-4 pt-3 space-y-2.5 overflow-y-auto custom-scrollbar flex-1"></div>
+        </div>
+    </div>
+
     <!-- 알바생 수정용 모달 영역 -->
     <div id="editWorkerModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
@@ -1252,9 +1267,16 @@
                 <div class="flex items-center justify-between py-1 bg-slate-50 px-2 rounded-lg border border-slate-100">
                     <span class="text-slate-600 font-bold">임시 대타(대근)로 등록</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="quick-form-isSubstitute" class="sr-only peer">
+                        <input type="checkbox" id="quick-form-isSubstitute" onchange="toggleOriginalWorkerField('quick')" class="sr-only peer">
                         <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sevenOrange"></div>
                     </label>
+                </div>
+
+                <div id="quick-form-originalWorkerWrap" class="hidden">
+                    <label class="block text-orange-500 font-bold mb-0.5">원래 근무 예정이었던 스태프</label>
+                    <select id="quick-form-originalWorkerId" class="w-full bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                        <option value="">선택 안 함</option>
+                    </select>
                 </div>
 
                 <div>
@@ -1385,8 +1407,12 @@
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
+        // 알림 센터(보건증/근무중복/잦은 대타) 데이터
+        let activeAlerts = [];
         // 근무 일지 장부 탭 스태프 이름 검색어
         let shiftsSearchQuery = "";
+        // 근무 일지 장부 탭 "대타만 보기" 필터 상태
+        let shiftsSubstituteOnlyFilter = false;
         // 달력 다중 날짜 선택(일괄 등록) 상태
         let bulkSelectMode = false;
         let selectedBulkDates = new Set();
@@ -1773,6 +1799,18 @@
             renderEverything();
         }
 
+        // 근무 일지 장부 탭 "대타만 보기" 필터 토글
+        function toggleShiftsSubstituteOnlyFilter() {
+            shiftsSubstituteOnlyFilter = !shiftsSubstituteOnlyFilter;
+            const btn = document.getElementById('shiftsSubstituteFilterBtn');
+            if (btn) {
+                btn.className = shiftsSubstituteOnlyFilter
+                    ? "flex-shrink-0 flex items-center gap-1 text-[11px] bg-sevenOrange text-white border border-sevenOrange px-2.5 py-1.5 rounded-lg font-bold transition-all"
+                    : "flex-shrink-0 flex items-center gap-1 text-[11px] bg-orange-50 hover:bg-orange-100 text-sevenOrange border border-orange-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+            }
+            renderEverything();
+        }
+
         function toggleBulkSelectMode() {
             bulkSelectMode = !bulkSelectMode;
             selectedBulkDates.clear();
@@ -1963,6 +2001,7 @@
 
             document.getElementById('quick-form-memo').value = '';
             document.getElementById('quick-form-isSubstitute').checked = false;
+            document.getElementById('quick-form-originalWorkerWrap').classList.add('hidden');
             document.getElementById('quick-form-advance-toggle').checked = false;
             document.getElementById('quick-advance-input-wrap').classList.add('hidden');
             if (document.getElementById('quick-form-advance')) document.getElementById('quick-form-advance').value = '';
@@ -2061,7 +2100,7 @@
                 listEl.innerHTML = dayShifts.map(s => {
                     const pay = getShiftPayroll(s, activeStore.optionNight);
                     const advText = s.advance > 0 ? `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black text-[11px]">가불 ₩${s.advance.toLocaleString()}</span>` : '';
-                    const subText = s.isSubstitute ? `<span class="bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-black text-[11px]">대타</span>` : '';
+                    const subText = s.isSubstitute ? `<span class="bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-black text-[11px]">대타${s.originalWorkerName ? ' (원: ' + s.originalWorkerName + ')' : ''}</span>` : '';
                     return `
                     <div class="bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs">
                         <div class="flex justify-between items-start">
@@ -2082,6 +2121,9 @@
                         </div>
                         ${s.memo ? `<p class="mt-1.5 text-[11px] text-slate-500 font-semibold bg-slate-50 px-2 py-1 rounded-lg">${s.memo}</p>` : ''}
                         <div class="flex justify-end gap-1 mt-1.5">
+                            <button onclick="copySubstituteRequest('${s.id}')" class="text-[11px] bg-orange-50 hover:bg-orange-100 text-sevenOrange font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
+                                <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> 대타 구하기
+                            </button>
                             <button onclick="openDailyHubEditShift('${s.id}')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-md flex items-center gap-0.5">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i> 수정
                             </button>
@@ -2205,6 +2247,8 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             isBulkShiftSubmit = false;
+            const wrap = document.getElementById('quick-form-originalWorkerWrap');
+            if (wrap) wrap.classList.add('hidden');
         }
 
         function onQuickWorkerSelected(workerId) {
@@ -2886,6 +2930,8 @@
             const endTime = document.getElementById('quick-form-endTime').value;
             const breakMinutes = Number(document.getElementById('quick-form-breakMinutes').value || 0);
             const isSubstitute = document.getElementById('quick-form-isSubstitute').checked;
+            const originalWorkerSelectQuick = document.getElementById('quick-form-originalWorkerId');
+            const originalWorkerId = isSubstitute && originalWorkerSelectQuick ? originalWorkerSelectQuick.value : '';
             const memo = document.getElementById('quick-form-memo').value;
             // 기능 2: 가불금 수집
             const hasAdvance = document.getElementById('quick-form-advance-toggle').checked;
@@ -2976,6 +3022,8 @@
             }
 
             const saveAction = () => {
+                const workersListForOriginal = workersMap[currentStoreId] || [];
+                const originalWorkerObj = originalWorkerId ? workersListForOriginal.find(w => w.id === originalWorkerId) : null;
                 const newShifts = targetDates.map((dateStr, idx) => ({
                     id: 's_' + Date.now() + '_' + idx,
                     workerId,
@@ -2988,6 +3036,8 @@
                     totalHours,
                     nightHours,
                     isSubstitute,
+                    originalWorkerId: originalWorkerObj ? originalWorkerObj.id : '',
+                    originalWorkerName: originalWorkerObj ? originalWorkerObj.name : '',
                     memo,
                     advance: advanceAmount
                 }));
@@ -3110,9 +3160,7 @@
                 totalHoursSum += s.totalHours;
             });
 
-            // 위생 보건증 디데이 만료 점검 경고창 세팅
-            const banner = document.getElementById('healthCardWarningBanner');
-            const bannerList = document.getElementById('healthCardWarningList');
+            // 위생 보건증 디데이 만료 점검 (알림 센터로 이동)
             let warningWorkers = [];
 
             allRenderWorkers.forEach(w => {
@@ -3135,28 +3183,57 @@
                 }
             });
 
-            if (warningWorkers.length > 0) {
-                banner.classList.remove('hidden');
-                bannerList.innerHTML = warningWorkers.map(w => `• ${w}`).join('<br>');
-            } else {
-                banner.classList.add('hidden');
-            }
+            // ── 근무 시간 중복 감지 ──
+            const overlaps = detectOverlappingShifts(currentStoreId);
+            const monthOverlaps = overlaps.filter(o => o.date.startsWith(selectedMonth));
+            const overlapMessages = monthOverlaps.map(o =>
+                `${o.workerName} · ${o.date} · ${o.a.startTime}~${o.a.endTime} ↔ ${o.b.startTime}~${o.b.endTime}`
+            );
 
-            // ── 근무 시간 중복 감지 배너 ──
-            const overlapBanner = document.getElementById('overlapWarningBanner');
-            const overlapList   = document.getElementById('overlapWarningList');
-            if (overlapBanner && overlapList) {
-                const overlaps = detectOverlappingShifts(currentStoreId);
-                // 이번 달 것만 필터
-                const monthOverlaps = overlaps.filter(o => o.date.startsWith(selectedMonth));
-                if (monthOverlaps.length > 0) {
-                    overlapBanner.classList.remove('hidden');
-                    overlapList.innerHTML = monthOverlaps.map(o =>
-                        `• <b>${o.workerName}</b> · ${o.date} · ${o.a.startTime}~${o.a.endTime} ↔ ${o.b.startTime}~${o.b.endTime}`
-                    ).join('<br>');
-                } else {
-                    overlapBanner.classList.add('hidden');
+            // ── 잦은 대타 발생 감지 (스태프별 이번 달 3회 이상, 또는 특정 요일 반복) ──
+            const monthSubShifts = filteredShifts.filter(s => s.isSubstitute);
+            const perWorkerCount = {};
+            const perWeekdayCount = {};
+            const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
+
+            monthSubShifts.forEach(s => {
+                perWorkerCount[s.workerName] = (perWorkerCount[s.workerName] || 0) + 1;
+                const wd = weekdayNames[new Date(s.date).getDay()];
+                perWeekdayCount[wd] = (perWeekdayCount[wd] || 0) + 1;
+            });
+
+            const freqMessages = [];
+            Object.keys(perWorkerCount).forEach(name => {
+                if (perWorkerCount[name] >= 3) {
+                    freqMessages.push(`${name} 님이 이번 달 대타를 ${perWorkerCount[name]}회 섰습니다.`);
                 }
+            });
+            Object.keys(perWeekdayCount).forEach(wd => {
+                if (perWeekdayCount[wd] >= 3) {
+                    freqMessages.push(`${wd}요일에 대타가 ${perWeekdayCount[wd]}회 반복 발생했습니다. 고정 근무자 스케줄 재검토를 권장합니다.`);
+                }
+            });
+
+            // 알림 센터 데이터 구성 및 벨 배지 갱신
+            activeAlerts = [
+                { key: 'health', icon: 'alert-octagon', color: 'rose', title: '위생법 무단 미갱신 과태료 경보', items: warningWorkers },
+                { key: 'overlap', icon: 'triangle-alert', color: 'amber', title: '근무 시간 중복 감지', items: overlapMessages },
+                { key: 'substitute', icon: 'megaphone', color: 'orange', title: '잦은 대타 발생 - 스케줄 안정성 점검 필요', items: freqMessages }
+            ];
+            const totalAlertCount = activeAlerts.reduce((sum, a) => sum + a.items.length, 0);
+            const alertsBadge = document.getElementById('alertsCenterBadge');
+            if (alertsBadge) {
+                if (totalAlertCount > 0) {
+                    alertsBadge.innerText = totalAlertCount > 99 ? '99+' : totalAlertCount;
+                    alertsBadge.classList.remove('hidden');
+                } else {
+                    alertsBadge.classList.add('hidden');
+                }
+            }
+            // 모달이 열려 있는 상태라면 내용도 실시간 갱신
+            const alertsModalEl = document.getElementById('alertsCenterModal');
+            if (alertsModalEl && !alertsModalEl.classList.contains('hidden')) {
+                renderAlertsCenterBody();
             }
 
             document.getElementById('dashboard-workerCount').innerText = `${allRenderWorkers.length}명`;
@@ -3186,7 +3263,7 @@
                     recentTableBody.innerHTML += `
                         <tr class="hover:bg-slate-50/70 border-b border-slate-50">
                             <td class="py-1.5 font-bold text-slate-900 flex items-center gap-0.5">
-                                ${s.isSubstitute ? '<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
+                                ${s.isSubstitute ? `<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black" title="${s.originalWorkerName ? '원 근무자: ' + s.originalWorkerName : ''}">대타</span>` : ''}
                                 <span>${s.workerName}</span>
                             </td>
                             <td class="py-1.5 text-slate-500">${s.date.substring(5)}</td>
@@ -3205,16 +3282,24 @@
             if (allRenderWorkers.length === 0) {
                 shiftsGroupedContainer.innerHTML = `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">등록되어 있는 알바생이 없습니다. [알바생 명부] 탭에서 알바생을 먼저 추가해 주세요.</div>`;
             } else {
-                const searchFilteredWorkers = shiftsSearchQuery
+                let searchFilteredWorkers = shiftsSearchQuery
                     ? allRenderWorkers.filter(w => w.name.toLowerCase().includes(shiftsSearchQuery.toLowerCase()))
                     : allRenderWorkers;
 
+                if (shiftsSubstituteOnlyFilter) {
+                    searchFilteredWorkers = searchFilteredWorkers.filter(w =>
+                        filteredShifts.some(s => s.workerId === w.id && s.isSubstitute)
+                    );
+                }
+
                 if (searchFilteredWorkers.length === 0) {
-                    shiftsGroupedContainer.innerHTML = `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">"${shiftsSearchQuery}" 검색 결과와 일치하는 스태프가 없습니다.</div>`;
+                    shiftsGroupedContainer.innerHTML = shiftsSubstituteOnlyFilter
+                        ? `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">이번 달 대타 근무 기록이 없습니다.</div>`
+                        : `<div class="text-center py-8 text-slate-400 font-bold bg-white rounded-xl border border-slate-200">"${shiftsSearchQuery}" 검색 결과와 일치하는 스태프가 없습니다.</div>`;
                 }
 
                 searchFilteredWorkers.forEach(w => {
-                    const workerShifts = filteredShifts.filter(s => s.workerId === w.id);
+                    const workerShifts = filteredShifts.filter(s => s.workerId === w.id && (!shiftsSubstituteOnlyFilter || s.isSubstitute));
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const tempBadge = w._isTemp ? `<span class="text-[10px] bg-purple-100 text-purple-600 px-1 py-0.5 rounded font-black">임시</span>` : '';
 
@@ -3231,7 +3316,7 @@
                     if (workerShifts.length === 0) {
                         workerShiftsRows = `
                             <tr>
-                                <td colspan="11" class="text-center py-6 text-slate-400 font-semibold">이번 달에 진행한 교대 기록이 존재하지 않습니다.</td>
+                                <td colspan="11" class="text-center py-6 text-slate-400 font-semibold">${shiftsSubstituteOnlyFilter ? '이번 달 대타 근무 기록이 없습니다.' : '이번 달에 진행한 교대 기록이 존재하지 않습니다.'}</td>
                             </tr>
                         `;
                     } else {
@@ -3251,7 +3336,7 @@
                                 <tr class="${rowClass}">
                                     <td class="px-3 py-2 font-bold text-slate-950">
                                         <div class="flex items-center gap-0.5 flex-wrap">
-                                            ${s.isSubstitute ? '<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타</span>' : ''}
+                                            ${s.isSubstitute ? `<span class="text-[10px] bg-orange-500 text-white px-1 py-0.2 rounded font-black">대타${s.originalWorkerName ? ' (원:' + s.originalWorkerName + ')' : ''}</span>` : ''}
                                             <span>${s.date}</span>
                                             ${advBadge}
                                             ${overlapIcon}
@@ -3347,13 +3432,15 @@
                     const tempBadgeR = w._isTemp ? `<span class="bg-purple-100 text-purple-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full">임시스태프</span>` : `<span class="bg-sevenGreen/10 text-sevenGreen text-[10px] font-bold px-1.5 py-0.2 rounded-full">세븐스태프</span>`;
                     const paid = isPaidStatus(w.id, selectedMonth);
                     const paidBadgeR = paid ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">지급완료</span>` : `<span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">미지급</span>`;
+                    const reportSubCount = (shiftsMap[currentStoreId] || []).filter(s => s.workerId === w.id && s.date.startsWith(selectedMonth) && s.isSubstitute).length;
+                    const subBadgeR = reportSubCount > 0 ? `<span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full ml-1">대타 ${reportSubCount}회</span>` : '';
 
                     reportContainer.innerHTML += `
                         <div class="bg-white p-3.5 rounded-xl shadow-xs border ${w._isTemp ? 'border-purple-200' : 'border-slate-200'} flex flex-col justify-between space-y-2 cursor-pointer hover:border-sevenGreen transition-all" onclick="toggleAccordion('report-content', '${w.id}')">
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <div>
-                                        ${tempBadgeR}${paidBadgeR}
+                                        ${tempBadgeR}${paidBadgeR}${subBadgeR}
                                         <div class="flex items-center gap-1 mt-0.5">
                                             <h4 class="text-xs font-black text-slate-900">${w.name}</h4>
                                             <i data-lucide="chevron-down" id="report-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform"></i>
@@ -3455,6 +3542,7 @@
             } else {
                 workersList.forEach(w => {
                     const shiftsCount = filteredShifts.filter(s => s.workerId === w.id).length;
+                    const substituteCount = filteredShifts.filter(s => s.workerId === w.id && s.isSubstitute).length;
                     const wStats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const isInsuranceEligible = wStats.holidayAllowance > 0; // 주 15시간 이상 근무 주가 있으면 4대보험 가입 대상
 
@@ -3513,6 +3601,7 @@
                                         ${w.taxWithholding ? `<span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">3.3% 원천징수</span>` : ''}
                                         ${isInsuranceEligible ? `<span class="bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded">4대보험 대상</span>` : ''}
                                         ${healthBadgeR}
+                                        ${substituteCount > 0 ? `<span class="bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">이번달 대타 ${substituteCount}회</span>` : ''}
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">서류 ${submittedCount}/6</span>
                                         <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">출근 ${shiftsCount}건</span>
                                     </div>
@@ -3664,6 +3753,27 @@
             reader.readAsArrayBuffer(file);
         }
 
+        // 대타 등록 시 "원래 근무 예정이었던 스태프" 선택 필드 토글 및 목록 채우기
+        function toggleOriginalWorkerField(mode) {
+            const checkboxId = mode === 'quick' ? 'quick-form-isSubstitute' : 'form-isSubstitute';
+            const wrapId = mode === 'quick' ? 'quick-form-originalWorkerWrap' : 'form-originalWorkerWrap';
+            const selectId = mode === 'quick' ? 'quick-form-originalWorkerId' : 'form-originalWorkerId';
+
+            const checkbox = document.getElementById(checkboxId);
+            const wrap = document.getElementById(wrapId);
+            if (!checkbox || !wrap) return;
+
+            if (checkbox.checked) {
+                wrap.classList.remove('hidden');
+                const select = document.getElementById(selectId);
+                const workersList = workersMap[currentStoreId] || [];
+                select.innerHTML = '<option value="">선택 안 함</option>' +
+                    workersList.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
+
         function onWorkerSelected(workerId) {
             const workersList = workersMap[currentStoreId] || [];
             const worker = workersList.find(w => w.id === workerId);
@@ -3799,6 +3909,56 @@
             setTimeout(() => {
                 toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 bg-sevenGreen text-white text-[13px] px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-1.5 border border-white transition-all duration-300 font-bold";
             }, 2500);
+        }
+
+        // --- 📌 알림 센터 모달 제어부 (보건증 만료/근무 중복/잦은 대타 통합) ---
+        function openAlertsCenter() {
+            renderAlertsCenterBody();
+            const modal = document.getElementById('alertsCenterModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAlertsCenter() {
+            const modal = document.getElementById('alertsCenterModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function renderAlertsCenterBody() {
+            const body = document.getElementById('alertsCenterBody');
+            if (!body) return;
+
+            const colorMap = {
+                rose:   { bg: 'bg-rose-50',   border: 'border-rose-200',   iconBg: 'bg-rose-500',   title: 'text-rose-950',   text: 'text-rose-700' },
+                amber:  { bg: 'bg-amber-50',  border: 'border-amber-300',  iconBg: 'bg-amber-400',  title: 'text-amber-900',  text: 'text-amber-800' },
+                orange: { bg: 'bg-orange-50', border: 'border-orange-300', iconBg: 'bg-sevenOrange', title: 'text-orange-900', text: 'text-orange-800' }
+            };
+
+            const visibleAlerts = activeAlerts.filter(a => a.items.length > 0);
+
+            if (visibleAlerts.length === 0) {
+                body.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-10 text-slate-300 gap-2">
+                        <i data-lucide="shield-check" class="w-10 h-10"></i>
+                        <p class="font-bold text-sm text-center text-slate-500">현재 확인이 필요한 알림이 없습니다.</p>
+                    </div>`;
+            } else {
+                body.innerHTML = visibleAlerts.map(a => {
+                    const c = colorMap[a.color];
+                    return `
+                        <div class="${c.bg} border ${c.border} rounded-xl p-2.5 flex items-start space-x-2">
+                            <div class="p-1 ${c.iconBg} text-white rounded-lg flex-shrink-0">
+                                <i data-lucide="${a.icon}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="flex-grow space-y-0.5">
+                                <h4 class="font-black ${c.title}">${a.title} (${a.items.length}건)</h4>
+                                <p class="${c.text} font-semibold leading-relaxed">${a.items.map(i => `• ${i}`).join('<br>')}</p>
+                            </div>
+                        </div>`;
+                }).join('');
+            }
+            lucide.createIcons();
         }
 
         function triggerConfirm(title, message, callback, confirmLabel, confirmColorClass) {
@@ -4043,6 +4203,8 @@
             const endTime = document.getElementById('form-endTime').value;
             const breakMinutes = Number(document.getElementById('form-breakMinutes').value || 0);
             const isSubstitute = document.getElementById('form-isSubstitute').checked;
+            const originalWorkerSelect = document.getElementById('form-originalWorkerId');
+            const originalWorkerId = isSubstitute && originalWorkerSelect ? originalWorkerSelect.value : '';
             const memo = document.getElementById('form-memo').value;
             const formAdvanceOn = document.getElementById('form-advance-toggle').checked;
             const formAdvance = formAdvanceOn ? Math.max(0, Number(document.getElementById('form-advance').value || 0)) : 0;
@@ -4098,6 +4260,7 @@
             }
 
             const saveAction = () => {
+                const originalWorkerObj = originalWorkerId ? workersList.find(w => w.id === originalWorkerId) : null;
                 const newS = {
                     id: 's_' + Date.now(),
                     workerId,
@@ -4110,6 +4273,8 @@
                     totalHours,
                     nightHours,
                     isSubstitute,
+                    originalWorkerId: originalWorkerObj ? originalWorkerObj.id : '',
+                    originalWorkerName: originalWorkerObj ? originalWorkerObj.name : '',
                     memo,
                     advance: formAdvance
                 };
@@ -4117,6 +4282,7 @@
                 shiftsMap[currentStoreId] = [newS, ...currentShifts];
                 document.getElementById('form-memo').value = '';
                 document.getElementById('form-isSubstitute').checked = false;
+                document.getElementById('form-originalWorkerWrap').classList.add('hidden');
                 document.getElementById('form-advance-toggle').checked = false;
                 document.getElementById('form-advance-wrap').classList.add('hidden');
                 document.getElementById('form-advance').value = '';
@@ -4213,7 +4379,7 @@
                 return;
             }
 
-            const headers = ['지점명', '근무날짜', '알바생성명', '출근시간', '퇴근시간', '휴게시간(분)', '약정시급(원)', '실근무(H)', '야근근로(H)', '대타여부', '급여합계(원)', '메모/인수인계'];
+            const headers = ['지점명', '근무날짜', '알바생성명', '출근시간', '퇴근시간', '휴게시간(분)', '약정시급(원)', '실근무(H)', '야근근로(H)', '대타여부', '원 근무자', '급여합계(원)', '메모/인수인계'];
             const rows = filteredShifts.map(s => [
                 activeStore.name,
                 s.date,
@@ -4225,6 +4391,7 @@
                 s.totalHours,
                 s.nightHours,
                 s.isSubstitute ? '대타' : '일반',
+                s.originalWorkerName || '',
                 getShiftPayroll(s, activeStore.optionNight),
                 s.memo || ''
             ]);
@@ -4503,6 +4670,22 @@
 
 
         // 클립보드 복사 유틸 (iOS/Android 호환)
+        // 특정 근무의 대타를 구하는 공유용 문구를 만들어 클립보드에 복사
+        function copySubstituteRequest(shiftId) {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
+            const s = (shiftsMap[currentStoreId] || []).find(sh => sh.id === shiftId);
+            if (!s) return;
+
+            const dateObj = new Date(s.date);
+            const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            const weekday = weekdayNames[dateObj.getDay()];
+            const dateLabel = `${s.date.substring(5).replace('-', '/')}(${weekday})`;
+
+            const requestText = `📢 ${activeStore.name} 대타 급구\n\n· 일시: ${dateLabel} ${s.startTime}~${s.endTime}\n· 원 근무자: ${s.workerName}\n· 가능하신 분은 매니저에게 연락 부탁드립니다!`;
+
+            copyToClipboard(requestText, "대타 급구 문구가 복사되었습니다! 단톡방에 붙여넣어 주세요.");
+        }
+
         // 내일 날짜 근무자 요약을 텍스트로 만들어 클립보드에 복사 (교대 인수인계용)
         function copyTomorrowShiftsSummary() {
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
@@ -4522,7 +4705,7 @@
 
             let summaryText = `📋 ${activeStore.name} 내일(${tomorrowStr}) 근무자 요약\n\n`;
             tomorrowShifts.forEach(s => {
-                summaryText += `· ${s.startTime}~${s.endTime} ${s.workerName}${s.isSubstitute ? ' (대타)' : ''}${s.memo ? ' - ' + s.memo : ''}\n`;
+                summaryText += `· ${s.startTime}~${s.endTime} ${s.workerName}${s.isSubstitute ? ` (대타${s.originalWorkerName ? ', 원:' + s.originalWorkerName : ''})` : ''}${s.memo ? ' - ' + s.memo : ''}\n`;
             });
 
             copyToClipboard(summaryText, `내일 근무자 요약이 복사되었습니다! (${tomorrowShifts.length}명)`);
