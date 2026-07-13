@@ -178,7 +178,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V4.4</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V4.8</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -423,13 +423,13 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:flex-1 md:min-h-0">
                 
                 <!-- 1단: 출퇴근 일지 추가 폼 -->
-                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col md:h-full md:overflow-hidden">
+                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col">
                     <h3 class="font-black text-slate-950 text-[13px] flex items-center gap-1 border-b pb-1.5 flex-shrink-0">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-sevenOrange"></i>
                         <span>교대 근무 기록 추가</span>
                     </h3>
 
-                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[12px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
+                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[12px] pt-2 pr-0.5">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">근무자 알바생 선택</label>
                             <select id="form-worker" onchange="onWorkerSelected(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:ring-1 focus:ring-sevenGreen focus:outline-none">
@@ -589,6 +589,10 @@
                     <i data-lucide="check-square" class="w-3.5 h-3.5 pointer-events-none"></i>
                     <span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>
                 </button>
+                <button id="calendarExpandToggleBtn" onclick="toggleCalendarExpandedView()" class="flex-shrink-0 flex items-center gap-1 text-[12px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 pointer-events-none"></i>
+                    <span class="pointer-events-none">전월·당월·차월 보기</span>
+                </button>
             </div>
 
             <!-- 일괄 등록 도구모음: 다중 선택 모드에서만 노출 -->
@@ -600,20 +604,28 @@
                 </div>
             </div>
 
-            <!-- 요일 헤더 -->
-            <div class="grid grid-cols-7 gap-1.5 text-center text-[12px] font-black text-slate-500 border-b pb-1 flex-shrink-0">
-                <div class="text-sevenRed">일</div>
-                <div>월</div>
-                <div>화</div>
-                <div>수</div>
-                <div>목</div>
-                <div>금</div>
-                <div class="text-blue-600">토</div>
+            <!-- 단일 월 상세 보기 (기본) -->
+            <div id="calendar-single-view" class="flex flex-col flex-grow md:flex-1 md:min-h-0 space-y-2">
+                <!-- 요일 헤더 -->
+                <div class="grid grid-cols-7 gap-1.5 text-center text-[12px] font-black text-slate-500 border-b pb-1 flex-shrink-0">
+                    <div class="text-sevenRed">일</div>
+                    <div>월</div>
+                    <div>화</div>
+                    <div>수</div>
+                    <div>목</div>
+                    <div>금</div>
+                    <div class="text-blue-600">토</div>
+                </div>
+
+                <!-- 달력 셀 그리드 컨테이너 -->
+                <div id="calendar-grid-body" class="grid grid-cols-7 gap-1.5 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden">
+                    <!-- JS에서 동적 일자 셀 및 근무자 칩 생성 -->
+                </div>
             </div>
 
-            <!-- 달력 셀 그리드 컨테이너 -->
-            <div id="calendar-grid-body" class="grid grid-cols-7 gap-1.5 flex-grow md:flex-1 md:min-h-0 md:overflow-y-auto custom-scrollbar">
-                <!-- JS에서 동적 일자 셀 및 근무자 칩 생성 -->
+            <!-- 전월·당월·차월 확장 보기 (한 화면에 3개월 동시 표시, 요약용) -->
+            <div id="calendar-expanded-view" class="hidden grid-cols-1 md:grid-cols-3 gap-2 flex-grow md:flex-1 md:min-h-0 md:overflow-y-auto custom-scrollbar">
+                <!-- JS에서 동적으로 3개월 미니 달력 생성 -->
             </div>
         </div>
 
@@ -889,13 +901,13 @@
             </div>
 
             <!-- 명부 신규 입력 -->
-            <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 lg:col-span-5 md:h-full md:overflow-hidden flex flex-col order-2 lg:order-1">
+            <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 lg:col-span-5 flex flex-col order-2 lg:order-1">
                 <h3 class="font-bold text-slate-900 text-[13px] flex items-center gap-1 border-b pb-2 flex-shrink-0">
                     <i data-lucide="user-plus" class="w-4 h-4 text-sevenGreen"></i>
                     <span>신규 아르바이트 스태프 추가</span>
                 </h3>
 
-                <div class="space-y-2 text-[12px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
+                <div class="space-y-2 text-[12px] pt-2 pr-0.5">
                     <div>
                         <label class="block text-slate-500 font-bold mb-0.5">스태프 이름 *</label>
                         <input type="text" id="newWorkerName" placeholder="예: 김민재" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
@@ -1402,7 +1414,7 @@
         let paidStatusMap = JSON.parse(localStorage.getItem('seven_paid_status_v4')) || {};
         let storeNotice = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
-        let selectedMonth = localStorage.getItem('seven_selected_month_live_v4') || '2026-06';
+        let selectedMonth = new Date().toISOString().slice(0, 7); // 접속할 때마다 항상 현재 월을 기본 정산월로 표시
         let currentActiveTab = 'dashboard';
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
@@ -1417,6 +1429,8 @@
         let bulkSelectMode = false;
         let selectedBulkDates = new Set();
         let isBulkShiftSubmit = false;
+        // 달력 전월·당월·차월 확장 보기 상태
+        let calendarExpandedView = false;
 
         // --- 3. 최초 실행 등록 ---
         // 다크 모드 상태 복원 및 토글
@@ -1811,6 +1825,25 @@
             renderEverything();
         }
 
+        // 화면 크기(모바일↔태블릿/PC breakpoint) 변경 시 달력 행 높이 재계산
+        let _calendarResizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(_calendarResizeTimer);
+            _calendarResizeTimer = setTimeout(() => {
+                if (currentActiveTab === 'calendar' && typeof renderCalendar === 'function') {
+                    renderCalendar();
+                    lucide.createIcons();
+                }
+            }, 200);
+        });
+
+        // ESC 키로 달력 다중 날짜 선택 모드 종료
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && bulkSelectMode) {
+                toggleBulkSelectMode();
+            }
+        });
+
         function toggleBulkSelectMode() {
             bulkSelectMode = !bulkSelectMode;
             selectedBulkDates.clear();
@@ -1881,6 +1914,21 @@
             const calendarTitle = document.getElementById('calendar-title');
             calendarTitle.innerText = `${year}년 ${String(month).padStart(2, '0')}월 스태프 종합 근무 달력`;
 
+            const singleView = document.getElementById('calendar-single-view');
+            const expandedView = document.getElementById('calendar-expanded-view');
+
+            if (calendarExpandedView) {
+                singleView.classList.add('hidden');
+                expandedView.classList.remove('hidden');
+                expandedView.classList.add('grid');
+                renderCalendarExpanded(year, month);
+                return;
+            } else {
+                singleView.classList.remove('hidden');
+                expandedView.classList.add('hidden');
+                expandedView.classList.remove('grid');
+            }
+
             const firstDay = new Date(year, month - 1, 1);
             const lastDay = new Date(year, month, 0);
             
@@ -1890,13 +1938,18 @@
             const gridBody = document.getElementById('calendar-grid-body');
             gridBody.innerHTML = '';
 
+            // 해당 월의 주(행) 개수를 계산해 화면 높이에 맞춰 행 높이를 균등 분배 (md+ 화면에서만 적용, 모바일은 자연스러운 페이지 스크롤 유지)
+            const totalWeekRows = Math.ceil((startDayOfWeek + totalDays) / 7);
+            const isMdUp = window.matchMedia('(min-width: 768px)').matches;
+            gridBody.style.gridTemplateRows = isMdUp ? `repeat(${totalWeekRows}, minmax(0, 1fr))` : '';
+
             const currentShifts = shiftsMap[currentStoreId] || [];
             const monthlyShifts = currentShifts.filter(s => s.date.startsWith(selectedMonth));
 
-            // 1일 시작 전 빈 칸 메우기 (PC와 모바일 맞춤 최소 높이 동적 설정)
+            // 1일 시작 전 빈 칸 메우기
             for (let i = 0; i < startDayOfWeek; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = "bg-slate-100/30 rounded-lg border border-slate-100/50 min-h-[60px] md:min-h-[95px] lg:min-h-[125px]";
+                emptyCell.className = "bg-slate-100/30 rounded-lg border border-slate-100/50";
                 gridBody.appendChild(emptyCell);
             }
 
@@ -1906,8 +1959,8 @@
                 const isSelectedBulk = bulkSelectMode && selectedBulkDates.has(dayStr);
                 const dayCell = document.createElement('div');
                 dayCell.className = isSelectedBulk
-                    ? "bg-indigo-50 p-1.5 rounded-lg border-2 border-indigo-500 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between transition-all cursor-pointer shadow-sm"
-                    : "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
+                    ? "bg-indigo-50 p-1.5 rounded-lg border-2 border-indigo-500 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between transition-all cursor-pointer shadow-sm"
+                    : "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
 
                 // 달력 셀 터치/클릭: 다중 선택 모드면 선택 토글, 아니면 근무 있으면 일일 허브, 없으면 빠른 등록
                 dayCell.onclick = (e) => {
@@ -1940,11 +1993,11 @@
                 const isUnassignedPastDay = dayShifts.length === 0 && dayStr <= todayStr;
 
                 if (!isSelectedBulk && isUnassignedPastDay) {
-                    dayCell.className = "bg-rose-50/40 p-1.5 rounded-lg border border-dashed border-rose-200 min-h-[60px] md:min-h-[95px] lg:min-h-[125px] flex flex-col justify-between hover:border-sevenRed transition-all cursor-pointer shadow-xs hover:shadow-sm";
+                    dayCell.className = "bg-rose-50/40 p-1.5 rounded-lg border border-dashed border-rose-200 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between hover:border-sevenRed transition-all cursor-pointer shadow-xs hover:shadow-sm";
                 }
 
                 // PC에서는 칩 박스의 가로세로 제한을 더 유연하게 가져가기 위해 max-h 점진적 적용
-                let shiftsHTML = '<div class="space-y-1 mt-1 flex-grow overflow-y-auto max-h-[45px] md:max-h-[75px] lg:max-h-[95px] custom-scrollbar">';
+                let shiftsHTML = '<div class="space-y-1 mt-1 flex-grow overflow-y-auto max-h-[45px] md:max-h-none custom-scrollbar">';
                 if (dayShifts.length > 0) {
                     dayShifts.forEach(s => {
                         const bgChipClass = s.isSubstitute 
@@ -1972,6 +2025,116 @@
 
                 dayCell.innerHTML = headerHTML + shiftsHTML;
                 gridBody.appendChild(dayCell);
+            }
+        }
+
+        // 전월·당월·차월 확장 보기 토글
+        function toggleCalendarExpandedView() {
+            calendarExpandedView = !calendarExpandedView;
+            const btn = document.getElementById('calendarExpandToggleBtn');
+            if (btn) {
+                btn.className = calendarExpandedView
+                    ? "flex-shrink-0 flex items-center gap-1 text-[12px] bg-slate-800 text-white border border-slate-800 px-2.5 py-1.5 rounded-lg font-bold transition-all"
+                    : "flex-shrink-0 flex items-center gap-1 text-[12px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = calendarExpandedView
+                    ? `<i data-lucide="calendar" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">1개월 보기</span>`
+                    : `<i data-lucide="layout-grid" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">전월·당월·차월 보기</span>`;
+            }
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        // 전월/당월/차월 3개 미니 달력을 한 화면에 요약 표시 (칩 없이 근무건수 점으로만 표기)
+        function renderCalendarExpanded(year, month) {
+            const container = document.getElementById('calendar-expanded-view');
+            container.innerHTML = '';
+
+            const monthOffsets = [-1, 0, 1];
+            const monthLabels = ['전월', '당월', '차월'];
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            monthOffsets.forEach((offset, idx) => {
+                const targetDate = new Date(year, month - 1 + offset, 1);
+                const tYear = targetDate.getFullYear();
+                const tMonth = targetDate.getMonth() + 1;
+                const tMonthKey = `${tYear}-${String(tMonth).padStart(2, '0')}`;
+                const firstDay = new Date(tYear, tMonth - 1, 1);
+                const lastDay = new Date(tYear, tMonth, 0);
+                const startDayOfWeek = firstDay.getDay();
+                const totalDays = lastDay.getDate();
+                const monthShifts = currentShifts.filter(s => s.date.startsWith(tMonthKey));
+
+                const wrap = document.createElement('div');
+                wrap.className = "bg-white border border-slate-200 rounded-xl p-2 flex flex-col";
+
+                let html = `
+                    <div class="flex items-center justify-between mb-1.5 flex-shrink-0">
+                        <span class="text-[11px] font-black ${offset === 0 ? 'text-sevenGreen' : 'text-slate-600'}">${monthLabels[idx]} · ${tYear}년 ${String(tMonth).padStart(2, '0')}월</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-0.5 text-center text-[9px] font-bold text-slate-400 mb-1 flex-shrink-0">
+                        <div class="text-sevenRed">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-600">토</div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-0.5">`;
+
+                for (let i = 0; i < startDayOfWeek; i++) {
+                    html += `<div></div>`;
+                }
+
+                for (let day = 1; day <= totalDays; day++) {
+                    const dayStr = `${tYear}-${String(tMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayShiftCount = monthShifts.filter(s => s.date === dayStr).length;
+                    const isToday = dayStr === todayStr;
+                    const isUnassignedPastDay = dayShiftCount === 0 && dayStr <= todayStr;
+                    const cellDate = new Date(tYear, tMonth - 1, day);
+                    const dow = cellDate.getDay();
+                    let numColor = 'text-slate-700';
+                    if (dow === 0) numColor = 'text-sevenRed';
+                    else if (dow === 6) numColor = 'text-blue-600';
+
+                    const dot = dayShiftCount > 0
+                        ? `<span class="block w-1 h-1 rounded-full bg-sevenGreen mx-auto mt-0.5"></span>`
+                        : (isUnassignedPastDay ? `<span class="block w-1 h-1 rounded-full bg-sevenRed mx-auto mt-0.5"></span>` : `<span class="block w-1 h-1 mx-auto mt-0.5"></span>`);
+
+                    html += `
+                        <button onclick="jumpToDateFromExpanded('${dayStr}')" class="aspect-square flex flex-col items-center justify-center rounded hover:bg-slate-100 transition-colors ${isToday ? 'bg-sevenGreen/10 ring-1 ring-sevenGreen' : ''}">
+                            <span class="text-[9px] font-bold ${numColor}">${day}</span>
+                            ${dot}
+                        </button>`;
+                }
+
+                html += `</div>`;
+                wrap.innerHTML = html;
+                container.appendChild(wrap);
+            });
+
+            lucide.createIcons();
+        }
+
+        // 확장 보기에서 날짜 클릭 시 해당 월로 이동하고 1개월 상세 보기로 전환, 해당 날짜 허브 오픈
+        function jumpToDateFromExpanded(dayStr) {
+            const monthKey = dayStr.substring(0, 7);
+
+            calendarExpandedView = false;
+            const btn = document.getElementById('calendarExpandToggleBtn');
+            if (btn) {
+                btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+                btn.innerHTML = `<i data-lucide="layout-grid" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">전월·당월·차월 보기</span>`;
+            }
+
+            if (monthKey !== selectedMonth) {
+                document.getElementById('monthSelector').value = monthKey;
+                changeSelectedMonth(monthKey);
+            } else {
+                renderCalendar();
+                lucide.createIcons();
+            }
+
+            const dayShiftsCheck = (shiftsMap[currentStoreId] || []).filter(s => s.date === dayStr);
+            if (dayShiftsCheck.length > 0) {
+                openDailyHub(dayStr);
+            } else {
+                openQuickShiftModal(dayStr);
             }
         }
 
