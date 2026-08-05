@@ -186,7 +186,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V5.5</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V5.6</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -647,6 +647,7 @@
                         <i data-lucide="calendar-range" class="w-4 h-4 text-sevenGreen"></i>
                         <span id="shifts-monthlyTitle">정산월별 상세 근무 일지 장부</span>
                     </h3>
+                    <p id="shifts-monthSummary" class="text-[11px] text-slate-400 font-semibold mt-0.5"></p>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button id="shiftsSubstituteFilterBtn" onclick="toggleShiftsSubstituteOnlyFilter()" class="flex-shrink-0 flex items-center gap-1 text-[11px] bg-orange-50 hover:bg-orange-100 text-sevenOrange border border-orange-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
@@ -678,6 +679,11 @@
                 </h3>
                 <div class="flex items-center gap-1.5">
                     <span id="reports-unpaidSummary" class="hidden text-[11px] font-black px-2 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100"></span>
+                    <div class="relative">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" id="reportsSearchInput" oninput="updateShiftsSearch(this.value)" placeholder="스태프 이름 검색"
+                            class="pl-6 pr-2 py-1 text-[12px] bg-slate-50 border border-slate-200 rounded-lg font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen w-24 sm:w-36">
+                    </div>
                     <button onclick="setReportsView('auto')" id="reports-view-auto"
                         class="text-[11px] font-black px-2.5 py-1 rounded-lg bg-sevenGreen text-white transition-all">자동 보고서</button>
                     <button onclick="setReportsView('invoice')" id="reports-view-invoice"
@@ -1854,6 +1860,37 @@
             }
         }
 
+        // 특정 카드를 강제로 펼치고 화면에 스크롤+하이라이트 (탭 간 딥링크 이동용 공통 헬퍼)
+        function focusAccordionCard(idPrefix, elementId) {
+            const box = document.getElementById(`${idPrefix}-${elementId}`);
+            const icon = document.getElementById(`${idPrefix}-icon-${elementId}`);
+            if (!box) return;
+            box.classList.remove('hidden');
+            if (icon) icon.classList.add('rotate-180');
+            const card = box.closest('.bg-white');
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('ring-2', 'ring-sevenGreen');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-sevenGreen'), 1800);
+            }
+        }
+
+        // 근무 일지 장부 → 급여 보고서로 이동해서 해당 스태프 카드를 펼쳐서 보여줌
+        function jumpToReportsForWorker(workerId) {
+            switchTab('reports');
+            setTimeout(() => focusAccordionCard('report-content', workerId), 120);
+        }
+
+        // 급여 보고서 → 근무 일지 장부로 이동해서 해당 스태프 카드를 펼쳐서 보여줌 (이름 검색어도 함께 세팅)
+        function jumpToShiftsForWorker(workerId, workerName) {
+            switchTab('shifts');
+            shiftsSearchQuery = workerName;
+            const searchInput = document.getElementById('shiftsSearchInput');
+            if (searchInput) searchInput.value = workerName;
+            renderEverything();
+            setTimeout(() => focusAccordionCard('shift-content', workerId), 120);
+        }
+
         // 📌 공지사항 저장
         function saveStoreNotice(value) {
             localStorage.setItem(`seven_notice_${currentStoreId}`, value);
@@ -1862,9 +1899,15 @@
         // --- 📅 달력 렌더링 엔진 (반응형 및 PC 가로세로 확장 기능 강화) ---
         // --- 📌 달력 다중 날짜 선택(일괄 등록) 제어부 ---
         // 근무 일지 장부 탭 스태프 이름 검색어 갱신
+        // 근무 일지 장부 / 급여 보고서 탭 공용 스태프 이름 검색어 갱신 (두 탭 검색창이 서로 동기화됨)
         function updateShiftsSearch(value) {
             shiftsSearchQuery = value.trim();
             renderEverything();
+            // 반대쪽 탭의 검색창도 같은 값으로 동기화 (renderEverything이 재렌더하지 않는 입력창이므로 직접 갱신)
+            const shiftsInput = document.getElementById('shiftsSearchInput');
+            const reportsInput = document.getElementById('reportsSearchInput');
+            if (shiftsInput && shiftsInput.value !== shiftsSearchQuery) shiftsInput.value = shiftsSearchQuery;
+            if (reportsInput && reportsInput.value !== shiftsSearchQuery) reportsInput.value = shiftsSearchQuery;
         }
 
         // 근무 일지 장부 탭 "대타만 보기" 필터 토글
@@ -2317,7 +2360,7 @@
                 listEl.innerHTML = dayShifts.map(s => {
                     const pay = getShiftPayroll(s, activeStore.optionNight);
                     const advText = s.advance > 0 ? `<span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black text-[11px]">가불 ₩${s.advance.toLocaleString()}</span>` : '';
-                    const subText = s.isSubstitute ? `<span class="bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-black text-[11px]">대타${s.originalWorkerName ? ' (원: ' + s.originalWorkerName + ')' : ''}</span>` : '';
+                    const subText = s.isSubstitute ? `<span class="bg-orange-500 text-white px-1.5 py-0.5 rounded font-black text-[11px]">대타${s.originalWorkerName ? ' (원: ' + s.originalWorkerName + ')' : ''}</span>` : '';
                     return `
                     <div class="bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs">
                         <div class="flex justify-between items-start">
@@ -3494,6 +3537,10 @@
             // 근무 일지 장부 탭 이름별 아코디언 목록 구성
             document.getElementById('shifts-monthlyTitle').innerText = `${splitM[1]}월 통합 교대 정산 장부`;
             const shiftsGroupedContainer = document.getElementById('shifts-grouped-container');
+            const shiftsMonthSummaryEl = document.getElementById('shifts-monthSummary');
+            if (shiftsMonthSummaryEl) {
+                shiftsMonthSummaryEl.innerText = `이번 달 총 근무 ${filteredShifts.length}건 · 누적 인건비 ₩${totalPayrollSum.toLocaleString()}`;
+            }
             shiftsGroupedContainer.innerHTML = '';
 
             if (allRenderWorkers.length === 0) {
@@ -3602,9 +3649,13 @@
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="flex items-center gap-1 text-[12px]">
+                                        ${isPaidStatus(w.id, selectedMonth) ? `<span class="bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded-md">지급완료</span>` : ''}
                                         <span class="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded-md">근무 ${workerShifts.length}건</span>
                                         <span class="bg-sevenGreen/5 border border-sevenGreen/10 text-sevenGreen font-black px-1.5 py-0.5 rounded-md">총 ${stats.totalHours}H</span>
                                     </div>
+                                    <button onclick="event.stopPropagation(); jumpToReportsForWorker('${w.id}')" aria-label="급여 보고서에서 보기" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-1.5 py-1 rounded-md flex items-center gap-0.5" title="급여 보고서에서 보기">
+                                        <i data-lucide="file-text" class="w-3.5 h-3.5 pointer-events-none"></i>
+                                    </button>
                                     <i data-lucide="chevron-down" id="shift-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
                                 </div>
                             </div>
@@ -3640,10 +3691,17 @@
             document.getElementById('reports-headerTitle').innerText = `${splitM[1]}월말 기준 지점 급여 대장 명세표`;
             const reportContainer = document.getElementById('reports-container');
             reportContainer.innerHTML = '';
+
+            const reportSearchFilteredWorkers = shiftsSearchQuery
+                ? allRenderWorkers.filter(w => w.name.toLowerCase().includes(shiftsSearchQuery.toLowerCase()))
+                : allRenderWorkers;
+
             if (allRenderWorkers.length === 0) {
                 reportContainer.innerHTML = `<div class="col-span-3 text-center py-10 bg-white rounded-xl border border-slate-150 font-bold text-slate-400">등록된 알바생이 없습니다. [알바생 명부]에서 추가해 주세요.</div>`;
+            } else if (reportSearchFilteredWorkers.length === 0) {
+                reportContainer.innerHTML = `<div class="col-span-3 text-center py-10 bg-white rounded-xl border border-slate-150 font-bold text-slate-400">"${shiftsSearchQuery}" 검색 결과와 일치하는 스태프가 없습니다.</div>`;
             } else {
-                allRenderWorkers.forEach(w => {
+                reportSearchFilteredWorkers.forEach(w => {
                     const stats = getWorkerMonthlyStats(w.id, selectedMonth);
                     const isWeeklyHolidayTarget = stats.holidayAllowance > 0;
                     const tempBadgeR = w._isTemp ? `<span class="bg-purple-100 text-purple-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full">임시스태프</span>` : `<span class="bg-sevenGreen/10 text-sevenGreen text-[10px] font-bold px-1.5 py-0.2 rounded-full">세븐스태프</span>`;
@@ -3661,6 +3719,9 @@
                                         <div class="flex items-center gap-1 mt-0.5">
                                             <h4 class="text-xs font-black text-slate-900">${w.name}</h4>
                                             <i data-lucide="chevron-down" id="report-content-icon-${w.id}" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                                            <button onclick="event.stopPropagation(); jumpToShiftsForWorker('${w.id}', '${w.name}')" class="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded-md flex items-center gap-0.5" title="근무 일지 장부에서 보기">
+                                                <i data-lucide="calendar-days" class="w-3 h-3 pointer-events-none"></i> 근무 내역
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="text-right">
