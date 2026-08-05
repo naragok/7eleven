@@ -186,7 +186,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V5.3</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V5.5</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -255,6 +255,7 @@
 
         <!-- 현재 매장 활성 타이틀 배너 및 수당 수동 스위치 -->
         <div class="bg-white rounded-xl shadow-xs border border-slate-200/60 p-3 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 flex-shrink-0">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto">
             <div class="flex items-start gap-2">
                 <div>
                     <div class="flex items-center gap-1.5">
@@ -273,7 +274,7 @@
             </div>
 
             <!-- 법정 수당 스위치 설정부 -->
-            <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-full lg:w-auto">
+            <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-full sm:w-auto">
                 <div class="flex items-center space-x-1.5">
                     <span class="text-[11px] font-bold text-slate-500">야간 가산(1.5배):</span>
                     <button id="toggleNightAllowance" onclick="toggleOption('night')" aria-label="야간 가산 수당 적용 여부 전환" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
@@ -286,6 +287,7 @@
                         <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
                     </button>
                 </div>
+            </div>
             </div>
 
             <div class="flex items-center gap-1.5 w-full lg:w-auto text-[12px] lg:border-l lg:pl-2.5 border-slate-200">
@@ -584,7 +586,7 @@
         </div>
 
         <!-- 📅 탭 Content: 월간 근무 달력 (아이패드 한 화면 맞춤 캘린더) -->
-        <div id="tabContent-calendar" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 flex flex-col">
+        <div id="tabContent-calendar" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-1.5 flex-shrink-0">
                 <div>
                     <h3 class="font-black text-slate-900 text-xs flex items-center gap-1.5">
@@ -638,7 +640,7 @@
         </div>
 
         <!-- 탭 Content: 근무 일지 장부 -->
-        <div id="tabContent-shifts" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 sm:p-4 space-y-3 flex-grow md:flex-1 md:min-h-0 flex flex-col">
+        <div id="tabContent-shifts" class="hidden bg-white rounded-xl shadow-xs border border-slate-200 p-3 sm:p-4 space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col">
             <div class="flex justify-between items-center border-b pb-2 flex-shrink-0">
                 <div>
                     <h3 class="font-black text-slate-900 text-xs flex items-center gap-1.5">
@@ -887,7 +889,7 @@
     </div>
 
         <!-- 탭 Content: 알바생 명부 및 구비 서류 -->
-        <div id="tabContent-workers" class="hidden grid grid-cols-1 md:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0">
+        <div id="tabContent-workers" class="hidden grid grid-cols-1 md:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden">
             
             <!-- 활성 스태프 목록 및 서류 현황판 -->
             <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200 md:col-span-7 flex flex-col md:h-full md:overflow-hidden order-1 md:order-2">
@@ -1437,6 +1439,27 @@
         const MINIMUM_WAGE_2026 = 10320;
 
         // --- 2. 로컬 저장소 바인딩 ---
+        // ⚠️ new Date().toISOString()은 UTC 기준으로 변환되어, 한국 새벽 0~8시대(UTC로는 전날)에는
+        // "오늘 날짜"가 하루 밀려서 계산되는 버그가 있음. 반드시 로컬(기기) 시간 기준으로 날짜를 뽑는 헬퍼를 사용한다.
+        function getLocalDateStr(d) {
+            const target = d || new Date();
+            const yyyy = target.getFullYear();
+            const mm = String(target.getMonth() + 1).padStart(2, '0');
+            const dd = String(target.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        function getLocalMonthStr(d) {
+            return getLocalDateStr(d).slice(0, 7);
+        }
+        // 오늘부터 특정 날짜(YYYY-MM-DD)까지 남은 일수를 로컬 캘린더 기준으로 정확히 계산 (시/분 오차, UTC 파싱 오차 없음)
+        function getDaysUntil(dateStr) {
+            const now = new Date();
+            const todayLocalMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const [ty, tm, td] = dateStr.split('-').map(Number);
+            const targetLocalMidnight = new Date(ty, tm - 1, td);
+            return Math.round((targetLocalMidnight - todayLocalMidnight) / (1000 * 60 * 60 * 24));
+        }
+
         let stores = JSON.parse(localStorage.getItem('seven_stores_live_v4')) || INITIAL_STORES;
         let currentStoreId = localStorage.getItem('seven_activeStore_id_v4') || 'st_thesharp';
         let workersMap = JSON.parse(localStorage.getItem('seven_workers_live_v4')) || INITIAL_WORKERS;
@@ -1445,7 +1468,7 @@
         let paidStatusMap = JSON.parse(localStorage.getItem('seven_paid_status_v4')) || {};
         let storeNotice = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
-        let selectedMonth = new Date().toISOString().slice(0, 7); // 접속할 때마다 항상 현재 월을 기본 정산월로 표시
+        let selectedMonth = getLocalMonthStr(); // 접속할 때마다 항상 현재 월을 기본 정산월로 표시
         let currentActiveTab = 'dashboard';
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
@@ -1493,7 +1516,7 @@
                 currentStoreId = stores[0] ? stores[0].id : '';
             }
 
-            document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('form-date').value = getLocalDateStr();
             document.getElementById('storeNoticeTextarea').value = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
 
             initStoreSelectorDOM();
@@ -2014,7 +2037,7 @@
                 if (dayOfWeek === 0) dateColorClass = "text-sevenRed font-black";
                 else if (dayOfWeek === 6) dateColorClass = "text-blue-600 font-black";
 
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalDateStr();
                 const isToday = (dayStr === todayStr);
                 const todayDot = isToday ? `<span class="w-1.5 h-1.5 rounded-full bg-sevenOrange inline-block ml-0.5 mb-0.5"></span>` : '';
                 const bulkCheckDot = isSelectedBulk ? `<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i>` : (bulkSelectMode ? `<i data-lucide="circle" class="w-3.5 h-3.5 text-slate-300"></i>` : '');
@@ -2083,7 +2106,7 @@
             const monthOffsets = [-1, 0, 1];
             const monthLabels = ['전월', '당월', '차월'];
             const currentShifts = shiftsMap[currentStoreId] || [];
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalDateStr();
 
             monthOffsets.forEach((offset, idx) => {
                 const targetDate = new Date(year, month - 1 + offset, 1);
@@ -2509,7 +2532,7 @@
                 ? allW.map(w => `<option value="${w.id}">${w.name}</option>`).join('')
                 : '<option value="">등록된 스태프 없음</option>';
             const dateEl = document.getElementById('inv-issue-date');
-            if (dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+            if (dateEl && !dateEl.value) dateEl.value = getLocalDateStr();
             const titleEl = document.getElementById('inv-title');
             if (titleEl && !titleEl.value) {
                 const [y, m] = selectedMonth.split('-');
@@ -2715,7 +2738,7 @@
     </div>
     <div class="hd-r">
       <p class="tag">발행일</p>
-      <p class="dt">${new Date().toISOString().split('T')[0]}</p>
+      <p class="dt">${getLocalDateStr()}</p>
     </div>
   </div>
   <div class="meta">
@@ -3368,12 +3391,9 @@
                     holidayEligibleCount++;
                 }
 
-                // 보건증 D-Day 만료 예보 (정식 스태프만)
+                // 보건증 D-Day 만료 예보 (정식 스태프만) - 시/분 오차 없이 로컬 캘린더 날짜 기준으로 정확히 계산
                 if (!w._isTemp && w.healthDate) {
-                    const today = new Date();
-                    const targetDate = new Date(w.healthDate);
-                    const diffTime = targetDate - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const diffDays = getDaysUntil(w.healthDate);
                     if (diffDays <= 30) {
                         warningWorkers.push(`[${w.name}] 스태프 보건증 만료 ${diffDays}일 전 (${w.healthDate})`);
                     }
@@ -3746,7 +3766,7 @@
                     // 보건증 만료 임박/만료 배지 계산 (30일 이내 임박, 0일 이하는 만료)
                     let healthBadgeR = '';
                     if (w.healthDate) {
-                        const diffDays = Math.ceil((new Date(w.healthDate) - new Date()) / (1000 * 60 * 60 * 24));
+                        const diffDays = getDaysUntil(w.healthDate);
                         if (diffDays < 0) {
                             healthBadgeR = `<span class="bg-rose-100 text-sevenRed px-1.5 py-0.5 rounded font-black">보건증 만료</span>`;
                         } else if (diffDays <= 30) {
@@ -4572,18 +4592,19 @@
 
         // --- 탭 전환 로직 (가로 깨짐 오류 수정 완료) ---
         function switchTab(tabId) {
+            const prevContent = document.getElementById(`tabContent-${currentActiveTab}`);
+            const nextContent = document.getElementById(`tabContent-${tabId}`);
+
             document.getElementById(`tab-${currentActiveTab}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all text-slate-600 hover:bg-slate-50";
-            document.getElementById(`tabContent-${currentActiveTab}`).className = "hidden";
-
-            if (tabId === 'workers') {
-                document.getElementById(`tabContent-${tabId}`).className = "grid grid-cols-1 md:grid-cols-12 gap-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden animate-in fade-in duration-200";
-            } else if (tabId === 'calendar') {
-                document.getElementById(`tabContent-${tabId}`).className = "bg-white rounded-xl shadow-xs border border-slate-200 p-3 md:p-4 space-y-2 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
-            } else {
-                document.getElementById(`tabContent-${tabId}`).className = "space-y-3 flex-grow md:flex-1 md:min-h-0 md:overflow-hidden flex flex-col animate-in fade-in duration-200";
-            }
-
             document.getElementById(`tab-${tabId}`).className = "flex items-center space-x-1 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all bg-sevenGreen text-white shadow-xs";
+
+            // 탭 콘텐츠는 기존에 갖고 있던 카드 스타일(배경/테두리/패딩 등)을 그대로 둔 채
+            // hidden 클래스와 등장 애니메이션만 토글한다 (className 전체를 덮어쓰면 탭별 고유 스타일이 사라지는 버그가 있었음)
+            prevContent.classList.add('hidden');
+            prevContent.classList.remove('animate-in', 'fade-in', 'duration-200');
+
+            nextContent.classList.remove('hidden');
+            nextContent.classList.add('animate-in', 'fade-in', 'duration-200');
 
             // 보고서 탭 진입 시 청구서 스태프 셀렉트 초기화
             if (tabId === 'reports') {
@@ -4731,7 +4752,7 @@
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            const dateStr = new Date().toISOString().split('T')[0];
+            const dateStr = getLocalDateStr();
 
             const cleanStoreName = activeStore.name.replace(/[^a-zA-Z0-9가-힣]/g, '_');
 
@@ -4824,7 +4845,7 @@
                 }
 
                 const putBody = {
-                    message: `세븐스태프 백업 (${new Date().toISOString().split('T')[0]})`,
+                    message: `세븐스태프 백업 (${getLocalDateStr()})`,
                     content: contentBase64,
                 };
                 if (sha) putBody.sha = sha;
@@ -5064,7 +5085,7 @@
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            const tomorrowStr = getLocalDateStr(tomorrow);
 
             const currentShifts = shiftsMap[currentStoreId] || [];
             const tomorrowShifts = currentShifts
