@@ -336,6 +336,24 @@
                 </div>
             </div>
 
+            <!-- 일자별 필요 인원 목표 (현재 활성 지점 기준) -->
+            <div class="border-t pt-2 border-slate-200">
+                <h4 class="font-bold text-slate-500 mb-1">일자별 필요 인원 목표 (현재 지점) — 달력에서 미달일을 자동 강조합니다</h4>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[12px] font-bold text-slate-500">평일:</span>
+                        <input type="number" id="minStaffWeekdayInput" min="0" onchange="updateMinStaffTarget()" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold text-center focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        <span class="text-[11px] text-slate-400">명 이상</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[12px] font-bold text-slate-500">주말(토·일):</span>
+                        <input type="number" id="minStaffWeekendInput" min="0" onchange="updateMinStaffTarget()" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold text-center focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                        <span class="text-[11px] text-slate-400">명 이상</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-semibold">(0으로 두면 기능이 꺼집니다)</span>
+                </div>
+            </div>
+
             <div class="border-t pt-2 border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div class="space-y-1">
                     <button onclick="exportData()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1 border border-emerald-150">
@@ -603,6 +621,20 @@
                     <i data-lucide="layout-grid" class="w-3.5 h-3.5 pointer-events-none"></i>
                     <span class="pointer-events-none">전월·당월·차월 보기</span>
                 </button>
+                <button id="calendarHeatmapToggleBtn" onclick="toggleCalendarHeatmap()" class="flex-shrink-0 flex items-center gap-1 text-[12px] bg-emerald-50 hover:bg-emerald-100 text-sevenGreen border border-emerald-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 pointer-events-none"></i>
+                    <span class="pointer-events-none">인건비 히트맵</span>
+                </button>
+                <button onclick="printMonthlyCalendar()" class="flex-shrink-0 flex items-center gap-1 text-[12px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg font-bold transition-all">
+                    <i data-lucide="printer" class="w-3.5 h-3.5 pointer-events-none"></i>
+                    <span class="pointer-events-none">인쇄</span>
+                </button>
+            </div>
+
+            <!-- 요일 패턴 빠른 선택: 다중 선택 모드에서만 노출 -->
+            <div id="bulkWeekdayPatternBar" class="hidden items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[11px] flex-shrink-0 flex-wrap">
+                <span class="font-bold text-slate-500 flex-shrink-0">요일로 한번에 선택:</span>
+                <div id="bulkWeekdayButtons" class="flex items-center gap-1"></div>
             </div>
 
             <!-- 일괄 등록 도구모음: 다중 선택 모드에서만 노출 -->
@@ -1444,6 +1476,32 @@
         // 2026년 대한민국 법정 최저시급
         const MINIMUM_WAGE_2026 = 10320;
 
+        // 2026년 대한민국 공휴일/대체공휴일 (출처: 인사혁신처 관공서의 공휴일에 관한 규정 기준 정리)
+        const KR_HOLIDAYS_2026 = {
+            '2026-01-01': '신정',
+            '2026-02-16': '설날 연휴',
+            '2026-02-17': '설날',
+            '2026-02-18': '설날 연휴',
+            '2026-03-01': '삼일절',
+            '2026-03-02': '삼일절 대체공휴일',
+            '2026-05-01': '노동절',
+            '2026-05-05': '어린이날',
+            '2026-05-24': '부처님오신날',
+            '2026-05-25': '부처님오신날 대체공휴일',
+            '2026-06-03': '전국동시지방선거',
+            '2026-06-06': '현충일',
+            '2026-07-17': '제헌절',
+            '2026-08-15': '광복절',
+            '2026-08-17': '광복절 대체공휴일',
+            '2026-09-24': '추석 연휴',
+            '2026-09-25': '추석',
+            '2026-09-26': '추석 연휴',
+            '2026-10-03': '개천절',
+            '2026-10-05': '개천절 대체공휴일',
+            '2026-10-09': '한글날',
+            '2026-12-25': '기독탄신일'
+        };
+
         // --- 2. 로컬 저장소 바인딩 ---
         // ⚠️ new Date().toISOString()은 UTC 기준으로 변환되어, 한국 새벽 0~8시대(UTC로는 전날)에는
         // "오늘 날짜"가 하루 밀려서 계산되는 버그가 있음. 반드시 로컬(기기) 시간 기준으로 날짜를 뽑는 헬퍼를 사용한다.
@@ -1489,8 +1547,11 @@
         let bulkSelectMode = false;
         let selectedBulkDates = new Set();
         let isBulkShiftSubmit = false;
+        let lastBulkClickedDate = "";
         // 달력 전월·당월·차월 확장 보기 상태
         let calendarExpandedView = false;
+        // 달력 인건비 히트맵 모드 상태
+        let calendarHeatmapMode = false;
 
         // --- 3. 최초 실행 등록 ---
         // 다크 모드 상태 복원 및 토글
@@ -1575,7 +1636,15 @@
             renderEverything();
         }
 
-        // --- 출근 시각 변경 및 퇴근 오토-인터벌 조정 ---
+        // 일자별 필요 인원 목표(평일/주말) 저장 - 달력 미달일 강조에 사용
+        function updateMinStaffTarget() {
+            const activeStore = stores.find(s => s.id === currentStoreId);
+            if (!activeStore) return;
+            activeStore.minStaffWeekday = Math.max(0, Number(document.getElementById('minStaffWeekdayInput').value || 0));
+            activeStore.minStaffWeekend = Math.max(0, Number(document.getElementById('minStaffWeekendInput').value || 0));
+            showToast('필요 인원 목표가 저장되었습니다.');
+            renderEverything();
+        }
         function onStartTimeChanged(val) {
             recalculateEndTime();
         }
@@ -1944,13 +2013,14 @@
         function toggleBulkSelectMode() {
             bulkSelectMode = !bulkSelectMode;
             selectedBulkDates.clear();
+            lastBulkClickedDate = "";
 
             const btn = document.getElementById('bulkSelectToggleBtn');
             const helpText = document.getElementById('calendar-help-text');
             if (bulkSelectMode) {
                 btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-sevenGreen text-white border border-sevenGreen px-2.5 py-1.5 rounded-lg font-bold transition-all";
                 btn.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">선택 모드 종료</span>`;
-                helpText.innerHTML = `※ 등록할 <span class="text-indigo-600 font-bold">날짜를 여러 개 선택</span>한 뒤 하단의 "일괄 등록" 버튼을 눌러 주세요.`;
+                helpText.innerHTML = `※ 등록할 <span class="text-indigo-600 font-bold">날짜를 여러 개 선택</span>한 뒤 하단의 "일괄 등록" 버튼을 눌러 주세요. (Shift+클릭으로 범위 선택 가능)`;
             } else {
                 btn.className = "flex-shrink-0 flex items-center gap-1 text-[12px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
                 btn.innerHTML = `<i data-lucide="check-square" class="w-3.5 h-3.5 pointer-events-none"></i><span class="pointer-events-none">날짜 여러 개 선택해서 일괄 등록</span>`;
@@ -1967,6 +2037,25 @@
                 selectedBulkDates.delete(dayStr);
             } else {
                 selectedBulkDates.add(dayStr);
+            }
+            updateBulkToolbar();
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        // Shift+클릭으로 시작일~끝일 범위를 한 번에 선택 (같은 달 안에서만)
+        function selectBulkDateRange(fromStr, toStr) {
+            let [start, end] = fromStr <= toStr ? [fromStr, toStr] : [toStr, fromStr];
+            let cursor = new Date(start);
+            const endDate = new Date(end);
+            let guard = 0;
+            while (cursor <= endDate && guard < 62) {
+                const cursorStr = getLocalDateStr(cursor);
+                if (cursorStr.startsWith(selectedMonth)) {
+                    selectedBulkDates.add(cursorStr);
+                }
+                cursor.setDate(cursor.getDate() + 1);
+                guard++;
             }
             updateBulkToolbar();
             renderCalendar();
@@ -2043,6 +2132,20 @@
             const currentShifts = shiftsMap[currentStoreId] || [];
             const monthlyShifts = currentShifts.filter(s => s.date.startsWith(selectedMonth));
 
+            // 인건비 히트맵용 일자별 합계 사전 계산
+            const activeStoreForCal = stores.find(s => s.id === currentStoreId) || {};
+            let dayPayrollMap = {};
+            let maxDayPayroll = 0;
+            if (calendarHeatmapMode) {
+                monthlyShifts.forEach(s => {
+                    const pay = getShiftPayroll(s, activeStoreForCal.optionNight);
+                    dayPayrollMap[s.date] = (dayPayrollMap[s.date] || 0) + pay;
+                });
+                maxDayPayroll = Math.max(0, ...Object.values(dayPayrollMap));
+            }
+            const minStaffWeekday = activeStoreForCal.minStaffWeekday || 0;
+            const minStaffWeekend = activeStoreForCal.minStaffWeekend || 0;
+
             // 1일 시작 전 빈 칸 메우기
             for (let i = 0; i < startDayOfWeek; i++) {
                 const emptyCell = document.createElement('div');
@@ -2059,11 +2162,16 @@
                     ? "bg-indigo-50 p-1.5 rounded-lg border-2 border-indigo-500 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between transition-all cursor-pointer shadow-sm"
                     : "bg-white p-1.5 rounded-lg border border-slate-200/80 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between hover:border-sevenGreen transition-all cursor-pointer shadow-xs hover:shadow-sm";
 
-                // 달력 셀 터치/클릭: 다중 선택 모드면 선택 토글, 아니면 근무 있으면 일일 허브, 없으면 빠른 등록
+                // 달력 셀 터치/클릭: 다중 선택 모드면 선택 토글(Shift+클릭 시 범위 선택), 아니면 근무 있으면 일일 허브, 없으면 빠른 등록
                 dayCell.onclick = (e) => {
                     e.stopPropagation();
                     if (bulkSelectMode) {
-                        toggleBulkDateSelection(dayStr);
+                        if (e.shiftKey && lastBulkClickedDate) {
+                            selectBulkDateRange(lastBulkClickedDate, dayStr);
+                        } else {
+                            toggleBulkDateSelection(dayStr);
+                        }
+                        lastBulkClickedDate = dayStr;
                         return;
                     }
                     const dayShiftsCheck = (shiftsMap[currentStoreId] || []).filter(s => s.date === dayStr);
@@ -2084,10 +2192,27 @@
                 const isToday = (dayStr === todayStr);
                 const todayDot = isToday ? `<span class="w-1.5 h-1.5 rounded-full bg-sevenOrange inline-block ml-0.5 mb-0.5"></span>` : '';
                 const bulkCheckDot = isSelectedBulk ? `<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i>` : (bulkSelectMode ? `<i data-lucide="circle" class="w-3.5 h-3.5 text-slate-300"></i>` : '');
-                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[12px] md:text-xs font-black">${day}${todayDot}</span>${bulkCheckDot}</div>`;
+
+                const holidayName = KR_HOLIDAYS_2026[dayStr];
+                const holidayBadge = holidayName ? `<span class="text-[9px] bg-rose-50 text-sevenRed font-black px-1 rounded truncate max-w-[54px]" title="${holidayName}">${holidayName}</span>` : '';
+
+                let headerHTML = `<div class="flex justify-between items-center"><span class="${dateColorClass} text-[12px] md:text-xs font-black">${day}${todayDot}</span><div class="flex items-center gap-0.5">${holidayBadge}${bulkCheckDot}</div></div>`;
 
                 const dayShifts = monthlyShifts.filter(s => s.date === dayStr);
                 const isUnassignedPastDay = dayShifts.length === 0 && dayStr <= todayStr;
+
+                // 날짜별 근무 인원/시간 미니 요약 + 필요 인원 목표 미달 강조
+                const uniqueWorkerIds = new Set(dayShifts.map(s => s.workerId));
+                const dayTotalHours = dayShifts.reduce((sum, s) => sum + (s.totalHours || 0), 0);
+                const dowForTarget = new Date(year, month - 1, day).getDay();
+                const minStaffTarget = (dowForTarget === 0 || dowForTarget === 6) ? minStaffWeekend : minStaffWeekday;
+                const isStaffShortage = minStaffTarget > 0 && uniqueWorkerIds.size < minStaffTarget;
+                const miniSummary = dayShifts.length > 0
+                    ? `<div class="flex items-center justify-between text-[9px] font-bold ${isStaffShortage ? 'text-sevenRed' : 'text-slate-400'} mt-0.5">
+                           <span>${uniqueWorkerIds.size}명·${dayTotalHours.toFixed(1)}H</span>
+                           ${isStaffShortage ? `<span class="flex items-center gap-0.5"><i data-lucide="user-minus" class="w-2.5 h-2.5"></i>목표 ${minStaffTarget}명↑</span>` : ''}
+                       </div>`
+                    : (minStaffTarget > 0 ? `<div class="text-[9px] font-bold text-sevenRed mt-0.5 flex items-center gap-0.5"><i data-lucide="user-minus" class="w-2.5 h-2.5"></i>목표 ${minStaffTarget}명↑</div>` : '');
 
                 if (!isSelectedBulk && isUnassignedPastDay) {
                     dayCell.className = "bg-rose-50/40 p-1.5 rounded-lg border border-dashed border-rose-200 min-h-[60px] md:min-h-0 md:h-full flex flex-col justify-between hover:border-sevenRed transition-all cursor-pointer shadow-xs hover:shadow-sm";
@@ -2120,12 +2245,36 @@
                 }
                 shiftsHTML += '</div>';
 
-                dayCell.innerHTML = headerHTML + shiftsHTML;
+                dayCell.innerHTML = headerHTML + miniSummary + shiftsHTML;
+
+                // 인건비 히트맵 배경 (다중선택 하이라이트와 겹치지 않도록 우선순위 조정)
+                if (calendarHeatmapMode && !isSelectedBulk) {
+                    const dayPayroll = dayPayrollMap[dayStr] || 0;
+                    if (dayPayroll > 0 && maxDayPayroll > 0) {
+                        const ratio = dayPayroll / maxDayPayroll;
+                        dayCell.style.backgroundColor = `rgba(0, 137, 56, ${(0.08 + ratio * 0.42).toFixed(2)})`;
+                        dayCell.title = `${dayStr} 인건비 합계: ₩${Math.round(dayPayroll).toLocaleString()}`;
+                    }
+                }
+
                 gridBody.appendChild(dayCell);
             }
         }
 
         // 전월·당월·차월 확장 보기 토글
+        // 인건비 히트맵 모드 토글
+        function toggleCalendarHeatmap() {
+            calendarHeatmapMode = !calendarHeatmapMode;
+            const btn = document.getElementById('calendarHeatmapToggleBtn');
+            if (btn) {
+                btn.className = calendarHeatmapMode
+                    ? "flex-shrink-0 flex items-center gap-1 text-[12px] bg-sevenGreen text-white border border-sevenGreen px-2.5 py-1.5 rounded-lg font-bold transition-all"
+                    : "flex-shrink-0 flex items-center gap-1 text-[12px] bg-emerald-50 hover:bg-emerald-100 text-sevenGreen border border-emerald-200 px-2.5 py-1.5 rounded-lg font-bold transition-all";
+            }
+            renderCalendar();
+            lucide.createIcons();
+        }
+
         function toggleCalendarExpandedView() {
             calendarExpandedView = !calendarExpandedView;
             const btn = document.getElementById('calendarExpandToggleBtn');
@@ -2722,6 +2871,87 @@
             }).join('');
             updateInvoiceTotals();
             lucide.createIcons();
+        }
+
+        // 월간 근무 달력을 인쇄용 페이지로 출력
+        function printMonthlyCalendar() {
+            const activeStore = stores.find(s => s.id === currentStoreId) || { name: '지점명' };
+            const [year, month] = selectedMonth.split('-').map(Number);
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay = new Date(year, month, 0);
+            const startDayOfWeek = firstDay.getDay();
+            const totalDays = lastDay.getDate();
+            const currentShifts = shiftsMap[currentStoreId] || [];
+            const monthlyShifts = currentShifts.filter(s => s.date.startsWith(selectedMonth));
+
+            let cellsHTML = '';
+            for (let i = 0; i < startDayOfWeek; i++) {
+                cellsHTML += `<td class="empty"></td>`;
+            }
+            for (let day = 1; day <= totalDays; day++) {
+                const dayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dow = new Date(year, month - 1, day).getDay();
+                const dayShifts = monthlyShifts.filter(s => s.date === dayStr).sort((a, b) => a.startTime.localeCompare(b.startTime));
+                const holidayName = KR_HOLIDAYS_2026[dayStr];
+                const dateClass = dow === 0 ? 'sun' : (dow === 6 ? 'sat' : '');
+                const namesHTML = dayShifts.length > 0
+                    ? dayShifts.map(s => `<div class="entry">${s.workerName}${s.isSubstitute ? ' (대타)' : ''} <span class="t">${s.startTime}-${s.endTime}</span></div>`).join('')
+                    : '<div class="empty-mark">-</div>';
+                cellsHTML += `<td>
+                    <div class="dnum ${dateClass}">${day}${holidayName ? `<span class="holi">${holidayName}</span>` : ''}</div>
+                    ${namesHTML}
+                </td>`;
+
+                if ((startDayOfWeek + day) % 7 === 0 && day !== totalDays) {
+                    cellsHTML += '</tr><tr>';
+                }
+            }
+            const remainder = (startDayOfWeek + totalDays) % 7;
+            if (remainder !== 0) {
+                for (let i = 0; i < 7 - remainder; i++) cellsHTML += `<td class="empty"></td>`;
+            }
+
+            const html = `<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>${year}년 ${month}월 근무 달력</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; color: #1e293b; }
+  h1 { font-size: 16pt; font-weight: 900; margin-bottom: 2pt; }
+  .sub { font-size: 9pt; color: #64748b; margin-bottom: 8pt; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th { background: #f0fdf4; border: 0.5pt solid #cbd5e1; padding: 4pt; font-size: 9pt; font-weight: 900; }
+  th.sun { color: #dc2626; } th.sat { color: #2563eb; }
+  td { border: 0.5pt solid #cbd5e1; vertical-align: top; padding: 3pt; height: 22mm; font-size: 7.5pt; }
+  td.empty { background: #f8fafc; }
+  .dnum { font-weight: 900; font-size: 9pt; margin-bottom: 2pt; display: flex; justify-content: space-between; }
+  .dnum.sun { color: #dc2626; } .dnum.sat { color: #2563eb; }
+  .holi { font-size: 6.5pt; color: #dc2626; font-weight: 700; }
+  .entry { background: #ecfdf5; border-radius: 3pt; padding: 1.5pt 3pt; margin-bottom: 1.5pt; font-weight: 700; }
+  .entry .t { color: #64748b; font-weight: 500; }
+  .empty-mark { color: #cbd5e1; text-align: center; padding-top: 4pt; }
+  .ftr { text-align: center; font-size: 8pt; color: #94a3b8; margin-top: 8pt; }
+</style>
+</head><body>
+  <h1>${activeStore.name} · ${year}년 ${month}월 근무 달력</h1>
+  <p class="sub">발행일: ${getLocalDateStr()}</p>
+  <table>
+    <thead><tr>
+      <th class="sun">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th class="sat">토</th>
+    </tr></thead>
+    <tbody><tr>${cellsHTML}</tr></tbody>
+  </table>
+  <p class="ftr">세븐스태프 · 월간 근무 달력</p>
+</body></html>`;
+
+            const win = window.open('', '_blank', 'width=1100,height=800');
+            win.document.open();
+            win.document.write(html);
+            win.document.close();
+            win.focus();
+            setTimeout(() => { win.print(); }, 700);
         }
 
         function printPayslip(workerId) {
@@ -3973,6 +4203,15 @@
                         </label>
                     `;
                 }).join('');
+            }
+
+            // 일자별 필요 인원 목표 입력값 동기화 (현재 지점 기준, 포커스 중이면 덮어쓰지 않음)
+            const minStaffWeekdayInput = document.getElementById('minStaffWeekdayInput');
+            const minStaffWeekendInput = document.getElementById('minStaffWeekendInput');
+            if (minStaffWeekdayInput && minStaffWeekendInput && document.activeElement !== minStaffWeekdayInput && document.activeElement !== minStaffWeekendInput) {
+                const activeStoreForTarget = stores.find(s => s.id === currentStoreId) || {};
+                minStaffWeekdayInput.value = activeStoreForTarget.minStaffWeekday || 0;
+                minStaffWeekendInput.value = activeStoreForTarget.minStaffWeekend || 0;
             }
 
 
