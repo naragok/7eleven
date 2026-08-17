@@ -72,7 +72,79 @@
             document.head.appendChild(manifestLink);
         })();
     </script>
-    
+
+    <!-- 오프라인 사용을 위한 서비스워커 등록 (앱 셸 + CDN 스크립트 캐싱) -->
+    <script>
+        (function() {
+            // file:// 로 직접 열었거나 브라우저가 지원하지 않으면 서비스워커 등록이 불가능함 - 조용히 건너뜀
+            if (!('serviceWorker' in navigator) || location.protocol === 'file:') {
+                window.__swUnavailable = true;
+                return;
+            }
+
+            const CACHE_NAME = 'seven-staff-cache-v1';
+            const CDN_URLS = [
+                'https://cdn.tailwindcss.com',
+                'https://unpkg.com/lucide@latest',
+                'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+            ];
+
+            const swSource = `
+                const CACHE_NAME = '${CACHE_NAME}';
+                const APP_SHELL_URL = self.registration.scope;
+                const CDN_URLS = ${JSON.stringify(CDN_URLS)};
+
+                self.addEventListener('install', (event) => {
+                    self.skipWaiting();
+                    event.waitUntil(
+                        caches.open(CACHE_NAME).then((cache) =>
+                            cache.addAll([APP_SHELL_URL, ...CDN_URLS]).catch(() => {})
+                        )
+                    );
+                });
+
+                self.addEventListener('activate', (event) => {
+                    event.waitUntil(
+                        caches.keys().then((names) =>
+                            Promise.all(names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n)))
+                        ).then(() => self.clients.claim())
+                    );
+                });
+
+                // 앱 셸/CDN 스크립트는 캐시 우선(오프라인 대응), 나머지 네트워크 요청은 그대로 통과
+                self.addEventListener('fetch', (event) => {
+                    if (event.request.method !== 'GET') return;
+                    const reqUrl = event.request.url;
+                    const isAppShell = reqUrl === APP_SHELL_URL || reqUrl === APP_SHELL_URL.replace(/\\/$/, '');
+                    const isCdnAsset = CDN_URLS.some(u => reqUrl.startsWith(u));
+                    if (!isAppShell && !isCdnAsset) return;
+
+                    event.respondWith(
+                        caches.match(event.request).then((cached) => {
+                            const networkFetch = fetch(event.request).then((res) => {
+                                if (res && res.status === 200) {
+                                    const resClone = res.clone();
+                                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+                                }
+                                return res;
+                            }).catch(() => cached);
+                            return cached || networkFetch;
+                        })
+                    );
+                });
+            `;
+
+            const swBlob = new Blob([swSource], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+
+            navigator.serviceWorker.register(swUrl).then(() => {
+                window.__swUnavailable = false;
+            }).catch(() => {
+                window.__swUnavailable = true;
+            });
+        })();
+    </script>
+
     <!-- Tailwind CSS 및 폰트 CDN 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -186,7 +258,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.0</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.4</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -383,6 +455,15 @@
                         <span>GitHub 연동 설정</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- 홈 화면(앱)으로 설치 & 오프라인 사용 -->
+            <div class="border-t pt-2 border-slate-200">
+                <button id="installAppBtn" onclick="handleInstallAppClick()" class="w-full bg-sevenGreen hover:bg-emerald-700 text-white font-extrabold py-1.5 px-2.5 rounded-lg flex items-center justify-center space-x-1">
+                    <i data-lucide="smartphone" class="w-4 h-4"></i>
+                    <span>홈 화면에 앱으로 설치 (오프라인 사용 가능)</span>
+                </button>
+                <p id="offlineStatusText" class="text-[11px] text-slate-400 font-semibold mt-1 text-center"></p>
             </div>
         </div>
 
@@ -903,6 +984,25 @@
                     <input type="time" id="shiftEditEnd" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                 </div>
             </div>
+
+            <!-- 연장근무 빠른 반영: 실제로 더 근무한 만큼 퇴근시각을 한 번에 밀어줌 -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 space-y-1.5">
+                <span class="text-amber-700 font-bold flex items-center gap-1"><i data-lucide="clock-4" class="w-3.5 h-3.5"></i> 실제로 더 근무했다면:</span>
+                <div class="flex items-center gap-1 flex-wrap">
+                    <button type="button" onclick="extendShiftEditEndTime(30)" class="bg-white hover:bg-amber-100 border border-amber-300 text-amber-700 px-2 py-1 rounded-md font-black">+30분</button>
+                    <button type="button" onclick="extendShiftEditEndTime(60)" class="bg-white hover:bg-amber-100 border border-amber-300 text-amber-700 px-2 py-1 rounded-md font-black">+1시간</button>
+                    <button type="button" onclick="extendShiftEditEndTime(120)" class="bg-white hover:bg-amber-100 border border-amber-300 text-amber-700 px-2 py-1 rounded-md font-black">+2시간</button>
+                    <div class="flex items-center gap-0.5 bg-white border border-amber-300 rounded-md pl-1.5 pr-0.5">
+                        <input type="number" id="shiftEditCustomExtendMinutes" min="1" step="1" placeholder="직접입력(분)" class="w-20 py-1 text-amber-700 font-black focus:outline-none" onkeydown="if(event.key==='Enter'){event.preventDefault(); applyCustomShiftExtend();}">
+                        <button type="button" onclick="applyCustomShiftExtend()" class="bg-amber-500 hover:bg-amber-600 text-white px-1.5 py-1 rounded font-black" title="입력한 분만큼 연장">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <button type="button" onclick="resetShiftEditEndTime()" class="text-amber-500 hover:text-amber-700 px-1.5 py-1 rounded-md font-bold" title="원래 퇴근시각으로 되돌리기">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
             <div class="grid grid-cols-2 gap-2">
                 <div>
                     <label class="block text-slate-500 font-bold mb-0.5">무급 휴게</label>
@@ -1042,7 +1142,7 @@
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-slate-500 font-bold mb-0.5">연락처 *</label>
+                            <label class="block text-slate-500 font-bold mb-0.5">연락처 (선택)</label>
                             <input type="tel" id="newWorkerPhone" oninput="autoHyphen(this)" placeholder="예: 010-1234-5678" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
                         </div>
                         <div>
@@ -1206,6 +1306,27 @@
                 <button onclick="closeAlertsCenter()" class="text-slate-400 hover:text-slate-600 font-bold" aria-label="닫기">닫기 ✕</button>
             </div>
             <div id="alertsCenterBody" class="p-4 pt-3 space-y-2.5 overflow-y-auto custom-scrollbar flex-1"></div>
+        </div>
+    </div>
+
+    <!-- iOS Safari용 홈 화면 추가 수동 안내 모달 (iOS는 자동 설치 프롬프트를 지원하지 않아 수동 안내 필요) -->
+    <div id="iosInstallGuideModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-slate-100 space-y-3 animate-in zoom-in-95 duration-150 text-xs">
+            <div class="flex items-center justify-between border-b pb-2">
+                <div class="flex items-center gap-1.5 text-sevenGreen">
+                    <i data-lucide="smartphone" class="w-4.5 h-4.5"></i>
+                    <h3 class="font-black text-slate-900">홈 화면에 앱으로 추가하기</h3>
+                </div>
+                <button onclick="closeIosInstallGuide()" class="text-slate-400 hover:text-slate-600 font-bold" aria-label="닫기">✕</button>
+            </div>
+            <ol class="space-y-2.5 text-slate-700 font-semibold list-decimal list-inside">
+                <li>화면 하단(또는 상단)의 <span class="inline-flex items-center gap-0.5 bg-slate-100 px-1.5 py-0.5 rounded font-black"><i data-lucide="share" class="w-3.5 h-3.5"></i>공유</span> 버튼을 눌러 주세요.</li>
+                <li>메뉴에서 <b>"홈 화면에 추가"</b>를 선택해 주세요.</li>
+                <li>오른쪽 위 <b>"추가"</b>를 누르면 완료! 이제 홈 화면 아이콘으로 바로 실행할 수 있고, 인터넷이 없어도 마지막으로 열었던 화면을 그대로 볼 수 있습니다.</li>
+            </ol>
+            <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-emerald-700 text-[11px] font-bold">
+                ※ Safari 브라우저에서만 가능합니다. 크롬 등 다른 브라우저로 열었다면 우측 상단 공유 버튼에서 "Safari로 열기"를 먼저 선택해 주세요.
+            </div>
         </div>
     </div>
 
@@ -1649,6 +1770,8 @@
         let onConfirmAction = null;
         let onBreakConfirmAction = null;
         let selectedQuickDate = ""; // 달력 임시 저장 선택 일자
+        // 홈 화면 설치(PWA) 관련 상태
+        let deferredInstallPrompt = null;
         // 알림 센터(보건증/근무중복/잦은 대타) 데이터
         let activeAlerts = [];
         // 근무 일지 장부 탭 스태프 이름 검색어
@@ -1731,6 +1854,9 @@
             // 근무 리마인더가 켜져 있으면 1분마다 임박 근무를 확인 (이 브라우저 탭이 열려있는 동안만 동작)
             updateReminderButtonUI();
             setInterval(checkUpcomingShiftReminders, 60 * 1000);
+
+            // 홈 화면 설치/오프라인 상태 표시 초기화
+            setTimeout(updateInstallButtonUI, 300);
         }
 
         function autoHyphen(target) {
@@ -2187,6 +2313,92 @@
                 }
             }, 200);
         });
+
+        // --- 📌 홈 화면 앱 설치(PWA) 및 오프라인 사용 관련 제어부 ---
+        // Chrome/Edge/안드로이드 등에서 지원하는 네이티브 설치 프롬프트를 미리 캡처해뒀다가 버튼 클릭 시 띄움
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            updateInstallButtonUI();
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            showToast('🎉 홈 화면에 앱이 설치되었습니다!');
+            updateInstallButtonUI();
+        });
+
+        function isRunningAsInstalledApp() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        function isIosDevice() {
+            return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS 13+ 데스크톱 UA 대응
+        }
+
+        function updateInstallButtonUI() {
+            const btn = document.getElementById('installAppBtn');
+            const statusText = document.getElementById('offlineStatusText');
+            if (!btn) return;
+
+            if (isRunningAsInstalledApp()) {
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>이미 앱으로 설치되어 실행 중입니다</span>`;
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            if (statusText) {
+                if (location.protocol === 'file:') {
+                    statusText.innerText = '※ 파일을 직접 열어서는 오프라인/설치 기능이 제한됩니다. 웹 서버(GitHub Pages 등)에 올려서 접속하면 완전히 사용할 수 있어요.';
+                } else if (window.__swUnavailable) {
+                    statusText.innerText = '※ 이 브라우저에서는 오프라인 캐싱이 지원되지 않습니다.';
+                } else {
+                    statusText.innerText = navigator.onLine
+                        ? '오프라인 캐싱 준비 완료 · 인터넷 연결됨'
+                        : '📴 오프라인 상태입니다 (캐시된 화면으로 동작 중)';
+                }
+            }
+        }
+
+        window.addEventListener('online', updateInstallButtonUI);
+        window.addEventListener('offline', updateInstallButtonUI);
+
+        // 설치 버튼 클릭: 플랫폼별로 분기 처리
+        function handleInstallAppClick() {
+            if (isRunningAsInstalledApp()) {
+                showToast('이미 홈 화면 앱으로 실행 중입니다.');
+                return;
+            }
+            if (deferredInstallPrompt) {
+                // Chrome/Edge/Android: 네이티브 설치 프롬프트
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then(() => {
+                    deferredInstallPrompt = null;
+                    updateInstallButtonUI();
+                });
+                return;
+            }
+            if (isIosDevice()) {
+                openIosInstallGuide();
+                return;
+            }
+            showToast('이 브라우저는 자동 설치를 지원하지 않습니다. 브라우저 메뉴에서 "홈 화면에 추가" 또는 "앱 설치"를 찾아 주세요.');
+        }
+
+        function openIosInstallGuide() {
+            const modal = document.getElementById('iosInstallGuideModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeIosInstallGuide() {
+            const modal = document.getElementById('iosInstallGuideModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
 
         // ESC 키로 달력 다중 날짜 선택/근무 이동 모드 종료
         document.addEventListener('keydown', (e) => {
@@ -3231,6 +3443,9 @@
         }
 
         // ===== 근무 수정 전용 모달 =====
+        // 근무일지 수정 모달을 열었을 때의 원래 퇴근시각 (연장근무 되돌리기용)
+        let shiftEditOriginalEndTime = "";
+
         function openShiftEditModal(shiftId) {
             const s = (shiftsMap[currentStoreId] || []).find(sh => sh.id === shiftId);
             if (!s) return;
@@ -3245,10 +3460,44 @@
             document.getElementById('shiftEditMemo').value = s.memo || '';
             document.getElementById('shiftEditAdvance').value = s.advance || 0;
             document.getElementById('shiftEditWorkerLabel').innerText = s.workerName;
+            shiftEditOriginalEndTime = s.endTime;
+            const customExtendInput = document.getElementById('shiftEditCustomExtendMinutes');
+            if (customExtendInput) customExtendInput.value = '';
 
             document.getElementById('shiftEditModal').classList.remove('hidden');
             document.getElementById('shiftEditModal').classList.add('flex');
             lucide.createIcons();
+        }
+
+        // 퇴근 시각을 지정한 분(min)만큼 뒤로 밀어서 연장근무를 빠르게 반영
+        function extendShiftEditEndTime(minutesToAdd) {
+            const endInput = document.getElementById('shiftEditEnd');
+            if (!endInput.value) return;
+            const [h, m] = endInput.value.split(':').map(Number);
+            const totalMinutes = h * 60 + m + minutesToAdd;
+            const newH = Math.floor((totalMinutes % 1440) / 60);
+            const newM = totalMinutes % 60;
+            endInput.value = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
+            showToast(`퇴근 시각이 ${minutesToAdd >= 60 ? (minutesToAdd / 60) + '시간' : minutesToAdd + '분'} 연장되었습니다. 확인 후 저장해 주세요.`);
+        }
+
+        // 2시간을 초과하는 연장근무 등 임의의 분 단위로 직접 입력해서 퇴근시각을 연장
+        function applyCustomShiftExtend() {
+            const input = document.getElementById('shiftEditCustomExtendMinutes');
+            const minutesToAdd = Math.round(Number(input.value));
+            if (!minutesToAdd || minutesToAdd <= 0) {
+                showToast('연장할 분(숫자)을 먼저 입력해 주세요.');
+                return;
+            }
+            extendShiftEditEndTime(minutesToAdd);
+            input.value = '';
+        }
+
+        // 연장근무 반영을 취소하고 원래 퇴근시각으로 되돌림
+        function resetShiftEditEndTime() {
+            if (!shiftEditOriginalEndTime) return;
+            document.getElementById('shiftEditEnd').value = shiftEditOriginalEndTime;
+            showToast('원래 퇴근 시각으로 되돌렸습니다.');
         }
 
         function closeShiftEditModal() {
@@ -3282,33 +3531,49 @@
                 return;
             }
 
-            s.date = newDate;
-            s.startTime = newStart;
-            s.endTime = newEnd;
-            s.breakMinutes = newBreak;
-            s.hourlyRate = newRate;
-            s.isSubstitute = newSub;
-            s.memo = newMemo;
-            s.advance = newAdv;
-            s.totalHours = totalHours;
-            s.nightHours = nightHours;
+            const applyShiftEdit = () => {
+                s.date = newDate;
+                s.startTime = newStart;
+                s.endTime = newEnd;
+                s.breakMinutes = newBreak;
+                s.hourlyRate = newRate;
+                s.isSubstitute = newSub;
+                s.memo = newMemo;
+                s.advance = newAdv;
+                s.totalHours = totalHours;
+                s.nightHours = nightHours;
 
-            // 현재 열린 아코디언 workerId 목록 저장 후 재렌더 후 복원
-            const openAccordions = [...document.querySelectorAll('[id^="shift-content-"]')]
-                .filter(el => !el.classList.contains('hidden'))
-                .map(el => el.id.replace('shift-content-', ''));
+                // 현재 열린 아코디언 workerId 목록 저장 후 재렌더 후 복원
+                const openAccordions = [...document.querySelectorAll('[id^="shift-content-"]')]
+                    .filter(el => !el.classList.contains('hidden'))
+                    .map(el => el.id.replace('shift-content-', ''));
 
-            showToast(`[${s.workerName}] 근무일지가 수정되었습니다.`);
-            closeShiftEditModal();
-            renderEverything();
+                showToast(`[${s.workerName}] 근무일지가 수정되었습니다.`);
+                closeShiftEditModal();
+                renderEverything();
 
-            // 아코디언 상태 복원
-            openAccordions.forEach(wid => {
-                const box  = document.getElementById(`shift-content-${wid}`);
-                const icon = document.getElementById(`shift-content-icon-${wid}`);
-                if (box)  { box.classList.remove('hidden'); }
-                if (icon) { icon.classList.add('rotate-180'); }
-            });
+                // 아코디언 상태 복원
+                openAccordions.forEach(wid => {
+                    const box  = document.getElementById(`shift-content-${wid}`);
+                    const icon = document.getElementById(`shift-content-icon-${wid}`);
+                    if (box)  { box.classList.remove('hidden'); }
+                    if (icon) { icon.classList.add('rotate-180'); }
+                });
+            };
+
+            // 연장근무 등으로 시간이 늘어나 주 52시간을 초과하게 되는 경우 경고 (원래 이 근무 자체는 계산에서 제외하고 비교)
+            const projectedWeeklyHours = getWeeklyHoursForWorker(s.workerId, newDate, s.id) + totalHours;
+            if (projectedWeeklyHours > 52) {
+                triggerConfirm(
+                    "⚠️ 주 52시간 초과 경고",
+                    `수정하면 "${s.workerName}"님의 해당 주 누적 근무시간이 약 ${projectedWeeklyHours.toFixed(1)}시간이 됩니다. 그대로 저장하시겠습니까?`,
+                    applyShiftEdit,
+                    "그대로 저장",
+                    "bg-amber-500 text-white px-3.5 py-1.5 rounded-lg font-bold hover:bg-amber-600"
+                );
+            } else {
+                applyShiftEdit();
+            }
         }
 
         function closeQuickShiftModal() {
@@ -5403,10 +5668,6 @@
 
             if (!name) {
                 showToast("알바생 이름을 채워주세요.");
-                return;
-            }
-            if (!phone) {
-                showToast("스태프의 연락처를 기입해 주세요.");
                 return;
             }
             if (selectedStoreIds.length === 0) {
