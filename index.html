@@ -258,7 +258,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.4</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.5</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -274,12 +274,22 @@
                     <input type="month" id="monthSelector" onchange="changeSelectedMonth(this.value)" class="bg-transparent font-extrabold text-[12px] text-slate-800 focus:outline-none cursor-pointer">
                 </div>
                 
-                <!-- 매장 스위처 -->
-                <div class="flex items-center space-x-1 bg-slate-100 rounded-lg px-2 py-1 border border-slate-200">
-                    <i data-lucide="store" class="w-4 h-4 text-sevenGreen flex-shrink-0"></i>
-                    <select id="storeSelector" onchange="changeSelectedStore(this.value)" class="bg-transparent font-bold text-[12px] text-slate-800 focus:outline-none cursor-pointer max-w-[120px]">
-                        <!-- JS에서 동적 로드 -->
-                    </select>
+                <!-- 매장 스위처: 원탭으로 즉시 전환 가능한 드롭다운 패널 -->
+                <div class="relative">
+                    <button id="storeSwitcherBtn" onclick="toggleStoreSwitcherPanel()" class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 py-1 border border-slate-200 transition-all min-h-[44px]">
+                        <i data-lucide="store" class="w-4 h-4 text-sevenGreen flex-shrink-0 pointer-events-none"></i>
+                        <span id="storeSwitcherCurrentName" class="font-bold text-[12px] text-slate-800 max-w-[110px] truncate pointer-events-none">지점 불러오는 중</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0 pointer-events-none"></i>
+                    </button>
+
+                    <div id="storeSwitcherPanel" class="hidden absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-40 overflow-hidden">
+                        <div class="p-1.5 border-b border-slate-100 bg-slate-50">
+                            <p class="text-[10px] font-bold text-slate-400 px-1.5">지점 전환 · Alt+숫자키로도 전환 가능</p>
+                        </div>
+                        <div id="storeSwitcherList" class="max-h-64 overflow-y-auto custom-scrollbar p-1">
+                            <!-- JS에서 동적 생성 -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 지점 세팅 -->
@@ -1871,15 +1881,76 @@
         }
 
         function initStoreSelectorDOM() {
-            const selector = document.getElementById('storeSelector');
-            selector.innerHTML = '';
-            stores.forEach(st => {
-                const opt = document.createElement('option');
-                opt.value = st.id;
-                opt.innerText = st.name;
-                if (st.id === currentStoreId) opt.selected = true;
-                selector.appendChild(opt);
+            const currentNameEl = document.getElementById('storeSwitcherCurrentName');
+            const activeStore = stores.find(st => st.id === currentStoreId);
+            if (currentNameEl) currentNameEl.innerText = activeStore ? activeStore.name : '지점 없음';
+
+            const listEl = document.getElementById('storeSwitcherList');
+            if (!listEl) return;
+
+            const sortedStores = [...stores].sort((a, b) => {
+                if (!!b.isFavorite !== !!a.isFavorite) return (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0);
+                return 0;
             });
+
+            listEl.innerHTML = sortedStores.map((st, idx) => {
+                const shortcutNum = idx < 9 ? idx + 1 : null;
+                const isActive = st.id === currentStoreId;
+                return `
+                    <div class="flex items-center gap-0.5">
+                        <button onclick="selectStoreFromSwitcher('${st.id}')" class="flex-grow flex items-center justify-between gap-1.5 text-left px-2 py-2 rounded-lg font-bold text-[12px] transition-all ${isActive ? 'bg-sevenGreen text-white' : 'hover:bg-slate-50 text-slate-700'}">
+                            <span class="truncate">${st.name}</span>
+                            <span class="flex items-center gap-1 flex-shrink-0">
+                                ${shortcutNum ? `<span class="text-[9px] font-black opacity-60 border ${isActive ? 'border-white/40' : 'border-slate-300'} rounded px-1">Alt+${shortcutNum}</span>` : ''}
+                                ${isActive ? `<i data-lucide="check" class="w-3.5 h-3.5"></i>` : ''}
+                            </span>
+                        </button>
+                        <button onclick="event.stopPropagation(); toggleFavoriteStore('${st.id}')" aria-label="즐겨찾기 지점으로 지정" class="flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-amber-50" title="즐겨찾기">
+                            <i data-lucide="star" class="w-4 h-4 ${st.isFavorite ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // 지점 스위처 패널 열기/닫기
+        function toggleStoreSwitcherPanel() {
+            const panel = document.getElementById('storeSwitcherPanel');
+            const isHidden = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden');
+            if (isHidden) {
+                initStoreSelectorDOM();
+                setTimeout(() => document.addEventListener('click', closeStoreSwitcherOnOutsideClick), 0);
+            }
+        }
+
+        function closeStoreSwitcherOnOutsideClick(e) {
+            const panel = document.getElementById('storeSwitcherPanel');
+            const btn = document.getElementById('storeSwitcherBtn');
+            if (panel && !panel.contains(e.target) && !btn.contains(e.target)) {
+                panel.classList.add('hidden');
+                document.removeEventListener('click', closeStoreSwitcherOnOutsideClick);
+            }
+        }
+
+        // 패널에서 지점을 선택했을 때 즉시 전환하고 패널을 닫음
+        function selectStoreFromSwitcher(id) {
+            document.getElementById('storeSwitcherPanel').classList.add('hidden');
+            document.removeEventListener('click', closeStoreSwitcherOnOutsideClick);
+            if (id !== currentStoreId) {
+                changeSelectedStore(id);
+            }
+        }
+
+        // 즐겨찾기 지점 지정/해제 (즐겨찾기 지점은 목록 맨 위로 고정)
+        function toggleFavoriteStore(id) {
+            stores.forEach(st => {
+                st.isFavorite = (st.id === id) ? !st.isFavorite : false;
+            });
+            initStoreSelectorDOM();
+            saveStateToStorage();
         }
 
         function toggleOption(type) {
@@ -2399,6 +2470,23 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        // Alt+숫자키(1~9)로 지점 빠른 전환 (즐겨찾기 지점이 맨 위로 정렬된 순서 기준)
+        document.addEventListener('keydown', (e) => {
+            if (!e.altKey || e.key < '1' || e.key > '9') return;
+            const tag = document.activeElement ? document.activeElement.tagName : '';
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+            const idx = Number(e.key) - 1;
+            const sortedStores = [...stores].sort((a, b) => {
+                if (!!b.isFavorite !== !!a.isFavorite) return (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0);
+                return 0;
+            });
+            if (sortedStores[idx] && sortedStores[idx].id !== currentStoreId) {
+                e.preventDefault();
+                changeSelectedStore(sortedStores[idx].id);
+            }
+        });
 
         // ESC 키로 달력 다중 날짜 선택/근무 이동 모드 종료
         document.addEventListener('keydown', (e) => {
@@ -5587,6 +5675,7 @@
         function changeSelectedStore(id) {
             currentStoreId = id;
             document.getElementById('storeNoticeTextarea').value = localStorage.getItem(`seven_notice_${currentStoreId}`) || '';
+            initStoreSelectorDOM();
             renderEverything();
             showToast(`관리 점포를 전환했습니다.`);
         }
