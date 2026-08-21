@@ -194,6 +194,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #008938;
         }
+        html.dark-mode .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        html.dark-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        html.dark-mode .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #34d399; }
         .pulse-light {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -215,6 +218,8 @@
         html.dark-mode .bg-slate-50\/50,
         html.dark-mode .bg-slate-50\/70 { background-color: #0f172a !important; }
         html.dark-mode .bg-slate-100 { background-color: #334155 !important; }
+        html.dark-mode .bg-slate-200,
+        html.dark-mode .hover\:bg-slate-200:hover { background-color: #475569 !important; }
         html.dark-mode .border-slate-200,
         html.dark-mode .border-slate-200\/80,
         html.dark-mode .border-slate-150,
@@ -231,6 +236,49 @@
         html.dark-mode .shadow-xs,
         html.dark-mode .shadow-sm,
         html.dark-mode .shadow-md { box-shadow: none !important; }
+
+        /* 다크모드에서 색상 배지(bg-X-50/100 + text-X-600/700 조합)가 밝은 스티커처럼 튀지 않도록,
+           어두운 톤 배경 + 밝은 톤 글자로 재조정. 아이콘 색상(text-sevenGreen 등)은 그대로 둠 */
+        html.dark-mode .bg-emerald-50,  html.dark-mode .bg-emerald-100  { background-color: rgba(16, 185, 129, 0.15) !important; }
+        html.dark-mode .bg-rose-50,     html.dark-mode .bg-rose-100     { background-color: rgba(244, 63, 94, 0.15) !important; }
+        html.dark-mode .bg-amber-50,    html.dark-mode .bg-amber-100    { background-color: rgba(245, 158, 11, 0.15) !important; }
+        html.dark-mode .bg-orange-50,   html.dark-mode .bg-orange-100   { background-color: rgba(249, 115, 22, 0.15) !important; }
+        html.dark-mode .bg-indigo-50,   html.dark-mode .bg-indigo-100   { background-color: rgba(99, 102, 241, 0.18) !important; }
+        html.dark-mode .bg-sky-50,      html.dark-mode .bg-sky-100      { background-color: rgba(14, 165, 233, 0.18) !important; }
+        html.dark-mode .bg-violet-50,   html.dark-mode .bg-violet-100   { background-color: rgba(139, 92, 246, 0.18) !important; }
+        html.dark-mode .bg-blue-50,     html.dark-mode .bg-blue-100     { background-color: rgba(59, 130, 246, 0.18) !important; }
+        html.dark-mode .bg-purple-50,   html.dark-mode .bg-purple-100   { background-color: rgba(168, 85, 247, 0.18) !important; }
+
+        html.dark-mode .text-emerald-600, html.dark-mode .text-emerald-700, html.dark-mode .text-emerald-800 { color: #6ee7b7 !important; }
+        html.dark-mode .text-rose-600,    html.dark-mode .text-rose-700                                       { color: #fda4af !important; }
+        html.dark-mode .text-amber-600,   html.dark-mode .text-amber-700, html.dark-mode .text-amber-800,
+        html.dark-mode .text-amber-900                                                                        { color: #fcd34d !important; }
+        html.dark-mode .text-orange-600,  html.dark-mode .text-orange-700, html.dark-mode .text-orange-900     { color: #fdba74 !important; }
+        html.dark-mode .text-indigo-600,  html.dark-mode .text-indigo-700                                      { color: #a5b4fc !important; }
+        html.dark-mode .text-sky-600,     html.dark-mode .text-sky-700                                         { color: #7dd3fc !important; }
+        html.dark-mode .text-violet-600,  html.dark-mode .text-violet-700                                      { color: #c4b5fd !important; }
+        html.dark-mode .text-blue-600,    html.dark-mode .text-blue-700, html.dark-mode .text-blue-900         { color: #93c5fd !important; }
+        html.dark-mode .text-purple-600,  html.dark-mode .text-purple-700                                      { color: #d8b4fe !important; }
+        html.dark-mode .text-rose-950,    html.dark-mode .text-rose-800                                        { color: #fecdd3 !important; }
+        html.dark-mode .text-sevenRed                                                                          { color: #fb7185 !important; }
+        html.dark-mode .text-sevenGreen                                                                        { color: #34d399 !important; }
+        html.dark-mode .text-sevenOrange                                                                       { color: #fb923c !important; }
+
+        /* 색상 보더도 같은 톤으로 어둡게 조정해 배지 테두리가 과하게 밝지 않도록 함 */
+        html.dark-mode .border-emerald-100, html.dark-mode .border-emerald-200 { border-color: rgba(16, 185, 129, 0.3) !important; }
+        html.dark-mode .border-rose-100,    html.dark-mode .border-rose-200,
+        html.dark-mode .border-rose-300     { border-color: rgba(244, 63, 94, 0.3) !important; }
+        html.dark-mode .border-amber-100,   html.dark-mode .border-amber-200,
+        html.dark-mode .border-amber-300    { border-color: rgba(245, 158, 11, 0.3) !important; }
+        html.dark-mode .border-orange-100,  html.dark-mode .border-orange-200,
+        html.dark-mode .border-orange-300   { border-color: rgba(249, 115, 22, 0.3) !important; }
+        html.dark-mode .border-indigo-100,  html.dark-mode .border-indigo-200 { border-color: rgba(99, 102, 241, 0.3) !important; }
+        html.dark-mode .border-sky-100,     html.dark-mode .border-sky-200   { border-color: rgba(14, 165, 233, 0.3) !important; }
+        html.dark-mode .border-violet-100,  html.dark-mode .border-violet-200 { border-color: rgba(139, 92, 246, 0.3) !important; }
+        html.dark-mode .border-blue-100,    html.dark-mode .border-blue-200 { border-color: rgba(59, 130, 246, 0.3) !important; }
+
+        /* 대시보드 알림 배너류(위험/경고 성격)는 어두운 배경에서도 위험도가 바로 눈에 띄도록 살짝 더 채도 있게 */
+        html.dark-mode .bg-rose-50\/40 { background-color: rgba(244, 63, 94, 0.08) !important; }
 
         /* 태블릿/PC 전용 "화면 고정 + 내부 스크롤" 레이아웃은
            가로폭뿐 아니라 세로 높이도 충분할 때만 적용한다.
@@ -258,7 +306,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-sm font-black text-sevenGreen tracking-tight">7-ELEVEN 파트타임 시스템</h1>
-                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.6</span>
+                        <span class="text-[10px] font-black text-white bg-sevenGreen/70 rounded px-1 py-0.5">V6.9</span>
                     </div>
                     <p class="text-[11px] text-slate-400 font-semibold">2026 대한민국 최저임금 반영, 스마트 캘린더 및 AI 노동 감사 도구</p>
                 </div>
@@ -399,28 +447,45 @@
                 <button onclick="toggleStoreManagerPanel()" class="text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- 신규 추가 -->
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-500">새 가맹지점 추가</h4>
-                    <div class="flex gap-1.5">
-                        <input type="text" id="newStoreNameInput" placeholder="예: 세븐일레븐 원주더샾점" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                        <button onclick="addStore()" class="bg-sevenGreen hover:bg-sevenGreen/90 text-white text-[13px] font-black px-3 py-1 rounded-lg">등록</button>
-                    </div>
-                </div>
-
-                <!-- 지점 목록 삭제 등 편집 -->
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-500">지점 목록 관리</h4>
-                    <div id="storeSettingsList" class="max-h-20 overflow-y-auto space-y-1 border p-1 rounded-lg bg-slate-50 custom-scrollbar">
-                        <!-- 동적 삽입 -->
-                    </div>
+            <!-- 새 가맹지점 추가 -->
+            <div class="space-y-1">
+                <h4 class="font-bold text-slate-500">새 가맹지점 추가</h4>
+                <div class="flex gap-1.5">
+                    <input type="text" id="newStoreNameInput" placeholder="예: 세븐일레븐 원주더샾점" onkeydown="if(event.key==='Enter'){event.preventDefault(); addStore();}" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                    <button onclick="addStore()" class="bg-sevenGreen hover:bg-sevenGreen/90 text-white text-[13px] font-black px-3 py-1.5 rounded-lg flex-shrink-0">등록</button>
                 </div>
             </div>
 
-            <!-- 일자별 필요 인원 목표 (현재 활성 지점 기준) -->
+            <!-- 지점 목록 관리: 전환/즐겨찾기/이름수정/삭제를 한 자리에서 -->
+            <div class="space-y-1">
+                <h4 class="font-bold text-slate-500">지점 목록 관리 <span class="font-semibold text-slate-400">(★ 클릭 시 빠른전환 즐겨찾기 · 지점명 클릭 시 이름 수정 · 카드 클릭 시 그 지점으로 전환)</span></h4>
+                <div id="storeSettingsList" class="max-h-52 overflow-y-auto space-y-1.5 border p-1.5 rounded-lg bg-slate-50 custom-scrollbar">
+                    <!-- 동적 삽입 -->
+                </div>
+            </div>
+
+            <!-- 현재 편집 중인 지점의 근무 옵션 (지점마다 개별 저장됨) -->
             <div class="border-t pt-2 border-slate-200">
-                <h4 class="font-bold text-slate-500 mb-1">일자별 필요 인원 목표 (현재 지점) — 달력에서 미달일을 자동 강조합니다</h4>
+                <h4 class="font-bold text-slate-500 mb-1 flex items-center gap-1">
+                    <i data-lucide="settings-2" class="w-3.5 h-3.5 text-sevenGreen"></i>
+                    <span id="storePanelActiveStoreLabel">현재 편집 중인 지점: -</span>
+                    <span class="text-[10px] text-slate-400 font-semibold">(아래 항목은 이 지점에만 적용됩니다)</span>
+                </h4>
+                <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 mb-2">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-[11px] font-bold text-slate-500">야간 가산(1.5배):</span>
+                        <button id="panelToggleNightAllowance" onclick="toggleOption('night')" aria-label="야간 가산 수당 적용 여부 전환" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
+                            <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-1.5 border-l pl-2 border-slate-200">
+                        <span class="text-[11px] font-bold text-slate-500">법정 주휴수당:</span>
+                        <button id="panelToggleHolidayAllowance" onclick="toggleOption('holiday')" aria-label="법정 주휴수당 적용 여부 전환" class="w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200">
+                            <span class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200"></span>
+                        </button>
+                    </div>
+                </div>
+                <h4 class="font-bold text-slate-500 mb-1">일자별 필요 인원 목표 — 달력에서 미달일을 자동 강조합니다</h4>
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center gap-1.5">
                         <span class="text-[12px] font-bold text-slate-500">평일:</span>
@@ -542,13 +607,13 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-grow md:flex-1 md:min-h-0">
                 
                 <!-- 1단: 출퇴근 일지 추가 폼 -->
-                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col">
+                <div class="bg-white p-3 rounded-xl shadow-xs border border-slate-200/60 md:col-span-6 flex flex-col md:h-full md:overflow-hidden">
                     <h3 class="font-black text-slate-950 text-[13px] flex items-center gap-1 border-b pb-1.5 flex-shrink-0">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-sevenOrange"></i>
                         <span>교대 근무 기록 추가</span>
                     </h3>
 
-                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[12px] pt-2 pr-0.5">
+                    <form id="shiftForm" onsubmit="addShift(event)" class="space-y-1.5 text-[12px] flex-grow overflow-y-auto custom-scrollbar pt-2 pr-0.5">
                         <div>
                             <label class="block text-slate-500 font-bold mb-0.5">근무자 알바생 선택</label>
                             <select id="form-worker" onchange="onWorkerSelected(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:ring-1 focus:ring-sevenGreen focus:outline-none">
@@ -599,54 +664,64 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-1.5 py-0.5">
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-0.5">무급 휴게시간 선택</label>
-                                <select id="form-breakMinutes" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenGreen">
-                                    <option value="0" selected>휴게 없음 (0분)</option>
-                                    <option value="15">15분 휴게</option>
-                                    <option value="30">30분 휴게</option>
-                                    <option value="45">45분 휴게</option>
-                                    <option value="60">60분 (1시간)</option>
-                                    <option value="90">90분 (1.5시간)</option>
-                                    <option value="120">120분 (2시간)</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center pt-3">
-                                <label class="flex items-center space-x-1 cursor-pointer font-bold text-slate-600">
-                                    <input type="checkbox" id="form-isSubstitute" onchange="toggleOriginalWorkerField('form')" class="rounded text-sevenGreen focus:ring-sevenGreen">
-                                    <span>대타(대근) 등록</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div id="form-originalWorkerWrap" class="hidden">
-                            <label class="block text-orange-500 font-bold mb-0.5">원래 근무 예정이었던 스태프</label>
-                            <select id="form-originalWorkerId" class="w-full bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenOrange">
-                                <option value="">선택 안 함</option>
+                        <div>
+                            <label class="block text-slate-500 font-bold mb-0.5">무급 휴게시간 선택</label>
+                            <select id="form-breakMinutes" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenGreen">
+                                <option value="0" selected>휴게 없음 (0분)</option>
+                                <option value="15">15분 휴게</option>
+                                <option value="30">30분 휴게</option>
+                                <option value="45">45분 휴게</option>
+                                <option value="60">60분 (1시간)</option>
+                                <option value="90">90분 (1.5시간)</option>
+                                <option value="120">120분 (2시간)</option>
                             </select>
                         </div>
 
-                        <div>
-                            <label class="block text-slate-500 font-bold mb-0.5">인수 인계/메모 사항</label>
-                            <input type="text" id="form-memo" placeholder="예: 토요 대타, 폐기 및 FF 진열 진행" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-semibold text-slate-800 focus:outline-none">
-                        </div>
+                        <!-- 부가 정보(선택) 확장 토글: 대타/메모/가불금처럼 매번 필요하지 않은 항목은 접어둠 -->
+                        <button type="button" onclick="toggleShiftFormExtraFields()" id="shiftFormExtraToggleBtn" class="w-full flex items-center justify-between bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-2 font-bold text-slate-600 transition-all">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                                <span id="shiftFormExtraToggleLabel">추가 정보 입력 (대타·메모·가불금)</span>
+                            </span>
+                            <i data-lucide="chevron-down" id="shiftFormExtraToggleIcon" class="w-4 h-4 transition-transform duration-200"></i>
+                        </button>
 
-                        <!-- 가불금 입력 -->
-                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 space-y-1">
-                            <div class="flex items-center justify-between">
-                                <label class="text-amber-800 font-black text-[11px] flex items-center gap-1">
-                                    <i data-lucide="banknote" class="w-3.5 h-3.5"></i>
-                                    가불금(선지급금)
-                                </label>
-                                <label class="flex items-center gap-1 cursor-pointer">
-                                    <input type="checkbox" id="form-advance-toggle" onchange="toggleFormAdvance()" class="rounded text-amber-500 focus:ring-amber-400">
-                                    <span class="text-[11px] font-bold text-amber-700">이 근무에 가불 있음</span>
+                        <div id="shiftFormExtraFields" class="hidden space-y-1.5">
+                            <div class="flex items-center">
+                                <label class="flex items-center space-x-1 cursor-pointer font-bold text-slate-600">
+                                    <input type="checkbox" id="form-isSubstitute" onchange="toggleOriginalWorkerField('form'); updateShiftFormExtraSummary();" class="rounded text-sevenGreen focus:ring-sevenGreen">
+                                    <span>대타(대근) 등록</span>
                                 </label>
                             </div>
-                            <div id="form-advance-wrap" class="hidden">
-                                <input type="number" id="form-advance" placeholder="예: 50000" min="0"
-                                    class="w-full bg-white border border-amber-300 rounded-lg px-2 py-1 font-bold text-amber-900 focus:ring-1 focus:ring-amber-400 focus:outline-none">
+
+                            <div id="form-originalWorkerWrap" class="hidden">
+                                <label class="block text-orange-500 font-bold mb-0.5">원래 근무 예정이었던 스태프</label>
+                                <select id="form-originalWorkerId" class="w-full bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-sevenOrange">
+                                    <option value="">선택 안 함</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-500 font-bold mb-0.5">인수 인계/메모 사항</label>
+                                <input type="text" id="form-memo" oninput="updateShiftFormExtraSummary()" placeholder="예: 토요 대타, 폐기 및 FF 진열 진행" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-semibold text-slate-800 focus:outline-none">
+                            </div>
+
+                            <!-- 가불금 입력 -->
+                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-amber-800 font-black text-[11px] flex items-center gap-1">
+                                        <i data-lucide="banknote" class="w-3.5 h-3.5"></i>
+                                        가불금(선지급금)
+                                    </label>
+                                    <label class="flex items-center gap-1 cursor-pointer">
+                                        <input type="checkbox" id="form-advance-toggle" onchange="toggleFormAdvance(); updateShiftFormExtraSummary();" class="rounded text-amber-500 focus:ring-amber-400">
+                                        <span class="text-[11px] font-bold text-amber-700">이 근무에 가불 있음</span>
+                                    </label>
+                                </div>
+                                <div id="form-advance-wrap" class="hidden">
+                                    <input type="number" id="form-advance" placeholder="예: 50000" min="0"
+                                        class="w-full bg-white border border-amber-300 rounded-lg px-2 py-1 font-bold text-amber-900 focus:ring-1 focus:ring-amber-400 focus:outline-none">
+                                </div>
                             </div>
                         </div>
 
@@ -2345,6 +2420,34 @@
             if (icon) icon.classList.toggle('rotate-180');
         }
 
+        // 교대 근무 기록 추가 폼의 "추가 정보(대타·메모·가불금)" 접기/펼치기
+        function toggleShiftFormExtraFields() {
+            const wrap = document.getElementById('shiftFormExtraFields');
+            const icon = document.getElementById('shiftFormExtraToggleIcon');
+            if (!wrap) return;
+            wrap.classList.toggle('hidden');
+            if (icon) icon.classList.toggle('rotate-180');
+        }
+
+        // 대타/메모/가불금 중 하나라도 입력되어 있으면 접혀있는 버튼 라벨에 요약 표시 (놓치지 않도록)
+        function updateShiftFormExtraSummary() {
+            const label = document.getElementById('shiftFormExtraToggleLabel');
+            const wrap = document.getElementById('shiftFormExtraFields');
+            if (!label || !wrap) return;
+            // 펼쳐져 있으면 요약 대신 기본 라벨 유지
+            if (!wrap.classList.contains('hidden')) {
+                label.innerText = '추가 정보 입력 (대타·메모·가불금)';
+                return;
+            }
+            const parts = [];
+            if (document.getElementById('form-isSubstitute')?.checked) parts.push('대타');
+            if (document.getElementById('form-memo')?.value.trim()) parts.push('메모 있음');
+            if (document.getElementById('form-advance-toggle')?.checked) parts.push('가불금 있음');
+            label.innerText = parts.length > 0
+                ? `추가 정보 입력 (대타·메모·가불금) · ${parts.join(', ')} 입력됨`
+                : '추가 정보 입력 (대타·메모·가불금)';
+        }
+
         function checkMinorWarning(dateInputId, warningElId) {
             const dateInput = document.getElementById(dateInputId);
             const warningEl = document.getElementById(warningElId);
@@ -3015,11 +3118,16 @@
                 dayCell.innerHTML = headerHTML + miniSummary + shiftsHTML;
 
                 // 인건비 히트맵 배경 (다중선택 하이라이트와 겹치지 않도록 우선순위 조정)
+                // setProperty(..., 'important')로 지정해야 다크모드의 .bg-white 강제 배경색(!important)을 확실히 이길 수 있음
                 if (calendarHeatmapMode && !isSelectedBulk) {
                     const dayPayroll = dayPayrollMap[dayStr] || 0;
                     if (dayPayroll > 0 && maxDayPayroll > 0) {
                         const ratio = dayPayroll / maxDayPayroll;
-                        dayCell.style.backgroundColor = `rgba(0, 137, 56, ${(0.08 + ratio * 0.42).toFixed(2)})`;
+                        const isDark = document.documentElement.classList.contains('dark-mode');
+                        const heatColor = isDark
+                            ? `rgba(52, 211, 153, ${(0.10 + ratio * 0.35).toFixed(2)})`
+                            : `rgba(0, 137, 56, ${(0.08 + ratio * 0.42).toFixed(2)})`;
+                        dayCell.style.setProperty('background-color', heatColor, 'important');
                         dayCell.title = `${dayStr} 인건비 합계: ₩${Math.round(dayPayroll).toLocaleString()}`;
                     }
                 }
@@ -4609,31 +4717,23 @@
             const activeStore = stores.find(s => s.id === currentStoreId) || { name: '등록된 지점 없음', optionNight: true, optionHoliday: true };
             const workersList = workersMap[currentStoreId] || [];
             const shiftsList = shiftsMap[currentStoreId] || [];
-            
-            const btnNight = document.getElementById('toggleNightAllowance');
-            const btnHoliday = document.getElementById('toggleHolidayAllowance');
 
-            if (btnNight) {
-                const spanN = btnNight.querySelector('span');
-                if (activeStore.optionNight) {
-                    btnNight.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanN) spanN.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
+            const syncToggleSwitch = (btn, isOn) => {
+                if (!btn) return;
+                const span = btn.querySelector('span');
+                if (isOn) {
+                    btn.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (span) span.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
                 } else {
-                    btnNight.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanN) spanN.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
+                    btn.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
+                    if (span) span.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
                 }
-            }
+            };
 
-            if (btnHoliday) {
-                const spanH = btnHoliday.querySelector('span');
-                if (activeStore.optionHoliday) {
-                    btnHoliday.className = "w-8 h-4.5 flex items-center bg-sevenGreen rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanH) spanH.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-3.5 transition-transform duration-200";
-                } else {
-                    btnHoliday.className = "w-8 h-4.5 flex items-center bg-slate-300 rounded-full p-0.5 cursor-pointer transition-colors duration-200";
-                    if (spanH) spanH.className = "bg-white w-4 h-4 rounded-full shadow-md transform translate-x-0 transition-transform duration-200";
-                }
-            }
+            syncToggleSwitch(document.getElementById('toggleNightAllowance'), activeStore.optionNight);
+            syncToggleSwitch(document.getElementById('toggleHolidayAllowance'), activeStore.optionHoliday);
+            syncToggleSwitch(document.getElementById('panelToggleNightAllowance'), activeStore.optionNight);
+            syncToggleSwitch(document.getElementById('panelToggleHolidayAllowance'), activeStore.optionHoliday);
 
             const filteredShifts = shiftsList.filter(s => s.date.startsWith(selectedMonth));
             filteredShifts.sort((a, b) => {
@@ -5294,15 +5394,32 @@
             const storeSettingsList = document.getElementById('storeSettingsList');
             storeSettingsList.innerHTML = '';
             stores.forEach(st => {
+                const isActive = st.id === currentStoreId;
                 storeSettingsList.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-[13px] font-semibold">
-                        <span class="font-bold ${st.id === currentStoreId ? 'text-sevenGreen' : 'text-slate-700'}">${st.name} ${st.id === currentStoreId ? '(활성)' : ''}</span>
-                        <button onclick="deleteStore('${st.id}', '${st.name}')" aria-label="지점 삭제" class="text-slate-400 hover:text-sevenRed transition-all min-w-[44px] min-h-[44px] flex items-center justify-center -my-2">
+                    <div class="flex items-center gap-1 bg-white p-1.5 rounded-lg border ${isActive ? 'border-sevenGreen ring-1 ring-sevenGreen' : 'border-slate-200'} text-[13px] font-semibold">
+                        <button onclick="event.stopPropagation(); toggleFavoriteStore('${st.id}')" aria-label="즐겨찾기 지점으로 지정" class="flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-amber-50" title="즐겨찾기">
+                            <i data-lucide="star" class="w-4 h-4 ${st.isFavorite ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}"></i>
+                        </button>
+                        <button onclick="renameStoreInline('${st.id}')" class="flex-grow text-left font-bold ${isActive ? 'text-sevenGreen' : 'text-slate-700'} truncate min-h-[36px] flex items-center gap-1" title="클릭해서 지점명 수정">
+                            <span class="truncate">${st.name}</span>
+                            ${isActive ? `<span class="text-[10px] bg-sevenGreen text-white px-1.5 py-0.5 rounded-full flex-shrink-0">편집중</span>` : ''}
+                        </button>
+                        ${!isActive ? `
+                            <button onclick="selectStoreFromSwitcher('${st.id}')" class="flex-shrink-0 text-[11px] font-bold bg-slate-100 hover:bg-sevenGreen hover:text-white text-slate-600 px-2 min-h-[36px] rounded-lg transition-all">전환</button>
+                        ` : ''}
+                        <button onclick="deleteStore('${st.id}', '${st.name}')" aria-label="지점 삭제" class="text-slate-400 hover:text-sevenRed transition-all min-w-[36px] min-h-[36px] flex items-center justify-center flex-shrink-0">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
                 `;
             });
+
+            // 지점설정 패널 내 "현재 편집 중인 지점" 라벨 및 야간/주휴 토글 상태 동기화 (헤더의 토글과 동일한 값을 반영)
+            const storePanelLabel = document.getElementById('storePanelActiveStoreLabel');
+            if (storePanelLabel) {
+                const activeStoreForPanel = stores.find(st => st.id === currentStoreId);
+                storePanelLabel.innerText = `현재 편집 중인 지점: ${activeStoreForPanel ? activeStoreForPanel.name : '-'}`;
+            }
 
             // 신규 스태프 등록 폼의 지점 다중 선택 체크박스 (기존 체크 상태는 보존, 새 지점은 미체크 기본값)
             const newWorkerStoreCheckboxes = document.getElementById('newWorkerStoreCheckboxes');
@@ -5727,6 +5844,23 @@
             showToast(`"${name}" 매장 장부가 정상적으로 생성되었습니다.`);
         }
 
+        // 지점명을 목록에서 바로 클릭해서 수정 (prompt 방식 - 별도 모달 없이 빠르게 처리)
+        function renameStoreInline(id) {
+            const store = stores.find(st => st.id === id);
+            if (!store) return;
+            const newName = prompt('지점명을 수정하세요.', store.name);
+            if (newName === null) return; // 취소
+            const trimmed = newName.trim();
+            if (!trimmed) {
+                showToast('지점명은 비워둘 수 없습니다.');
+                return;
+            }
+            store.name = trimmed;
+            initStoreSelectorDOM();
+            renderEverything();
+            showToast(`지점명이 "${trimmed}"(으)로 변경되었습니다.`);
+        }
+
         function deleteStore(id, name) {
             if (stores.length <= 1) {
                 showToast("최소 1개의 매장은 유지되어야 합니다.");
@@ -6039,6 +6173,9 @@
                 document.getElementById('form-advance-toggle').checked = false;
                 document.getElementById('form-advance-wrap').classList.add('hidden');
                 document.getElementById('form-advance').value = '';
+                document.getElementById('shiftFormExtraFields').classList.add('hidden');
+                document.getElementById('shiftFormExtraToggleIcon').classList.remove('rotate-180');
+                updateShiftFormExtraSummary();
                 const advMsg = formAdvance > 0 ? ` (가불 ₩${formAdvance.toLocaleString()} 등록)` : '';
                 showToast(`[${worker.name}] 님의 ${date} 근무 일지가 추가되었습니다.${advMsg}`);
                 renderEverything();
